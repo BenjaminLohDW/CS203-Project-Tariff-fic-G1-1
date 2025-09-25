@@ -1,0 +1,13 @@
+# Flask and related dependencies  
+flask==3.0.0
+flask-cors==4.0.0
+flasgger==0.9.7.1
+
+# Existing scraper dependencies
+selenium==4.15.2
+pandas==2.1.3
+openpyxl==3.1.2
+undetected-chromedriver==3.5.4
+
+# Additional utilities
+python-multipart==0.0.6
