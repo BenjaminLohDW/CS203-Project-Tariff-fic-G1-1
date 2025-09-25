@@ -1,0 +1,89 @@
+# --- Python / Flask ---
+__pycache__/
+*.py[cod]
+*.pyd
+*.pyo
+*.so
+
+# Virtual envs
+.venv/
+venv/
+env/
+ENV/
+
+# Environment files & secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+
+# Tests / coverage / type-checkers / linters
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+.cache/
+
+# Build / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Logs
+*.log
+logs/
+
+# Databases / dumps (keep migrations in Git!)
+*.sqlite
+*.sqlite3
+*.db
+*.dump.sql
+*.sql.gz
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# IDE / editor
+.vscode/
+.idea/
+*.code-workspace
+
+# OS junk
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Docker / Compose
+docker-compose.override*.yml
+.compose/
+.docker/
+
+# (Optional) Node — if you add a frontend later
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+
+# opentofu
+@"
+**/.terraform/*
+.terraform/*
+*.tfstate
+*.tfstate.*
+*.plan
+crash.log
+crash.*.log
+*.tfvars
+*.tfvars.json
+!.terraform.lock.hcl
+"@ | Out-File -Encoding utf8 .gitignore
+
+# Maven build output
+/tariff/target/
