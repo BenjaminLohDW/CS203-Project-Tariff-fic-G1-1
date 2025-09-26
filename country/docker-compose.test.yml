@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: default
+      POSTGRES_USER: pgsql
+      POSTGRES_PASSWORD: cs203g1t1
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  country-service:
+    build: .
+    ports:
+      - "5005:5005"
+    environment:
+      - DB_HOST=db
+      - DB_USER=pgsql
+      - DB_PASSWORD=cs203g1t1
+      - DB_NAME=default
+      - DB_PORT=5432
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
