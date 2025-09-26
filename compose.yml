@@ -1,0 +1,189 @@
+services:
+
+  # PostgreSQL service for atomic microservices
+  db:
+    image: postgres:latest
+    container_name: pgsql
+    restart: always
+    environment:
+      POSTGRES_USER: pgsql 
+      POSTGRES_PASSWORD: cs203g1t1
+      POSTGRES_DB: default
+    ports:
+      - "5440:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pgsql -d default"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - pgdata:/var/lib/postgresql/data   
+
+
+  #------------------------ USER ------------------------
+  user-migrate:
+    build: ./user                 
+    env_file:
+      - ./user/.env              
+    environment:
+      FLASK_APP: app.py
+      DB_HOST: db                 
+      DB_PORT: "5432"             
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["flask", "db", "upgrade"]
+    restart: "no"
+  
+  user:
+    container_name: user
+    build: 
+      context: ./user
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+    depends_on:
+      db: 
+        condition: service_healthy 
+      user-migrate: 
+        condition: service_completed_successfully 
+    env_file:
+      - ./user/.env
+    environment:
+      - FLASK_APP=app.py
+      - DB_HOST=db
+      - DB_PORT=5432
+
+
+  # #------------------------ PRODUCT ------------------------
+  # product microservice (HS Code Scraper)
+  product:
+    container_name: product
+    build:
+      context: ./product
+      dockerfile: Dockerfile
+    ports:
+      - "5002:5002"
+    environment:
+      - FLASK_ENV=production
+      - FLASK_HOST=0.0.0.0
+      - FLASK_PORT=5002
+      - HEADLESS_MODE=true
+      - LOG_LEVEL=INFO
+
+
+  # #------------------------ HISTORY ------------------------
+  history-migrate:
+    build: ./history                 
+    env_file:
+      - ./history/.env              
+    environment:
+      FLASK_APP: app.py
+      DB_HOST: db                 
+      DB_PORT: "5432"             
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["flask", "db", "upgrade"]
+    restart: "no"
+  
+  history:
+    container_name: history
+    build: 
+      context: ./history
+      dockerfile: Dockerfile
+    ports:
+      - "5003:5003"
+    depends_on:
+      db: 
+        condition: service_healthy 
+      history-migrate: 
+        condition: service_completed_successfully 
+    env_file:
+      - ./user/.env
+    environment:
+      - FLASK_APP=app.py
+      - DB_HOST=db
+      - DB_PORT=5432
+
+
+  #------------------------ COUNTRY ------------------------
+  country-migrate:
+    build: ./country
+    env_file:
+      - ./country/.env
+    environment:
+      FLASK_APP: app.py
+      DB_HOST: db
+      DB_PORT: "5432"
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["flask", "db", "upgrade"]
+    restart: "no"
+
+  country-seeding:
+    build: ./country
+    env_file:
+      - ./country/.env
+    environment:
+      FLASK_APP: app.py
+      DB_HOST: db
+      DB_PORT: "5432"
+    depends_on:
+      db:
+        condition: service_healthy
+      country-migrate:
+        condition: service_completed_successfully
+    command: ["flask", "seed"]
+    restart: "no"
+
+  country:
+    container_name: country
+    build:
+      context: ./country
+      dockerfile: Dockerfile
+    ports:
+      - "5005:5005"
+    depends_on:
+      db:
+        condition: service_healthy
+      country-migrate:
+        condition: service_completed_successfully
+      country-seeding:
+        condition: service_completed_successfully
+    env_file:
+      - ./country/.env
+    environment:
+      - FLASK_APP=app.py
+      - DB_HOST=db
+      - DB_PORT=5432
+
+ #------------------------ TARIFF (Spring Boot) ------------------------
+  # tariff:
+  #   container_name: tariff
+  #   build:
+  #     context: ./tariff
+  #     dockerfile: Dockerfile
+  #   environment:
+  #     # Keep your docker profile from the service-specific compose
+  #     SPRING_PROFILES_ACTIVE: docker
+  #     # # Add Flyway baseline configuration
+  #     SPRING_FLYWAY_BASELINE_ON_MIGRATE: true
+  #     SPRING_FLYWAY_BASELINE_VERSION: 0
+  #     # If you prefer env over yaml config, uncomment these:
+  #     # SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/tariff
+  #     # SPRING_DATASOURCE_USERNAME: tariff
+  #     # SPRING_DATASOURCE_PASSWORD: tariff
+  #     # If tariff needs to call other services internally (optional):
+  #     # PRODUCT_BASE_URL: http://product:5002
+  #     # COUNTRY_BASE_URL: http://country:5005
+  #   ports:
+  #     - "5004:5004"
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+
+volumes:
+  pgdata:
+  
