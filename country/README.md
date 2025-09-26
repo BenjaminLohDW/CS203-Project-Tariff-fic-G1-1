@@ -2,6 +2,10 @@ Country microservice
 
 This is a small Flask microservice that exposes country data from a Postgres database.
 
+## API Documentation
+
+**Swagger UI:** Access interactive API documentation at `http://localhost:5005/docs/` when the service is running.
+
 Endpoints:
 - GET /api/countries -> list countries
 - POST /api/countries/seed -> seed countries from CSV (optional JSON body: {"csv_path": "/path/to/file.csv"})
@@ -29,6 +33,22 @@ App host/port and auto-seed:
 
 Run (development):
 
+**Option 1: With Swagger Documentation (Recommended)**
+1. Create a virtualenv and install deps:
+   python -m venv .venv; .\.venv\Scripts\activate; pip install -r requirements.txt
+
+2. Ensure Postgres is reachable with credentials from `.env`.
+
+3. Run database migrations:
+   set FLASK_APP=app_swagger.py
+   flask db upgrade
+
+4. Start the Swagger-enabled service:
+   python app_swagger.py
+
+5. Access Swagger UI at: http://localhost:5005/docs/
+
+**Option 2: Standard Flask (No Swagger)**
 1. Create a virtualenv and install deps:
    python -m venv .venv; .\.venv\Scripts\activate; pip install -r requirements.txt
 

@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_cors import CORS
+from flasgger import Swagger
 from dotenv import load_dotenv
 from urllib.parse import quote_plus
 from uuid import uuid4
@@ -13,6 +14,42 @@ load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
+
+# Swagger configuration
+swagger_config = {
+    "headers": [],
+    "specs": [
+        {
+            "endpoint": 'apispec',
+            "route": '/api/v1/apispec.json',
+            "rule_filter": lambda rule: True,
+            "model_filter": lambda tag: True,
+        }
+    ],
+    "static_url_path": "/flasgger_static",
+    "swagger_ui": True,
+    "specs_route": "/api/v1/docs/"
+}
+
+swagger_template = {
+    "swagger": "2.0",
+    "info": {
+        "title": "Country Microservice API",
+        "description": "A microservice providing country data and relationships",
+        "version": "1.0.0",
+        "contact": {
+            "name": "CS203 G1-T1",
+            "email": "support@cs203.com"
+        }
+    },
+    "host": "localhost:5005",
+    "basePath": "/",
+    "schemes": ["http", "https"],
+    "consumes": ["application/json"],
+    "produces": ["application/json"]
+}
+
+swagger = Swagger(app, config=swagger_config, template=swagger_template)
 
 DB_USER = os.getenv('DB_USER')
 DB_PASSWORD = quote_plus(os.getenv('DB_PASSWORD', ''))
@@ -160,8 +197,111 @@ def seed_cmd():
 
 
 #----------------------- API ROUTES ----------------------- 
+
+@app.route('/', methods=['GET'])
+def root():
+    """
+    Root endpoint providing API information and links to documentation
+    ---
+    tags:
+      - Information
+    responses:
+      200:
+        description: API information and documentation links
+        schema:
+          type: object
+          properties:
+            service:
+              type: string
+              example: "Country Microservice API"
+            version:
+              type: string
+              example: "1.0.0"
+            description:
+              type: string
+              example: "A microservice providing country data and relationships"
+            documentation:
+              type: string
+              example: "/api/v1/docs/"
+    """
+    return jsonify({
+        'service': 'Country Microservice API',
+        'version': '1.0.0',
+        'description': 'A microservice providing country data and relationships',
+        'documentation': '/api/v1/docs/'
+    }), 200
+
+@app.route('/health', methods=['GET'])
+def health_check():
+    """
+    Health check endpoint
+    ---
+    tags:
+      - Health
+    responses:
+      200:
+        description: Service health status
+        schema:
+          type: object
+          properties:
+            service:
+              type: string
+              example: "Country Microservice API"
+            status:
+              type: string
+              example: "healthy"
+            timestamp:
+              type: string
+              example: "2025-09-26T10:17:47.022321"
+    """
+    return jsonify({
+        'service': 'Country Microservice API',
+        'status': 'healthy',
+        'timestamp': datetime.datetime.utcnow().isoformat()
+    }), 200
+
 @app.route('/api/countries', methods=['GET'])
 def list_countries():
+    """
+    Get list of all countries
+    ---
+    tags:
+      - Countries
+    responses:
+      200:
+        description: List of all countries
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 200
+            data:
+              type: array
+              items:
+                type: object
+                properties:
+                  country_id:
+                    type: integer
+                    example: 1
+                  name:
+                    type: string
+                    example: "Singapore"
+                  code:
+                    type: string
+                    example: "SG"
+      500:
+        description: Internal server error
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 500
+            error:
+              type: string
+              example: "Database connection failed"
+    """
     try:
         countries = Country.query.order_by(Country.name).all()
         return jsonify({'code': 200, 'data': [c.as_dict() for c in countries]}), 200
@@ -172,6 +312,62 @@ def list_countries():
 # This returns the country object if found, else 404
 @app.route('/api/countries/<int:country_id>', methods=['GET'])
 def get_country_by_id(country_id):
+    """
+    Get country by ID
+    ---
+    tags:
+      - Countries
+    parameters:
+      - name: country_id
+        in: path
+        type: integer
+        required: true
+        description: ID of the country to retrieve
+        example: 153
+    responses:
+      200:
+        description: Country found
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 200
+            data:
+              type: object
+              properties:
+                country_id:
+                  type: integer
+                  example: 153
+                name:
+                  type: string
+                  example: "Singapore"
+                code:
+                  type: string
+                  example: "SG"
+      404:
+        description: Country not found
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 404
+            error:
+              type: string
+              example: "Country not found"
+      500:
+        description: Internal server error
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 500
+            error:
+              type: string
+              example: "Database connection failed"
+    """
     try:
         country = Country.query.get(country_id)
         if not country:
@@ -183,6 +379,62 @@ def get_country_by_id(country_id):
 
 @app.route('/api/countries/by-name', methods=['GET'])
 def get_country_by_name():
+    """
+    Get country by name
+    ---
+    tags:
+      - Countries
+    parameters:
+      - name: name
+        in: query
+        type: string
+        required: true
+        description: Name of the country to search for
+        example: "Singapore"
+    responses:
+      200:
+        description: Country found
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 200
+            data:
+              type: object
+              properties:
+                country_id:
+                  type: integer
+                  example: 1
+                name:
+                  type: string
+                  example: "Singapore"
+                code:
+                  type: string
+                  example: "SG"
+      400:
+        description: Missing name parameter
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 400
+            error:
+              type: string
+              example: "Missing 'name' query parameter"
+      404:
+        description: Country not found
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 404
+            error:
+              type: string
+              example: "Country not found"
+    """
     try:
         name = request.args.get('name', '')
         if not name:
@@ -197,6 +449,73 @@ def get_country_by_name():
 
 @app.route('/api/country-relation/current', methods=["GET"])
 def current_relation():
+    """
+    Get current relationship between two countries
+    ---
+    tags:
+      - Country Relations
+    parameters:
+      - name: a
+        in: query
+        type: string
+        required: true
+        description: First country code (e.g., US, SG)
+        example: "US"
+      - name: b
+        in: query
+        type: string
+        required: true
+        description: Second country code (e.g., US, SG)
+        example: "SG"
+    responses:
+      200:
+        description: Country relationship found
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 200
+            data:
+              type: object
+              properties:
+                a:
+                  type: string
+                  example: "US"
+                b:
+                  type: string
+                  example: "SG"
+                weight_a_to_b:
+                  type: number
+                  format: float
+                  example: 1.25
+                weight_b_to_a:
+                  type: number
+                  format: float
+                  example: 0.85
+      400:
+        description: Invalid query parameters
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 400
+            error:
+              type: string
+              example: "Query params 'a' and 'b' required and must differ"
+      500:
+        description: Internal server error
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 500
+            error:
+              type: string
+              example: "Database error"
+    """
     a = request.args.get("a", "")
     b = request.args.get("b", "")
     if not a or not b or a.strip().upper() == b.strip().upper():
@@ -211,6 +530,64 @@ def current_relation():
 
 @app.route('/api/countries/seed', methods=['POST'])
 def seed_countries_endpoint():
+    """
+    Seed countries data from CSV file
+    ---
+    tags:
+      - Data Management
+    parameters:
+      - name: body
+        in: body
+        required: false
+        description: Optional CSV file path (uses default if not provided)
+        schema:
+          type: object
+          properties:
+            csv_path:
+              type: string
+              example: "countries_full.csv"
+              description: Path to CSV file containing country data
+    responses:
+      200:
+        description: Countries already exist, no new data added
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: "Countries already seeded"
+            count:
+              type: integer
+              example: 0
+      201:
+        description: Countries successfully seeded
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 201
+            message:
+              type: string
+              example: "Countries seeded successfully"
+            count:
+              type: integer
+              example: 195
+      500:
+        description: Error during seeding process
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 500
+            error:
+              type: string
+              example: "CSV file not found"
+    """
     # Optional: accept CSV path in JSON body or use env var
     data = request.get_json(silent=True) or {}
     csv_path = data.get('csv_path') or os.getenv('COUNTRY_SEED_CSV')
@@ -266,6 +643,47 @@ def seed_countries(csv_path=None):
 
 @app.route('/api/country/relations/', methods=["POST"])
 def seed_country_rel_endpoint():
+    """
+    Seed country relationships data from CSV file
+    ---
+    tags:
+      - Data Management
+    parameters:
+      - name: body
+        in: body
+        required: false
+        description: Optional CSV file path (uses default if not provided)
+        schema:
+          type: object
+          properties:
+            csv_path:
+              type: string
+              example: "country_relations_all.csv"
+              description: Path to CSV file containing country relationships data
+    responses:
+      200:
+        description: Country relationships successfully seeded
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 200
+            message:
+              type: string
+              example: "sucessful seeding"
+      500:
+        description: Error during seeding process
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 500
+            error:
+              type: string
+              example: "CSV file not found or database error"
+    """
     data = request.get_json(silent=True) or {}
     get_path = data.get("csv_path")
     try:
