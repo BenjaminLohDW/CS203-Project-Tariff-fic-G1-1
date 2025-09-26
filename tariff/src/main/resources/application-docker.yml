@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://db:5432/default
+    username: pgsql
+    password: cs203g1t1
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+
+# external MS (point to real hosts later if you spin them up)
+country:
+  base-url: http://country:5005
+  by-name-path: /api/countries/by-name
+product:
+  base-url: http://product:5002
+  lookup-path: /api/v1/hs-code/lookup
+
+server:
+  port: 5004

@@ -1,0 +1,11 @@
+# src/main/resources/application-local.yml
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/tariff
+    username: tariff
+    password: tariff
+  jpa:
+    hibernate:
+      ddl-auto: none
+  flyway:
+    enabled: true
