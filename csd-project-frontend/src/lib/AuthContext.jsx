@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, useRef } from 'react'
 import { useLocation, Navigate } from 'react-router-dom'
-import { onAuthChange, signIn, signUp, logOut } from './auth'
+import { onAuthChange, signIn, signUp, logOut, resetPassword } from './auth'
 import { createUser } from './userService'
 
 const AuthContext = createContext({
@@ -10,6 +10,7 @@ const AuthContext = createContext({
   signIn: async () => {},
   signUp: async () => {},
   logOut: async () => {},
+  resetPassword: async () => {},
   setUserProfile: () => {}
 })
 
@@ -82,7 +83,7 @@ export function AuthProvider({ children }) {
     }
   }, [user, userProfile])
 
-  const value = { user, userProfile, setUserProfile, loading, signIn, signUp, logOut }
+  const value = { user, userProfile, setUserProfile, loading, signIn, signUp, logOut, resetPassword }
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 

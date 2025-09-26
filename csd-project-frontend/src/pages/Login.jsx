@@ -37,9 +37,23 @@ export default function Login() {
     } catch {}
   }, [])
 
+  // Clear messages when user starts typing
+  const handleEmailChange = (e) => {
+    setEmail(e.target.value)
+    if (info) setInfo('') // Clear success message when user starts typing
+    if (error) setError('') // Clear error message when user starts typing
+  }
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value)
+    if (info) setInfo('') // Clear success message when user starts typing  
+    if (error) setError('') // Clear error message when user starts typing
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setError('')
+    setInfo('') // Clear any success messages when attempting login
 
     if (!email || !password) {
       setError('Please enter email and password')
@@ -75,9 +89,7 @@ export default function Login() {
         </div>
 
         {info && (
-          <div
-            className={`${styles.error} bg-teal-50 border-teal-200 text-teal-900`}
-          >
+          <div className={styles.success}>
             {info}
           </div>
         )}
@@ -92,7 +104,7 @@ export default function Login() {
               type="email"
               className={styles.input}
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={handleEmailChange}
               placeholder="you@example.com"
               autoComplete="username"
             />
@@ -105,10 +117,15 @@ export default function Login() {
               type="password"
               className={styles.input}
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={handlePasswordChange}
               placeholder="••••••••"
               autoComplete="current-password"
             />
+            <div className="mt-1 text-right">
+              <Link to="/reset-password" className="text-sm text-blue-500 hover:text-blue-600">
+                Forgot password?
+              </Link>
+            </div>
           </div>
 
           <div className={styles.actions}>
