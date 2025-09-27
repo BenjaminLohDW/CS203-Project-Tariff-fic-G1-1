@@ -5,11 +5,11 @@ import { allProducts, groupedProducts, popularProducts } from './productData'
 const ProductAutocomplete = ({ 
   value, 
   onChange, 
-  placeholder = "Search and select a product...",
+  placeholder = "Enter HS Code (e.g., 8517120000)...",
   disabled = false,
   className = ""
 }) => {
-  const [isHsCodeMode, setIsHsCodeMode] = useState(false)
+  const [isHsCodeMode, setIsHsCodeMode] = useState(true) // Default to HS code mode
   const [hsCodeValue, setHsCodeValue] = useState('')
   // Custom styles for React Select to match Tailwind design
   const customStyles = {
