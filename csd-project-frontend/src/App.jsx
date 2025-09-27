@@ -67,6 +67,10 @@ function App() {
   // State for countries from API
   const [countries, setCountries] = useState([])
   const [isLoadingCountries, setIsLoadingCountries] = useState(true)
+  
+  // State for detailed tariff view modal
+  const [selectedHistoryDetail, setSelectedHistoryDetail] = useState(null)
+  const [loadingTariffDetails, setLoadingTariffDetails] = useState(false)
 
   // Fetch countries from API on component mount
   useEffect(() => {
@@ -496,7 +500,7 @@ function App() {
     }
   }
 
-  // Load user's calculation history from the API
+  // Load user's calculation history from the API (only basic info, no tariff lines)
   const loadUserHistory = async () => {
     const userId = userProfile?.user_id
     if (!userId || userId === 'anonymous') {
@@ -512,50 +516,29 @@ function App() {
       const response = await getUserHistory(userId)
       
       if (response.code === 200 && response.data) {
-        // Transform API response to match local history format
-        const transformedHistory = []
-        
-        for (const apiHistory of response.data) {
-          // Fetch tariff lines for this history record
-          let tariffLines = []
-          try {
-            const tariffResponse = await getHistoryTariffLines(apiHistory.history_id)
-            if (tariffResponse.code === 200 && tariffResponse.data) {
-              tariffLines = tariffResponse.data.map(line => ({
-                type: line.tariff_type,
-                description: line.tariff_desc,
-                rate: line.rate_str,
-                amount: parseFloat(line.amount_str).toFixed(2)
-              }))
-            }
-          } catch (error) {
-            console.warn(`Failed to load tariff lines for history ${apiHistory.history_id}:`, error)
-          }
-
-          transformedHistory.push({
-            id: apiHistory.history_id,
-            date: apiHistory.created_at ? apiHistory.created_at.split('T')[0] : new Date().toISOString().split('T')[0],
-            timestamp: apiHistory.created_at ? new Date(apiHistory.created_at).toLocaleString() : new Date().toLocaleString(),
-            mode: 'Standard', // Default mode since API doesn't store this
-            productType: apiHistory.product_type,
-            importingCountry: apiHistory.import_country,
-            exportingCountry: apiHistory.export_country,
-            quantity: apiHistory.total_qty,
-            cost: parseFloat(apiHistory.base_cost) / parseFloat(apiHistory.total_qty) || 0, // Calculate cost per unit
-            tariffRate: 0, // Default since API doesn't store this separately
-            startDate: apiHistory.created_at ? apiHistory.created_at.split('T')[0] : new Date().toISOString().split('T')[0],
-            endDate: apiHistory.created_at ? apiHistory.created_at.split('T')[0] : new Date().toISOString().split('T')[0],
-            baseAmount: parseFloat(apiHistory.base_cost).toFixed(2),
-            tariffs: tariffLines, // Now includes actual tariff data from API
-            totalAmount: parseFloat(apiHistory.final_cost).toFixed(2),
-            status: 'Calculation completed',
-            // Keep original API data for reference
-            originalApiData: apiHistory
-          })
-        }
+        // Transform API response - ONLY basic info for cards (lightweight)
+        const transformedHistory = response.data.map(apiHistory => ({
+          id: apiHistory.history_id,
+          date: apiHistory.created_at ? apiHistory.created_at.split('T')[0] : new Date().toISOString().split('T')[0],
+          timestamp: apiHistory.created_at ? new Date(apiHistory.created_at).toLocaleString() : new Date().toLocaleString(),
+          mode: 'Standard', // Default mode since API doesn't store this
+          productType: apiHistory.product_type,
+          importingCountry: apiHistory.import_country,
+          exportingCountry: apiHistory.export_country,
+          quantity: apiHistory.total_qty,
+          cost: parseFloat(apiHistory.base_cost) / parseFloat(apiHistory.total_qty) || 0, // Calculate cost per unit
+          baseAmount: parseFloat(apiHistory.base_cost).toFixed(2),
+          totalAmount: parseFloat(apiHistory.final_cost).toFixed(2),
+          status: 'Calculation completed',
+          // Keep original API data for reference
+          originalApiData: apiHistory,
+          // Tariff lines will be loaded on-demand when user clicks "View Detailed Summary"
+          tariffs: null, // Not loaded yet
+          tariffLinesLoaded: false
+        }))
         
         setCalculationHistory(transformedHistory)
-        console.log('History loaded successfully:', transformedHistory.length, 'records')
+        console.log('History loaded successfully:', transformedHistory.length, 'records (tariff details will load on-demand)')
       } else {
         // No history found
         setCalculationHistory([])
@@ -581,67 +564,175 @@ function App() {
     loadUserHistory()
   }
 
-  // Function to restore calculation from history
-  const restoreCalculationFromHistory = async (calculationData) => {
-    // Navigate to calculation page
-    setCurrentPage('calculation')
+  // Function to load detailed tariff information for a history item
+  const loadDetailedTariffInfo = async (historyItem) => {
+    setLoadingTariffDetails(true)
+    setSelectedHistoryDetail(null)
     
-    // Set manual tariff mode based on saved data
-    const isManualMode = calculationData.mode === 'Manual Tariff'
-    setIsManualTariff(isManualMode)
-    
-    // Populate input fields
-    setQuantity(calculationData.quantity !== 'Not specified' ? calculationData.quantity : '')
-    setCost(calculationData.cost !== 'Not specified' ? calculationData.cost : '')
-    
-    if (!isManualMode) {
-      // Standard mode - populate all fields
-      const productOption = calculationData.productType !== 'Not specified' ? 
-        { value: calculationData.productType.toLowerCase().replace(/[^a-z0-9]/g, '-'), label: calculationData.productType } : 
-        null
-      setSelectedProduct(productOption)
-      setSelectedImportingCountry(calculationData.importingCountry !== 'Not specified' ? calculationData.importingCountry : '')
-      setSelectedExportingCountry(calculationData.exportingCountry !== 'Not specified' ? calculationData.exportingCountry : '')
-      setStartDate(calculationData.startDate !== 'Not specified' ? calculationData.startDate : '')
-      setEndDate(calculationData.endDate !== 'Not specified' ? calculationData.endDate : '')
-    } else {
-      // Manual tariff mode - populate tariff rate
-      setTariffRate(calculationData.tariffRate !== 'Not specified' ? calculationData.tariffRate : '')
-    }
-    
-    // Set calculated values
-    setCalculatedProduct(calculationData.productType !== 'Not specified' ? calculationData.productType : '')
-    setCalculatedImportingCountry(calculationData.importingCountry !== 'Not specified' ? calculationData.importingCountry : '')
-    setCalculatedExportingCountry(calculationData.exportingCountry !== 'Not specified' ? calculationData.exportingCountry : '')
-    setCalculatedQuantity(calculationData.quantity !== 'Not specified' ? calculationData.quantity : '')
-    setCalculatedCost(calculationData.cost !== 'Not specified' ? calculationData.cost : '')
-    setCalculatedStartDate(calculationData.startDate !== 'Not specified' ? calculationData.startDate : '')
-    setCalculatedEndDate(calculationData.endDate !== 'Not specified' ? calculationData.endDate : '')
-    setCalculatedTariffRate(calculationData.tariffRate !== 'Not specified' ? calculationData.tariffRate : '')
-    
-    // Restore tariff data if it exists
-    if (calculationData.tariffs && calculationData.tariffs.length > 0) {
-      const restoredTariffData = calculationData.tariffs.map(tariff => ({
-        "Tariff Type": tariff.type,
-        "Tariff Description": tariff.description,
-        "Tariff amount": tariff.rate
-      }))
-      setTariffData(restoredTariffData)
-    }
-    
-    // Clear any validation errors
-    setDateValidationError('')
-    setCountryValidationError('')
-    
-    // Autoscroll to results section after a brief delay to ensure DOM has updated
-    setTimeout(() => {
-      if (resultsRef.current) {
-        resultsRef.current.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start'
+    try {
+      // Check if tariff details are already loaded and cached
+      if (historyItem.tariffLinesLoaded && historyItem.tariffs) {
+        console.log('Using cached tariff details')
+        setSelectedHistoryDetail({
+          ...historyItem,
+          tariffs: historyItem.tariffs
         })
+        return
       }
-    }, 100)
+      
+      console.log('Loading tariff details for history ID:', historyItem.id)
+      
+      // Fetch tariff lines from the history microservice
+      const tariffResponse = await getHistoryTariffLines(historyItem.id)
+      
+      if (tariffResponse.code === 200 && tariffResponse.data) {
+        const tariffLines = tariffResponse.data.map(line => ({
+          type: line.tariff_type || 'N/A',
+          description: line.tariff_desc || 'No description available',
+          rate: line.rate_str || '0%',
+          amount: line.amount_str || '$0.00'
+        }))
+        
+        console.log('Loaded tariff details:', tariffLines.length, 'lines')
+        
+        // Create detailed view object
+        const detailedInfo = {
+          ...historyItem,
+          tariffs: tariffLines,
+          tariffLinesLoaded: true
+        }
+        
+        // Update the history cache to store loaded data
+        setCalculationHistory(prevHistory => 
+          prevHistory.map(item => 
+            item.id === historyItem.id 
+              ? { ...item, tariffs: tariffLines, tariffLinesLoaded: true }
+              : item
+          )
+        )
+        
+        setSelectedHistoryDetail(detailedInfo)
+      } else {
+        throw new Error('Failed to load tariff details: ' + (tariffResponse.message || 'Unknown error'))
+      }
+    } catch (error) {
+      console.error('Error loading tariff details:', error)
+      alert('Failed to load detailed tariff information. Please try again.')
+    } finally {
+      setLoadingTariffDetails(false)
+    }
+  }
+  
+  // Function to close the detailed tariff modal
+  const closeDetailedTariffModal = () => {
+    setSelectedHistoryDetail(null)
+  }
+
+  // Function to load tariff details on-demand and restore calculation
+  const restoreCalculationFromHistory = async (calculationData) => {
+    try {
+      // Load tariff lines if not already loaded
+      if (!calculationData.tariffLinesLoaded && calculationData.id) {
+        console.log('Loading tariff details for history:', calculationData.id)
+        
+        try {
+          const tariffResponse = await getHistoryTariffLines(calculationData.id)
+          
+          if (tariffResponse.code === 200 && tariffResponse.data) {
+            const tariffLines = tariffResponse.data.map(line => ({
+              type: line.tariff_type,
+              description: line.tariff_desc,
+              rate: line.rate_str,
+              amount: parseFloat(line.amount_str.replace('$', '')).toFixed(2)
+            }))
+            
+            // Update the calculation data with loaded tariff lines
+            calculationData.tariffs = tariffLines
+            calculationData.tariffLinesLoaded = true
+            
+            // Update the history state to cache the loaded data
+            setCalculationHistory(prevHistory => 
+              prevHistory.map(item => 
+                item.id === calculationData.id 
+                  ? { ...item, tariffs: tariffLines, tariffLinesLoaded: true }
+                  : item
+              )
+            )
+            
+            console.log('Tariff details loaded successfully:', tariffLines.length, 'lines')
+          }
+        } catch (error) {
+          console.warn('Failed to load tariff details:', error)
+          // Continue with restoration even if tariff details fail to load
+        }
+      }
+      
+      // Navigate to calculation page
+      setCurrentPage('calculation')
+      
+      // Set manual tariff mode based on saved data
+      const isManualMode = calculationData.mode === 'Manual Tariff'
+      setIsManualTariff(isManualMode)
+      
+      // Populate input fields
+      setQuantity(calculationData.quantity !== 'Not specified' ? calculationData.quantity : '')
+      setCost(calculationData.cost !== 'Not specified' ? calculationData.cost : '')
+      
+      if (!isManualMode) {
+        // Standard mode - populate all fields
+        const productOption = calculationData.productType !== 'Not specified' ? 
+          { value: calculationData.productType.toLowerCase().replace(/[^a-z0-9]/g, '-'), label: calculationData.productType } : 
+          null
+        setSelectedProduct(productOption)
+        setSelectedImportingCountry(calculationData.importingCountry !== 'Not specified' ? calculationData.importingCountry : '')
+        setSelectedExportingCountry(calculationData.exportingCountry !== 'Not specified' ? calculationData.exportingCountry : '')
+        setStartDate(calculationData.originalApiData?.created_at?.split('T')[0] || new Date().toISOString().split('T')[0])
+        setEndDate(calculationData.originalApiData?.created_at?.split('T')[0] || new Date().toISOString().split('T')[0])
+      } else {
+        // Manual tariff mode - populate tariff rate
+        setTariffRate(calculationData.tariffRate !== 'Not specified' ? calculationData.tariffRate : '')
+      }
+      
+      // Set calculated values
+      setCalculatedProduct(calculationData.productType !== 'Not specified' ? calculationData.productType : '')
+      setCalculatedImportingCountry(calculationData.importingCountry !== 'Not specified' ? calculationData.importingCountry : '')
+      setCalculatedExportingCountry(calculationData.exportingCountry !== 'Not specified' ? calculationData.exportingCountry : '')
+      setCalculatedQuantity(calculationData.quantity !== 'Not specified' ? calculationData.quantity : '')
+      setCalculatedCost(calculationData.cost !== 'Not specified' ? calculationData.cost : '')
+      setCalculatedStartDate(calculationData.originalApiData?.created_at?.split('T')[0] || new Date().toISOString().split('T')[0])
+      setCalculatedEndDate(calculationData.originalApiData?.created_at?.split('T')[0] || new Date().toISOString().split('T')[0])
+      setCalculatedTariffRate(calculationData.tariffRate !== 'Not specified' ? calculationData.tariffRate : '')
+      
+      // Restore tariff data if it exists (now loaded on-demand)
+      if (calculationData.tariffs && calculationData.tariffs.length > 0) {
+        const restoredTariffData = calculationData.tariffs.map(tariff => ({
+          "Tariff Type": tariff.type,
+          "Tariff Description": tariff.description,
+          "Tariff amount": parseFloat(tariff.rate.replace(/[^0-9.-]/g, '')) || 0
+        }))
+        setTariffData(restoredTariffData)
+      } else {
+        setTariffData([])
+      }
+      
+      // Clear any validation errors
+      setDateValidationError('')
+      setCountryValidationError('')
+      
+      // Autoscroll to results section after a brief delay to ensure DOM has updated
+      setTimeout(() => {
+        if (resultsRef.current) {
+          resultsRef.current.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          })
+        }
+      }, 100)
+      
+    } catch (error) {
+      console.error('Error restoring calculation from history:', error)
+      alert('Failed to load calculation details. Please try again.')
+    }
   }
 
   // Render Calculation page
@@ -1026,56 +1117,41 @@ function App() {
           ) : (
             calculationHistory.map(calculation => (
               <div key={calculation.id} className="history-item">
-                <div className="history-header">
-                  <p><strong>Date:</strong> {calculation.date}</p>
-                  <p><strong>Time:</strong> {calculation.timestamp}</p>
-                  <p><strong>Mode:</strong> {calculation.mode}</p>
-                  {calculation.originalApiData && (
-                    <p><strong>History ID:</strong> {calculation.originalApiData.history_id}</p>
-                  )}
+                {/* Concise History Card Header */}
+                <div className="flex justify-between items-center mb-3 pb-2 border-b border-gray-200">
+                  <h4 className="font-semibold text-gray-800">Calculation #{calculation.id}</h4>
+                  <span className="text-sm text-gray-500">{calculation.date}</span>
                 </div>
-                <p><strong>Quantity:</strong> {calculation.quantity}</p>
-                <p><strong>Cost per Unit:</strong> {calculation.cost !== 'Not specified' ? `$${calculation.cost}` : calculation.cost}</p>
-                {calculation.mode === 'Manual Tariff' ? (
-                  <p><strong>Tariff Rate:</strong> {calculation.tariffRate !== 'Not specified' ? `${calculation.tariffRate}%` : calculation.tariffRate}</p>
-                ) : (
-                  <>
-                    <p><strong>Product Type:</strong> {calculation.productType}</p>
-                    <p><strong>Importing Country:</strong> {calculation.importingCountry}</p>
-                    <p><strong>Exporting Country:</strong> {calculation.exportingCountry}</p>
-                    <p><strong>Start Date:</strong> {calculation.startDate}</p>
-                    <p><strong>End Date:</strong> {calculation.endDate}</p>
-                  </>
-                )}
-                <p><strong>Base Amount:</strong> ${calculation.baseAmount}</p>
                 
-                {/* Display tariff details if available */}
-                {calculation.tariffs && calculation.tariffs.length > 0 && (
-                  <div className="mt-3 p-3 bg-purple-50 rounded border border-purple-200">
-                    <p><strong>Applied Tariffs:</strong></p>
-                    <div className="text-sm space-y-1 mt-2">
-                      {calculation.tariffs.map((tariff, index) => (
-                        <div key={index} className="flex justify-between items-center">
-                          <span className="text-purple-700">
-                            {tariff.description} ({tariff.type}, {tariff.rate}{tariff.type.toLowerCase() === 'specific' ? '/unit' : '%'})
-                          </span>
-                          <span className="font-semibold text-purple-900">${tariff.amount}</span>
-                        </div>
-                      ))}
-                    </div>
+                {/* Concise History Card - Only Essential Fields */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                  <div className="space-y-1">
+                    <p><strong>Product:</strong> {calculation.productType || 'Not specified'}</p>
+                    <p><strong>Quantity:</strong> {calculation.quantity || 'Not specified'}</p>
+                    <p><strong>Cost per Unit:</strong> {calculation.cost !== 'Not specified' ? `$${calculation.cost}` : 'Not specified'}</p>
                   </div>
-                )}
+                  <div className="space-y-1">
+                    <p><strong>From:</strong> {calculation.exportingCountry || 'Not specified'}</p>
+                    <p><strong>To:</strong> {calculation.importingCountry || 'Not specified'}</p>
+                    <p className="text-lg font-semibold text-green-600"><strong>Total:</strong> {calculation.totalAmount !== 'Not calculated' ? `$${Number(calculation.totalAmount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : 'Not calculated'}</p>
+                  </div>
+                </div>
                 
-                <p><strong>Status:</strong> {calculation.status}</p>
-                <p><strong>Total Cost:</strong> {calculation.totalAmount !== 'Not calculated' ? `$${Number(calculation.totalAmount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : calculation.totalAmount}</p>
-                
-                {/* View Detailed Summary Button */}
-                <div className="mt-4 pt-2.5 border-t border-gray-300">
+                {/* Action Buttons */}
+                <div className="mt-4 pt-2.5 border-t border-gray-300 flex gap-2 flex-wrap">
+                  <button 
+                    onClick={() => loadDetailedTariffInfo(calculation)}
+                    disabled={loadingTariffDetails}
+                    className="bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 text-white border-none py-2 px-4 rounded cursor-pointer text-sm font-bold transition-colors duration-200"
+                  >
+                    {loadingTariffDetails ? 'Loading...' : 'View Detailed Summary'}
+                  </button>
+                  
                   <button 
                     onClick={() => restoreCalculationFromHistory(calculation)}
-                    className="bg-blue-500 hover:bg-blue-600 text-white border-none py-2 px-4 rounded cursor-pointer text-sm font-bold transition-colors duration-200"
+                    className="bg-green-500 hover:bg-green-600 text-white border-none py-2 px-4 rounded cursor-pointer text-sm font-bold transition-colors duration-200"
                   >
-                    View Detailed Summary
+                    Restore Calculation
                   </button>
                 </div>
                 
@@ -1180,6 +1256,100 @@ function App() {
       <div className="w-full min-h-[calc(100vh-80px)] px-8">
         {currentPage === 'calculation' ? renderCalculationPage() : renderHistoryPage()}
       </div>
+      
+      {/* Detailed Tariff Modal */}
+      {selectedHistoryDetail && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg max-w-4xl max-h-[90vh] w-full overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
+              <h2 className="text-2xl font-bold text-gray-800">Detailed Tariff Summary</h2>
+              <button 
+                onClick={closeDetailedTariffModal}
+                className="text-gray-500 hover:text-gray-700 text-2xl font-bold"
+              >
+                ×
+              </button>
+            </div>
+            
+            <div className="p-6">
+              {/* Basic Calculation Information */}
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                <h3 className="text-lg font-semibold mb-3 text-gray-700">Calculation Details</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p><strong>Product:</strong> {selectedHistoryDetail.productType}</p>
+                    <p><strong>Importing Country:</strong> {selectedHistoryDetail.importingCountry}</p>
+                    <p><strong>Exporting Country:</strong> {selectedHistoryDetail.exportingCountry}</p>
+                    <p><strong>Mode:</strong> {selectedHistoryDetail.mode}</p>
+                  </div>
+                  <div>
+                    <p><strong>Quantity:</strong> {selectedHistoryDetail.quantity}</p>
+                    <p><strong>Cost:</strong> ${Number(selectedHistoryDetail.cost).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                    <p><strong>Date:</strong> {new Date(selectedHistoryDetail.originalApiData?.created_at).toLocaleDateString()}</p>
+                    <p><strong>Status:</strong> <span className={`font-semibold ${selectedHistoryDetail.status === 'Completed' ? 'text-green-600' : 'text-yellow-600'}`}>{selectedHistoryDetail.status}</span></p>
+                  </div>
+                </div>
+                
+                <div className="mt-4 p-3 bg-white border border-gray-200 rounded">
+                  <p className="text-lg font-bold text-green-600">
+                    Total Amount: ${Number(selectedHistoryDetail.totalAmount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </p>
+                </div>
+              </div>
+              
+              {/* Detailed Tariff Breakdown */}
+              <div className="mb-6">
+                <h3 className="text-lg font-semibold mb-3 text-gray-700">Tariff Breakdown</h3>
+                {selectedHistoryDetail.tariffs && selectedHistoryDetail.tariffs.length > 0 ? (
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse border border-gray-300">
+                      <thead>
+                        <tr className="bg-gray-100">
+                          <th className="border border-gray-300 px-4 py-2 text-left font-semibold">Tariff Type</th>
+                          <th className="border border-gray-300 px-4 py-2 text-left font-semibold">Description</th>
+                          <th className="border border-gray-300 px-4 py-2 text-left font-semibold">Rate</th>
+                          <th className="border border-gray-300 px-4 py-2 text-left font-semibold">Amount</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedHistoryDetail.tariffs.map((tariff, index) => (
+                          <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                            <td className="border border-gray-300 px-4 py-2 font-medium">{tariff.type}</td>
+                            <td className="border border-gray-300 px-4 py-2">{tariff.description}</td>
+                            <td className="border border-gray-300 px-4 py-2 text-right">{tariff.rate}</td>
+                            <td className="border border-gray-300 px-4 py-2 text-right font-medium">{tariff.amount}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <p>No detailed tariff information available.</p>
+                    <p className="text-sm mt-2">This may be a manual tariff calculation or the data may not have been saved with detailed breakdown.</p>
+                  </div>
+                )}
+              </div>
+              
+              {/* Action Buttons */}
+              <div className="flex gap-3 justify-end pt-4 border-t border-gray-200">
+                <button 
+                  onClick={() => restoreCalculationFromHistory(selectedHistoryDetail)}
+                  className="bg-green-500 hover:bg-green-600 text-white border-none py-2 px-6 rounded cursor-pointer font-bold transition-colors duration-200"
+                >
+                  Restore This Calculation
+                </button>
+                <button 
+                  onClick={closeDetailedTariffModal}
+                  className="bg-gray-500 hover:bg-gray-600 text-white border-none py-2 px-6 rounded cursor-pointer font-bold transition-colors duration-200"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
