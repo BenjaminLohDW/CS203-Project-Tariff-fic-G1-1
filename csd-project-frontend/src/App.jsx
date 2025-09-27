@@ -22,14 +22,12 @@ function App() {
   const [selectedExportingCountry, setSelectedExportingCountry] = useState('')
   const [quantity, setQuantity] = useState('')
   const [cost, setCost] = useState('')
-  const [startDate, setStartDate] = useState('')
-  const [endDate, setEndDate] = useState('')
+  const [date, setDate] = useState('')
   
-  // Initialize dates to current date on component mount
+  // Initialize date to current date on component mount
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0] // Format: YYYY-MM-DD
-    setStartDate(today)
-    setEndDate(today)
+    setDate(today)
   }, [])
   
   // State for manual tariff mode
@@ -42,8 +40,7 @@ function App() {
   const [calculatedExportingCountry, setCalculatedExportingCountry] = useState('')
   const [calculatedQuantity, setCalculatedQuantity] = useState('')
   const [calculatedCost, setCalculatedCost] = useState('')
-  const [calculatedStartDate, setCalculatedStartDate] = useState('')
-  const [calculatedEndDate, setCalculatedEndDate] = useState('')
+  const [calculatedDate, setCalculatedDate] = useState('')
   const [calculatedTariffRate, setCalculatedTariffRate] = useState('')
   
   // State for API tariff data
@@ -189,38 +186,17 @@ function App() {
     }
   }
 
-  const handleStartDateChange = (e) => {
-    const newStartDate = e.target.value
-    setStartDate(newStartDate)
+  const handleDateChange = (e) => {
+    const newDate = e.target.value
+    setDate(newDate)
     
     // Mark fields as modified if there are calculated values
     if (calculatedProduct) {
       setFieldsModified(true)
     }
     
-    // Validate dates if both are set
-    if (newStartDate && endDate && new Date(newStartDate) > new Date(endDate)) {
-      setDateValidationError('Start date cannot be after end date')
-    } else {
-      setDateValidationError('')
-    }
-  }
-
-  const handleEndDateChange = (e) => {
-    const newEndDate = e.target.value
-    setEndDate(newEndDate)
-    
-    // Mark fields as modified if there are calculated values
-    if (calculatedProduct) {
-      setFieldsModified(true)
-    }
-    
-    // Validate dates if both are set
-    if (startDate && newEndDate && new Date(startDate) > new Date(newEndDate)) {
-      setDateValidationError('Start date cannot be after end date')
-    } else {
-      setDateValidationError('')
-    }
+    // Clear any previous date validation errors since we now have a single date
+    setDateValidationError('')
   }
 
   // Tariff calculation functions
@@ -391,8 +367,7 @@ function App() {
     setCalculatedExportingCountry('')
     setCalculatedQuantity('')
     setCalculatedCost('')
-    setCalculatedStartDate('')
-    setCalculatedEndDate('')
+    setCalculatedDate('')
     setCalculatedTariffRate('')
     setTariffData([])
     
@@ -405,8 +380,7 @@ function App() {
     setCalculatedExportingCountry(selectedExportingCountry)
     setCalculatedQuantity(quantity)
     setCalculatedCost(cost)
-    setCalculatedStartDate(startDate)
-    setCalculatedEndDate(endDate)
+    setCalculatedDate(date)
     setCalculatedTariffRate(tariffRate)
     
     // Fetch tariff data from API (simulated)
@@ -424,7 +398,7 @@ function App() {
         return
       }
     } else {
-      if (!calculatedProduct && !calculatedImportingCountry && !calculatedExportingCountry && !calculatedQuantity && !calculatedCost && !calculatedStartDate && !calculatedEndDate) {
+      if (!calculatedProduct && !calculatedImportingCountry && !calculatedExportingCountry && !calculatedQuantity && !calculatedCost && !calculatedDate) {
         alert('No calculation results to save. Please calculate first.')
         return
       }
@@ -491,8 +465,7 @@ function App() {
         quantity: calculationData.total_qty,
         cost: calculatedCost || 0,
         tariffRate: calculatedTariffRate || 0,
-        startDate: calculatedStartDate || new Date().toISOString().split('T')[0],
-        endDate: calculatedEndDate || new Date().toISOString().split('T')[0],
+        date: calculatedDate || new Date().toISOString().split('T')[0],
         baseAmount: calculationData.base_cost.toFixed(2),
         tariffs: calculationData.tariff_lines.map(line => ({
           type: line.type,
@@ -722,8 +695,7 @@ function App() {
         setSelectedProduct(productOption)
         setSelectedImportingCountry(calculationData.importingCountry !== 'Not specified' ? calculationData.importingCountry : '')
         setSelectedExportingCountry(calculationData.exportingCountry !== 'Not specified' ? calculationData.exportingCountry : '')
-        setStartDate(calculationData.originalApiData?.created_at?.split('T')[0] || new Date().toISOString().split('T')[0])
-        setEndDate(calculationData.originalApiData?.created_at?.split('T')[0] || new Date().toISOString().split('T')[0])
+        setDate(calculationData.date || calculationData.originalApiData?.created_at?.split('T')[0] || new Date().toISOString().split('T')[0])
       } else {
         // Manual tariff mode - populate tariff rate
         setTariffRate(calculationData.tariffRate !== 'Not specified' ? calculationData.tariffRate : '')
@@ -735,8 +707,7 @@ function App() {
       setCalculatedExportingCountry(calculationData.exportingCountry !== 'Not specified' ? calculationData.exportingCountry : '')
       setCalculatedQuantity(calculationData.quantity !== 'Not specified' ? calculationData.quantity : '')
       setCalculatedCost(calculationData.cost !== 'Not specified' ? calculationData.cost : '')
-      setCalculatedStartDate(calculationData.originalApiData?.created_at?.split('T')[0] || new Date().toISOString().split('T')[0])
-      setCalculatedEndDate(calculationData.originalApiData?.created_at?.split('T')[0] || new Date().toISOString().split('T')[0])
+      setCalculatedDate(calculationData.date || calculationData.originalApiData?.created_at?.split('T')[0] || new Date().toISOString().split('T')[0])
       setCalculatedTariffRate(calculationData.tariffRate !== 'Not specified' ? calculationData.tariffRate : '')
       
       // Restore tariff data if it exists (now loaded on-demand)
@@ -911,24 +882,12 @@ function App() {
             )}
 
             <div className="flex flex-col items-start text-left w-full">
-              <label htmlFor="start-date">Start Date:</label>
+              <label htmlFor="calculation-date">Date:</label>
               <input
                 type="date"
-                id="start-date"
-                value={startDate}
-                onChange={handleStartDateChange}
-                className="w-full p-3 text-base border-2 border-gray-300 rounded-lg bg-white text-gray-900 transition-colors hover:border-blue-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 cursor-pointer"
-                onClick={(e) => e.target.showPicker && e.target.showPicker()}
-              />
-            </div>
-
-            <div className="flex flex-col items-start text-left w-full">
-              <label htmlFor="end-date">End Date:</label>
-              <input
-                type="date"
-                id="end-date"
-                value={endDate}
-                onChange={handleEndDateChange}
+                id="calculation-date"
+                value={date}
+                onChange={handleDateChange}
                 className="w-full p-3 text-base border-2 border-gray-300 rounded-lg bg-white text-gray-900 transition-colors hover:border-blue-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 cursor-pointer"
                 onClick={(e) => e.target.showPicker && e.target.showPicker()}
               />
@@ -977,8 +936,7 @@ function App() {
                     !selectedProduct || 
                     !selectedImportingCountry || 
                     !selectedExportingCountry || 
-                    !startDate || 
-                    !endDate ||
+                    !date ||
                     dateValidationError !== '' || 
                     countryValidationError !== ''
                   ))
