@@ -4,6 +4,7 @@ import { useAuth } from './lib/AuthContext.jsx'
 import { fetchCountries } from './lib/countryService.js'
 import { saveCalculation, getUserHistory, getHistoryTariffLines } from './lib/historyService.js'
 import ProductAutocomplete from './lib/ProductAutocomplete.jsx'
+import tariffService from './lib/tariffService.js'
 import './App.css'
 
 function App() {
@@ -84,6 +85,15 @@ function App() {
 
     loadCountries()
   }, [])
+
+  // Helper function to get country code from country name
+  // TODO: Backend team - Update tariff API to accept country names instead of ISO codes
+  // Current workaround: Frontend maps country names to ISO codes before API calls
+  const getCountryCode = (countryName) => {
+    if (!countryName) return null
+    const country = countries.find(c => c.name === countryName)
+    return country ? country.code : null
+  }
 
   // Handle dropdown changes
   const handleProductChange = (selectedOption) => {
@@ -246,46 +256,92 @@ function App() {
     }
   }
 
-  // Simulate API call to Tariff microservice
+  // Fetch tariff data from Tariff microservice
   const fetchTariffData = async () => {
     setIsLoadingTariffs(true)
     
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    // Mock API response - test tariff data
-    const mockTariffResponse = [
-      {
-        "Tariff Type": "ad valorem",
-        "Tariff Description": "US Import Duty on Electronics",
-        "Tariff amount": 15.5  // 15.5% of value
-      },
-      {
-        "Tariff Type": "ad valorem",
-        "Tariff Description": "Value Added Tax (VAT)",
-        "Tariff amount": 8.25  // 8.25% of value
-      },
-      {
-        "Tariff Type": "specific",
-        "Tariff Description": "Processing and Handling Fee",
-        "Tariff amount": 2.50  // $2.50 per unit
-      },
-      {
-        "Tariff Type": "ad valorem",
-        "Tariff Description": "Environmental Protection Tax",
-        "Tariff amount": 3.75  // 3.75% of value
-      },
-      {
-        "Tariff Type": "specific",
-        "Tariff Description": "Port Security Surcharge",
-        "Tariff amount": 1.25  // $1.25 per unit
+    try {
+      let tariffs = []
+      
+      // Get HS code from selected product or user input
+      let hsCode = null
+      
+      if (selectedProduct) {
+        // If product is selected, extract or derive HS code
+        if (selectedProduct.isHsCode) {
+          // User entered HS code directly
+          hsCode = selectedProduct.value
+        } else {
+          // For now, we'll skip API call for product names and show a message
+          // In the future, you might want to call the product service to get HS codes
+          console.log('Selected product:', selectedProduct.label)
+          setTariffData([])
+          setIsLoadingTariffs(false)
+          alert('HS code lookup for product names is not yet implemented. Please use the HS code input mode.')
+          return []
+        }
       }
-    ]
+      
+      if (hsCode) {
+        // Call tariff service with HS code
+        console.log('Fetching tariffs for HS code:', hsCode)
+        
+        if (selectedImportingCountry && selectedExportingCountry) {
+          // TODO: Backend team - Update tariff API to accept country names instead of ISO codes
+          // CURRENT ISSUE: Tariff API expects ISO codes (SG, CN) but frontend sends names (Singapore, China)
+          // WORKAROUND: Convert country names to ISO codes before API call
+          const importerCode = getCountryCode(selectedImportingCountry)
+          const exporterCode = getCountryCode(selectedExportingCountry)
+          
+          if (!importerCode || !exporterCode) {
+            throw new Error(`Could not find country codes for: ${selectedImportingCountry} -> ${selectedExportingCountry}`)
+          }
+          
+          console.log(`Mapping countries: ${selectedImportingCountry} -> ${importerCode}, ${selectedExportingCountry} -> ${exporterCode}`)
+          
+          // Get specific tariffs for the country combination using ISO codes
+          tariffs = await tariffService.getTariffsByCombo(
+            hsCode, 
+            importerCode,  // Use ISO code instead of full name
+            exporterCode   // Use ISO code instead of full name
+          )
+        } else {
+          // Get all tariffs for this HS code
+          tariffs = await tariffService.getTariffsByHsCode(hsCode)
+        }
+        
+        console.log('Received tariffs:', tariffs)
+        
+        // Transform API response to match existing UI format
+        const transformedTariffs = tariffs.map(tariff => {
+          // TODO: Backend team - Consider returning country names in API response
+          // Current: API returns ISO codes (SG, CN) but UI shows full names
+          const importerName = countries.find(c => c.code === tariff.importerId)?.name || tariff.importerId
+          const exporterName = countries.find(c => c.code === tariff.exporterId)?.name || tariff.exporterId
+          
+          return {
+            "Tariff Type": tariff.tariffType || 'ad_valorem',
+            "Tariff Description": `${importerName} → ${exporterName} (HS: ${tariff.hsCode})`,
+            "Tariff amount": tariff.specificAmt || tariff.tariffRate || 0,
+            "originalData": tariff // Keep original data for reference
+          }
+        })
+        
+        setTariffData(transformedTariffs)
+      } else {
+        // No valid HS code available
+        console.warn('No HS code available for tariff lookup')
+        setTariffData([])
+      }
+    } catch (error) {
+      console.error('Failed to fetch tariff data:', error)
+      alert(`Failed to fetch tariff data: ${error.message}`)
+      setTariffData([])
+    } finally {
+      setIsLoadingTariffs(false)
+    }
     
-    setTariffData(mockTariffResponse)
-    setIsLoadingTariffs(false)
-    
-    return mockTariffResponse
+    return tariffData
   }
 
   // Handle calculate button click

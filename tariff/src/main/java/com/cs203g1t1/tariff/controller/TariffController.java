@@ -20,6 +20,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/tariffs")
+@CrossOrigin(origins = {
+    "http://localhost:5173",  // Local Vite dev server
+    "http://localhost:3000",  // Local React dev server
+    "http://frontend:5173",   // Docker frontend container
+    "http://127.0.0.1:5173", // Alternative localhost
+    "http://127.0.0.1:3000"  // Alternative localhost
+}, allowCredentials = "true", maxAge = 3600)
 public class TariffController {
 
   private final TariffService service;

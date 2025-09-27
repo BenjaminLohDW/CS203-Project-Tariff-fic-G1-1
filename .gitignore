@@ -87,3 +87,5 @@ crash.*.log
 
 # Maven build output
 /tariff/target/
+**/target/
+*.class

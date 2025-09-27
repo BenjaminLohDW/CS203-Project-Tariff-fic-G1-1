@@ -1,12 +1,11 @@
 services:
-
   # PostgreSQL service for atomic microservices
   db:
     image: postgres:latest
     container_name: pgsql
     restart: always
     environment:
-      POSTGRES_USER: pgsql 
+      POSTGRES_USER: pgsql
       POSTGRES_PASSWORD: cs203g1t1
       POSTGRES_DB: default
     ports:
@@ -17,43 +16,41 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - pgdata:/var/lib/postgresql/data   
-
+      - pgdata:/var/lib/postgresql/data
 
   #------------------------ USER ------------------------
   user-migrate:
-    build: ./user                 
+    build: ./user
     env_file:
-      - ./user/.env              
+      - ./user/.env
     environment:
       FLASK_APP: app.py
-      DB_HOST: db                 
-      DB_PORT: "5432"             
+      DB_HOST: db
+      DB_PORT: "5432"
     depends_on:
       db:
         condition: service_healthy
     command: ["flask", "db", "upgrade"]
     restart: "no"
-  
+
   user:
     container_name: user
-    build: 
+    build:
       context: ./user
       dockerfile: Dockerfile
     ports:
       - "5001:5001"
     depends_on:
-      db: 
-        condition: service_healthy 
-      user-migrate: 
-        condition: service_completed_successfully 
+      db:
+        condition: service_healthy
+      user-migrate:
+        condition: service_completed_successfully
     env_file:
       - ./user/.env
     environment:
       - FLASK_APP=app.py
       - DB_HOST=db
       - DB_PORT=5432
-
 
   # #------------------------ PRODUCT ------------------------
   # product microservice (HS Code Scraper)
@@ -71,41 +68,39 @@ services:
       - HEADLESS_MODE=true
       - LOG_LEVEL=INFO
 
-
   # #------------------------ HISTORY ------------------------
   history-migrate:
-    build: ./history                 
+    build: ./history
     env_file:
-      - ./history/.env              
+      - ./history/.env
     environment:
       FLASK_APP: app.py
-      DB_HOST: db                 
-      DB_PORT: "5432"             
+      DB_HOST: db
+      DB_PORT: "5432"
     depends_on:
       db:
         condition: service_healthy
     command: ["flask", "db", "upgrade"]
     restart: "no"
-  
+
   history:
     container_name: history
-    build: 
+    build:
       context: ./history
       dockerfile: Dockerfile
     ports:
       - "5003:5003"
     depends_on:
-      db: 
-        condition: service_healthy 
-      history-migrate: 
-        condition: service_completed_successfully 
+      db:
+        condition: service_healthy
+      history-migrate:
+        condition: service_completed_successfully
     env_file:
       - ./user/.env
     environment:
       - FLASK_APP=app.py
       - DB_HOST=db
       - DB_PORT=5432
-
 
   #------------------------ COUNTRY ------------------------
   country-migrate:
@@ -159,7 +154,7 @@ services:
       - DB_HOST=db
       - DB_PORT=5432
 
- #------------------------ TARIFF (Spring Boot) ------------------------
+  #------------------------ TARIFF (Spring Boot) ------------------------
   tariff:
     container_name: tariff
     build:
@@ -184,6 +179,35 @@ services:
       db:
         condition: service_healthy
 
+  #------------------------ FRONTEND (COMMENTED OUT) ------------------------
+  # TODO: Uncomment and configure for full containerization deployment
+  # Currently running frontend locally for faster development
+  #
+  # frontend:
+  #   container_name: frontend
+  #   build:
+  #     context: ./csd-project-frontend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "5173:5173"
+  #   environment:
+  #     # For containerized frontend, these should point to container names
+  #     - VITE_COUNTRY_API_URL=http://country:5005
+  #     - VITE_TARIFF_API_URL=http://tariff:5004
+  #     - VITE_PRODUCT_API_URL=http://product:5002
+  #     - VITE_USER_API_URL=http://user:5001
+  #     - VITE_HISTORY_API_URL=http://history:5003
+  #   depends_on:
+  #     - user
+  #     - product
+  #     - history
+  #     - country
+  #     - tariff
+  #
+  # DEPLOYMENT NOTES:
+  # 1. For local frontend + containerized backend: Use localhost URLs (current setup)
+  # 2. For full containerization: Use container names in URLs (see commented config above)
+  # 3. For cloud deployment: Use actual domain names or service discovery
+
 volumes:
   pgdata:
-  

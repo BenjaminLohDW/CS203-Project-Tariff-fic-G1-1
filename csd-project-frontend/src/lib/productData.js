@@ -223,11 +223,33 @@ export const productCategories = [
   }
 ]
 
+// Function to extract the first meaningful word from product names
+const extractShortName = (productName) => {
+  // Define common words to skip when creating short names
+  const skipWords = ['and', 'or', 'the', 'a', 'an', 'with', 'for', 'in', 'on', 'at', 'to', 'of']
+  
+  const words = productName.toLowerCase().split(/\s+/)
+  
+  // Find the first meaningful word
+  for (const word of words) {
+    const cleanWord = word.replace(/[^a-z]/g, '')
+    if (cleanWord.length > 2 && !skipWords.includes(cleanWord)) {
+      // Capitalize first letter
+      return cleanWord.charAt(0).toUpperCase() + cleanWord.slice(1)
+    }
+  }
+  
+  // Fallback to first word if no meaningful word found
+  const firstWord = words[0].replace(/[^a-z]/g, '')
+  return firstWord.charAt(0).toUpperCase() + firstWord.slice(1)
+}
+
 // Flatten all products into a single searchable array
 export const allProducts = productCategories.reduce((acc, category) => {
   const categoryProducts = category.products.map(product => ({
     value: product.toLowerCase().replace(/[^a-z0-9]/g, '-'),
-    label: product,
+    label: extractShortName(product),
+    fullName: product, // Keep full name for search and reference
     category: category.category
   }))
   return [...acc, ...categoryProducts]
@@ -238,7 +260,8 @@ export const groupedProducts = productCategories.map(category => ({
   label: category.category,
   options: category.products.map(product => ({
     value: product.toLowerCase().replace(/[^a-z0-9]/g, '-'),
-    label: product,
+    label: extractShortName(product),
+    fullName: product, // Keep full name for search and reference
     category: category.category
   }))
 }))
@@ -246,7 +269,7 @@ export const groupedProducts = productCategories.map(category => ({
 // Popular/commonly traded products for quick suggestions
 export const popularProducts = [
   "Smartphones and Mobile Devices",
-  "Laptops and Computers",
+  "Laptops and Computers", 
   "Clothing and Garments",
   "Cotton Textiles and Fabrics",
   "Steel and Iron Products",
@@ -261,6 +284,7 @@ export const popularProducts = [
   "Industrial Machinery"
 ].map(product => ({
   value: product.toLowerCase().replace(/[^a-z0-9]/g, '-'),
-  label: product,
+  label: extractShortName(product),
+  fullName: product, // Keep full name for search and reference
   category: "Popular"
 }))
