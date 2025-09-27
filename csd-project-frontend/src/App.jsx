@@ -231,33 +231,50 @@ function App() {
 
   const calculateAdValoremTariff = (baseValue, tariffRate) => {
     // Ad valorem tariff: percentage of the value (tariffRate is percentage)
-    return Number(baseValue) * (Number(tariffRate) / 100)
+    console.log('🧮 Ad Valorem calculation inputs:', { baseValue, tariffRate })
+    const result = Number(baseValue) * (Number(tariffRate) / 100)
+    console.log('🧮 Ad Valorem calculation result:', result)
+    return result
   }
 
   // Hashmap/Dictionary mapping tariff types to calculation functions
   const tariffCalculationMap = {
     'specific': calculateSpecificTariff,
     'ad valorem': calculateAdValoremTariff,
+    'ad_valorem': calculateAdValoremTariff, // Handle underscore version
+    'percentage': calculateAdValoremTariff, // Handle percentage type
     'compound': calculateAdValoremTariff, // Can be extended later for compound tariffs
     'quota': calculateAdValoremTariff // Can be extended later for quota tariffs
   }
 
   // Function to calculate tariff amount based on type
   const calculateTariffAmount = (tariffType, quantity, baseValue, tariffAmount) => {
+    console.log('🧮 Calculating tariff:', { tariffType, quantity, baseValue, tariffAmount })
+    
     const calculationFunction = tariffCalculationMap[tariffType.toLowerCase()]
     
     if (!calculationFunction) {
-      console.warn(`Unknown tariff type: ${tariffType}`)
+      console.warn(`❌ Unknown tariff type: ${tariffType}`)
       return 0
     }
 
-    switch (tariffType.toLowerCase()) {
+    let result = 0
+    const normalizedType = tariffType.toLowerCase()
+    
+    switch (normalizedType) {
       case 'specific':
-        return calculationFunction(quantity, tariffAmount)
+        result = calculationFunction(quantity, tariffAmount)
+        break
       case 'ad valorem':
+      case 'ad_valorem':
+      case 'percentage':
       default:
-        return calculationFunction(baseValue, tariffAmount)
+        result = calculationFunction(baseValue, tariffAmount)
+        break
     }
+    
+    console.log(`✅ Tariff calculation result: ${result} (type: ${tariffType})`)
+    return result
   }
 
   // Fetch tariff data from Tariff microservice
@@ -323,10 +340,28 @@ function App() {
           const importerName = countries.find(c => c.code === tariff.importerId)?.name || tariff.importerId
           const exporterName = countries.find(c => c.code === tariff.exporterId)?.name || tariff.exporterId
           
+          // Get tariff amount based on tariff type
+          let tariffAmount = 0
+          const tariffType = (tariff.tariffType || 'ad_valorem').toLowerCase()
+          
+          if (tariffType === 'ad_valorem' || tariffType === 'percentage') {
+            // For ad valorem tariffs, use tariffRate (percentage)
+            tariffAmount = tariff.tariffRate || 0
+          } else if (tariffType === 'specific') {
+            // For specific tariffs, use specificAmt
+            tariffAmount = tariff.specificAmt || 0
+          } else if (tariffType === 'compound') {
+            // For compound tariffs, we'll use tariffRate as primary (ad valorem component)
+            tariffAmount = tariff.tariffRate || 0
+          } else {
+            // Default to tariffRate
+            tariffAmount = tariff.tariffRate || 0
+          }
+          
           return {
             "Tariff Type": tariff.tariffType || 'ad_valorem',
             "Tariff Description": `${importerName} → ${exporterName} (HS: ${tariff.hsCode})`,
-            "Tariff amount": tariff.specificAmt || tariff.tariffRate || 0,
+            "Tariff amount": tariffAmount,
             "originalData": tariff // Keep original data for reference
           }
         })
@@ -399,13 +434,12 @@ function App() {
     const baseAmount = calculatedQuantity && calculatedCost ? (Number(calculatedQuantity) * Number(calculatedCost)) : 0
     const totalTariffs = calculatedQuantity && calculatedCost && tariffData.length > 0 ? 
       tariffData.reduce((sum, tariff) => {
-        const tariffAmount = calculateTariffAmount(
-          tariff["Tariff Type"], 
-          calculatedQuantity, 
-          baseAmount, 
-          tariff["Tariff amount"]
+        // Use the tariffService calculation method instead of the broken local one
+        const result = tariffService.calculateTariffAmount(
+          tariff.originalData, // Pass the original tariff object from API
+          baseAmount           // Pass the goods value
         )
-        return sum + tariffAmount
+        return sum + result.tariffAmount
       }, 0) : 0
     const finalAmount = baseAmount + totalTariffs
 
@@ -417,17 +451,19 @@ function App() {
       final_cost: finalAmount,
       import_country: calculatedImportingCountry || 'Not specified',
       export_country: calculatedExportingCountry || 'Not specified',
-      tariff_lines: tariffData.length > 0 ? tariffData.map(tariff => ({
-        description: tariff["Tariff Description"] || tariff["Tariff Type"],
-        type: tariff["Tariff Type"],
-        rate: tariff["Tariff amount"],
-        amount: calculateTariffAmount(
-          tariff["Tariff Type"], 
-          calculatedQuantity, 
-          baseAmount, 
-          tariff["Tariff amount"]
+      tariff_lines: tariffData.length > 0 ? tariffData.map(tariff => {
+        // Use the tariffService calculation method
+        const result = tariffService.calculateTariffAmount(
+          tariff.originalData, // Pass the original tariff object from API
+          baseAmount           // Pass the goods value
         )
-      })) : []
+        return {
+          description: tariff["Tariff Description"] || tariff["Tariff Type"],
+          type: tariff["Tariff Type"],
+          rate: tariff["Tariff amount"],
+          amount: result.tariffAmount
+        }
+      }) : []
     }
 
     // Debug user authentication
@@ -992,12 +1028,12 @@ function App() {
                 <div className="space-y-2">
                   {tariffData.map((tariff, index) => {
                     const baseAmount = Number(calculatedQuantity) * Number(calculatedCost)
-                    const tariffAmount = calculateTariffAmount(
-                      tariff["Tariff Type"], 
-                      calculatedQuantity, 
-                      baseAmount, 
-                      tariff["Tariff amount"]
+                    // Use tariffService for proper calculation
+                    const result = tariffService.calculateTariffAmount(
+                      tariff.originalData, // Pass the original tariff object from API
+                      baseAmount           // Pass the goods value
                     )
+                    const tariffAmount = result.tariffAmount
                     
                     return (
                       <div key={index} className="bg-purple-50 p-2 rounded border border-purple-200">
@@ -1029,13 +1065,12 @@ function App() {
                       ${(() => {
                         const baseAmount = Number(calculatedQuantity) * Number(calculatedCost)
                         const totalTariffs = tariffData.reduce((sum, tariff) => {
-                          const tariffAmount = calculateTariffAmount(
-                            tariff["Tariff Type"], 
-                            calculatedQuantity, 
-                            baseAmount, 
-                            tariff["Tariff amount"]
+                          // Use tariffService for proper calculation
+                          const result = tariffService.calculateTariffAmount(
+                            tariff.originalData, // Pass the original tariff object from API
+                            baseAmount           // Pass the goods value
                           )
-                          return sum + tariffAmount
+                          return sum + result.tariffAmount
                         }, 0)
                         return (baseAmount + totalTariffs).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
                       })()}

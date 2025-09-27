@@ -158,9 +158,10 @@ class TariffService {
     // Handle different tariff types
     switch (tariff.tariffType?.toLowerCase()) {
       case 'ad_valorem':
-      case 'percentage':
+      case 'percentage': // Note: percentage should typically be classified as ad_valorem
+        // Ad valorem tariffs are percentage-based on the value of goods
         tariffAmount = goodsValue * (tariff.tariffRate / 100)
-        calculation = `${goodsValue} × ${tariff.tariffRate}% = ${tariffAmount.toFixed(2)}`
+        calculation = `Ad Valorem: ${goodsValue} × ${tariff.tariffRate}% = ${tariffAmount.toFixed(2)}`
         break
         
       case 'specific':
@@ -175,12 +176,13 @@ class TariffService {
         const adValoremPart = goodsValue * (tariff.tariffRate / 100)
         const specificPart = tariff.specificAmt || 0
         tariffAmount = adValoremPart + specificPart
-        calculation = `Ad Valorem: ${adValoremPart.toFixed(2)} + Specific: ${specificPart} = ${tariffAmount.toFixed(2)}`
+        calculation = `Compound: Ad Valorem ${adValoremPart.toFixed(2)} +   Specific ${specificPart} = ${tariffAmount.toFixed(2)}`
         break
         
       default:
+        // Default to ad valorem calculation for unknown types
         tariffAmount = goodsValue * (tariff.tariffRate / 100)
-        calculation = `${goodsValue} × ${tariff.tariffRate}% = ${tariffAmount.toFixed(2)}`
+        calculation = `Default (Ad Valorem): ${goodsValue} × ${tariff.tariffRate}% = ${tariffAmount.toFixed(2)}`
     }
 
     // Apply min/max caps if they exist
