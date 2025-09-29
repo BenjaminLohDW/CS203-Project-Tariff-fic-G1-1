@@ -3,7 +3,6 @@ package com.cs203g1t1.tariff.service;
 
 import com.cs203g1t1.tariff.repository.TariffRepository;
 import com.cs203g1t1.tariff.dto.TariffResponse;
-import com.cs203g1t1.tariff.dto.EffectiveByNamesRequest;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -18,7 +17,6 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -28,8 +26,10 @@ import static org.mockito.Mockito.when;
 @Testcontainers
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class TariffServiceIT {
+
   // Real Postgres via Testcontainers
   @Container
+  @SuppressWarnings("resource")
   static final PostgreSQLContainer<?> POSTGRES =
       new PostgreSQLContainer<>("postgres:16")
           .withDatabaseName("tariff")
@@ -46,7 +46,7 @@ class TariffServiceIT {
     r.add("spring.flyway.enabled", () -> "true");
     r.add("spring.jpa.hibernate.ddl-auto", () -> "validate");
 
-    // keep external clients inert
+    // keep external clients inert (they’re mocked below)
     r.add("country.base-url", () -> "http://localhost:65535");
     r.add("product.base-url", () -> "http://localhost:65535");
   }
@@ -59,35 +59,31 @@ class TariffServiceIT {
     );
   }
 
-  // Mock external microservices so service can wire but won’t call the network
-  @MockBean com.cs203g1t1.tariff.controller.TariffController tariffController;
+  // Mock external microservices so the service can wire without real network calls
+  @MockBean com.cs203g1t1.tariff.controller.TariffController tariffController; // not used, but harmless
   @MockBean com.cs203g1t1.tariff.client.CountryClient countryClient;
   @MockBean com.cs203g1t1.tariff.client.ProductClient productClient;
 
-  @Autowired TariffRepository repo;          // used only for sanity checks if needed
-  @Autowired TariffService tariffService;    // your real service bean
+  @Autowired TariffRepository repo;          // optional: sanity checks
+  @Autowired TariffService tariffService;    // real service bean under test
 
   @Test
   void getOneEffectiveByNames_happyPath_returnsResponse() {
-    // Seed in Phase 7 used: hs=85171300, importer=702, exporter=156, active today
+    // Example: seed has rule active today for hs=85171300, importer=SG, exporter=CN
     when(productClient.getHsCodeByProductName("smartphone")).thenReturn("85171300");
     when(countryClient.getCountryIdByName("Singapore")).thenReturn("SG");
     when(countryClient.getCountryIdByName("China")).thenReturn("CN");
 
     LocalDate today = LocalDate.now();
-    EffectiveByNamesRequest req = new EffectiveByNamesRequest();
-    req.setProductName("smartphone");
-    req.setImporterCountryName("Singapore");
-    req.setExporterCountryName("China");
-    req.setDate(today);
 
-    TariffResponse resp = tariffService.getOneEffectiveByNames(req);
+    TariffResponse resp = tariffService.getOneEffectiveByNames(
+        "smartphone", "Singapore", "China", today);
 
     assertThat(resp).as("TariffResponse should not be null").isNotNull();
-    // Optional stronger checks if your DTO exposes these fields:
+    // Optional stronger checks if your mapper exposes these:
     // assertThat(resp.getHsCode()).isEqualTo("85171300");
-    // assertThat(resp.getImporterId()).isEqualTo(702L);
-    // assertThat(resp.getExporterId()).isEqualTo(156L);
+    // assertThat(resp.getImporterId()).isEqualTo("SG");
+    // assertThat(resp.getExporterId()).isEqualTo("CN");
   }
 
   @Test

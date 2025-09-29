@@ -22,6 +22,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -110,36 +111,84 @@ class TariffControllerTest {
         .andExpect(status().isNotFound());
   }
 
-  // ---------- POST /api/tariffs/effective/by-names ----------
+  // ---------- GET /api/tariffs/effective/by-names ----------
   @Test
-  void getOneEffectiveByNames_post_returns200_andPassesDTO() throws Exception {
-    // Arrange request body that matches YOUR DTO fields
-    var body = "{\n"
-        + "  \"productName\": \"Smartphone\",\n"
-        + "  \"importerCountryName\": \"Singapore\",\n"
-        + "  \"exporterCountryName\": \"China\",\n"
-        + "  \"date\": \"2025-01-15\"\n"
-        + "}";
+  void getOneEffectiveByNames_get_returns200_andPassesQueryParams() throws Exception {
+    // Arrange
+    String productName = "smartphone";
+    String importerCountryName = "Singapore";
+    String exporterCountryName = "China";
+    LocalDate date = LocalDate.parse("2025-01-15");
 
-    when(service.getOneEffectiveByNames(any(EffectiveByNamesRequest.class)))
+    when(service.getOneEffectiveByNames(
+            eq(productName),
+            eq(importerCountryName),
+            eq(exporterCountryName),
+            eq(date)))
         .thenReturn(sampleResponse());
 
-    var result = mvc.perform(post("/api/tariffs/effective/by-names")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(body))
+    // Act + Assert
+    var result = mvc.perform(get("/api/tariffs/effective/by-names")
+            .param("productName", productName)
+            .param("importerCountryName", importerCountryName)
+            .param("exporterCountryName", exporterCountryName)
+            .param("date", "2025-01-15"))
         .andExpect(status().isOk())
+        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
         .andExpect(jsonPath("$.hsCode").value("85171300"))
         .andReturn();
 
-    // (Optional) capture & assert the DTO passed into the service
-    ArgumentCaptor<EffectiveByNamesRequest> cap = ArgumentCaptor.forClass(EffectiveByNamesRequest.class);
-    // Since we used when(...).thenReturn(...) above, direct verification is enough in Mockito 5+
-    // If you prefer, switch to Mockito.verify(service).getOneEffectiveByNames(cap.capture());
-    // But @WebMvcTest + MockBean doesn't require verification for a passing controller test.
-
-    // Basic sanity: confirm response content type
     assertThat(result.getResponse().getContentType()).contains("application/json");
+
+    // Optional: verify the exact args passed to the service
+    verify(service).getOneEffectiveByNames(
+        eq(productName), eq(importerCountryName), eq(exporterCountryName), eq(date));
   }
+
+  @Test
+  void getOneEffectiveByNames_get_returns404_whenNotFound() throws Exception {
+    when(service.getOneEffectiveByNames(anyString(), anyString(), anyString(), any(LocalDate.class)))
+        .thenReturn(null);
+
+    mvc.perform(get("/api/tariffs/effective/by-names")
+            .param("productName", "NoSuchProduct")
+            .param("importerCountryName", "Narnia")
+            .param("exporterCountryName", "Westeros")
+            .param("date", "2025-01-15"))
+        .andExpect(status().isNotFound());
+  }
+
+  // Previous helper for POST body request
+  // // ---------- POST /api/tariffs/effective/by-names ----------
+  // @Test
+  // void getOneEffectiveByNames_post_returns200_andPassesDTO() throws Exception {
+  //   // Arrange request body that matches YOUR DTO fields
+  //   var body = "{\n"
+  //       + "  \"productName\": \"Smartphone\",\n"
+  //       + "  \"importerCountryName\": \"Singapore\",\n"
+  //       + "  \"exporterCountryName\": \"China\",\n"
+  //       + "  \"date\": \"2025-01-15\"\n"
+  //       + "}";
+
+  //   when(service.getOneEffectiveByNames(any(EffectiveByNamesRequest.class)))
+  //       .thenReturn(sampleResponse());
+
+  //   var result = mvc.perform(post("/api/tariffs/effective/by-names")
+  //           .contentType(MediaType.APPLICATION_JSON)
+  //           .content(body))
+  //       .andExpect(status().isOk())
+  //       .andExpect(jsonPath("$.hsCode").value("85171300"))
+  //       .andReturn();
+
+  //   // (Optional) capture & assert the DTO passed into the service
+  //   ArgumentCaptor<EffectiveByNamesRequest> cap = ArgumentCaptor.forClass(EffectiveByNamesRequest.class);
+  //   // Since we used when(...).thenReturn(...) above, direct verification is enough in Mockito 5+
+  //   // If you prefer, switch to Mockito.verify(service).getOneEffectiveByNames(cap.capture());
+  //   // But @WebMvcTest + MockBean doesn't require verification for a passing controller test.
+
+  //   // Basic sanity: confirm response content type
+  //   assertThat(result.getResponse().getContentType()).contains("application/json");
+  // }
 
   // ---------- GET /api/tariffs (list by combo) ----------
   @Test

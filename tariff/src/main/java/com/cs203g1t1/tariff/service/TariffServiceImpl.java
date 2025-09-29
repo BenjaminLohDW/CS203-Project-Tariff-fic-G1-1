@@ -29,16 +29,12 @@ public class TariffServiceImpl implements TariffService {
 
   // ============ Orchestration by names ============
   @Override
-  public TariffResponse getOneEffectiveByNames(EffectiveByNamesRequest req) {
-    String productName = req.getProductName();
-    String importerCountryName = req.getImporterCountryName();
-    String exporterCountryName = req.getExporterCountryName();
-    LocalDate date = req.getDate();
+  public TariffResponse getOneEffectiveByNames(String productName, String importerCountryName, String exporterCountryName, LocalDate date) {
 
-    String hs = productClient.getHsCodeByProductName(productName);           // name -> HS code
+    String hs = productClient.getHsCodeByProductName(productName);             // name -> HS code
     String impId = countryClient.getCountryIdByName(importerCountryName);      // name -> id
     String expId = countryClient.getCountryIdByName(exporterCountryName);      // name -> id
-    return getOneEffective(hs, impId, expId, date);                           // reuse domain method
+    return getOneEffective(hs, impId, expId, date);                            // reuse domain method
   }
 
   @Override

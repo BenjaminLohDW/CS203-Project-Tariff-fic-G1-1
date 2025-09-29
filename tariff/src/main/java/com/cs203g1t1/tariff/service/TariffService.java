@@ -7,7 +7,9 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface TariffService {
-  TariffResponse getOneEffectiveByNames(EffectiveByNamesRequest req);
+  // Previously used with POST method (see commented out code in TariffController)
+  // TariffResponse getOneEffectiveByNames(EffectiveByNamesRequest req);
+  TariffResponse getOneEffectiveByNames(String productName, String importerCountryName, String exporterCountryName, LocalDate date);
   TariffResponse create(TariffCreateRequest req);
   TariffResponse getOneEffective(String hsCode, String importeId, String exporterId, LocalDate date);
   List<TariffResponse> listByCombo(String hsCode, String importerId, String exporterId);
