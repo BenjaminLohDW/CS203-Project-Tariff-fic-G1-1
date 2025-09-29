@@ -143,7 +143,8 @@ class TariffService {
    * @param {number} goodsValue - Value of goods
    * @returns {Object} Calculation result with breakdown
    */
-  calculateTariffAmount(tariff, goodsValue) {
+  // qty is optional number of units; used for specific tariffs (per-unit)
+  calculateTariffAmount(tariff, goodsValue, qty = 1) {
     if (!tariff) {
       return {
         tariffAmount: 0,
@@ -165,18 +166,19 @@ class TariffService {
         break
         
       case 'specific':
-        // For specific tariffs, we'd need quantity and unit info
-        // For now, just use the specific amount if available
-        tariffAmount = tariff.specificAmt || 0
-        calculation = `Specific tariff: ${tariffAmount} per ${tariff.specificUnit || 'unit'}`
+        // Specific tariffs are fixed amount per unit - multiply by quantity
+        const perUnit = tariff.specificAmt || 0
+        tariffAmount = perUnit * (Number(qty) || 0)
+        calculation = `Specific tariff: ${perUnit} per ${tariff.specificUnit || 'unit'} × ${qty} = ${tariffAmount.toFixed(2)}`
         break
         
       case 'compound':
         // Combination of ad valorem and specific
-        const adValoremPart = goodsValue * (tariff.tariffRate / 100)
-        const specificPart = tariff.specificAmt || 0
-        tariffAmount = adValoremPart + specificPart
-        calculation = `Compound: Ad Valorem ${adValoremPart.toFixed(2)} +   Specific ${specificPart} = ${tariffAmount.toFixed(2)}`
+  const adValoremPart = goodsValue * (tariff.tariffRate / 100)
+  const specificPartPerUnit = tariff.specificAmt || 0
+  const specificPart = specificPartPerUnit * (Number(qty) || 0)
+  tariffAmount = adValoremPart + specificPart
+  calculation = `Compound: Ad Valorem ${adValoremPart.toFixed(2)} + Specific ${specificPart.toFixed(2)} = ${tariffAmount.toFixed(2)}`
         break
         
       default:
