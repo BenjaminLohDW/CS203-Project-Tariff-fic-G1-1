@@ -411,7 +411,8 @@ function App() {
         // Use the tariffService calculation method instead of the broken local one
         const result = tariffService.calculateTariffAmount(
           tariff.originalData, // Pass the original tariff object from API
-          baseAmount           // Pass the goods value
+          baseAmount,          // Pass the goods value
+          calculatedQuantity   // Pass quantity so specific tariffs multiply per unit
         )
         return sum + result.tariffAmount
       }, 0) : 0
@@ -429,7 +430,8 @@ function App() {
         // Use the tariffService calculation method
         const result = tariffService.calculateTariffAmount(
           tariff.originalData, // Pass the original tariff object from API
-          baseAmount           // Pass the goods value
+          baseAmount,          // Pass the goods value
+          calculatedQuantity   // Pass quantity so specific tariffs multiply per unit
         )
         return {
           description: tariff["Tariff Description"] || tariff["Tariff Type"],
@@ -989,7 +991,8 @@ function App() {
                     // Use tariffService for proper calculation
                     const result = tariffService.calculateTariffAmount(
                       tariff.originalData, // Pass the original tariff object from API
-                      baseAmount           // Pass the goods value
+                      baseAmount,          // Pass the goods value
+                      calculatedQuantity   // quantity for specific tariffs
                     )
                     const tariffAmount = result.tariffAmount
                     
@@ -1026,7 +1029,8 @@ function App() {
                           // Use tariffService for proper calculation
                           const result = tariffService.calculateTariffAmount(
                             tariff.originalData, // Pass the original tariff object from API
-                            baseAmount           // Pass the goods value
+                            baseAmount,          // Pass the goods value
+                            calculatedQuantity   // quantity for specific tariffs
                           )
                           return sum + result.tariffAmount
                         }, 0)
