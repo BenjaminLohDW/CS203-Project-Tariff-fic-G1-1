@@ -2,7 +2,7 @@
 -- Seed ~3 tariff rules (Specific, Ad Valorem, Compound) for each directional country pair among SG, US, CN, JP, KR.
 -- HS codes used: smartphone=85171300, laptop=84713000, coffee beans (not roasted)=09011100
 
-INSERT INTO tariff (hs_code, importer_id, exporter_id, tariff_type, specific_amt, specific_unit, ad_valorem_rate, start_date, end_date)
+INSERT INTO tariff (hs_code, importer_id, exporter_id, tariff_type, specific_amt, specific_unit, tariff_rate, start_date, end_date)
 VALUES
   ('85171300', 'SG', 'US', 'Specific', 5.00, 'USD per unit', NULL, DATE '2024-01-01', DATE '2099-12-31'),
   ('84713000', 'SG', 'US', 'Ad Valorem', NULL, NULL, 5.0, DATE '2024-01-01', DATE '2099-12-31'),
