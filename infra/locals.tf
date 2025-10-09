@@ -11,6 +11,12 @@ locals {
     tariff  = { path = "/tariff/*",  port = 8003, health = "/health" }
   }
 
+  interface_endpoints = [
+  "ecr.api", "ecr.dkr", "logs", "secretsmanager",
+  "ssm", "ssmmessages", "ec2messages"
+  ]
+
+
   tags = {
     Project = var.project_name
     Env     = var.env

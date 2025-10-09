@@ -90,33 +90,5 @@ variable "enable_cloud_map" {
   default = false
 }
 
-# RDS (optional)
-variable "enable_rds" {
-  type    = bool
-  default = false
-}
 
-variable "db_engine" {
-  type    = string
-  default = "postgres"
-}
-
-variable "db_engine_ver" {
-  type    = string
-  default = "15"
-}
-
-variable "db_instance" {
-  type    = string
-  default = "db.t4g.micro"
-}
-
-variable "db_name" {
-  type    = string
-  default = "appdb"
-}
-
-variable "db_username" {
-  type    = string
-  default = "appuser"
-}
+variable "enable_endpoints" { type = bool default = true }
