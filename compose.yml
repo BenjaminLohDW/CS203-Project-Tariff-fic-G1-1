@@ -179,6 +179,39 @@ services:
       db:
         condition: service_healthy
 
+  agreement-migrate:
+    build: ./agreement
+    env_file:
+      - ./agreement/.env
+    environment:
+      FLASK_APP: app.py
+      DB_HOST: db
+      DB_PORT: "5432"
+    depends_on:
+      db:
+        condition: service_healthy
+    command: ["flask", "db", "upgrade"]
+    restart: "no"
+
+  agreement:
+    container_name: agreement
+    build:
+      context: ./agreement
+      dockerfile: Dockerfile
+    ports:
+      - "5006:5006"
+    depends_on:
+      db:
+        condition: service_healthy
+      agreement-migrate:
+        condition: service_completed_successfully
+    env_file:
+      - ./agreement/.env
+    environment:
+      - FLASK_APP=app.py
+      - DB_HOST=db
+      - DB_PORT=5432
+
   #------------------------ FRONTEND (COMMENTED OUT) ------------------------
   # TODO: Uncomment and configure for full containerization deployment
   # Currently running frontend locally for faster development
