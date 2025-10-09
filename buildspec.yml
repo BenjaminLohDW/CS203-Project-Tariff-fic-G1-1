@@ -1,0 +1,37 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo "Logging in to Amazon ECR..."
+      - aws --version
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPO
+  build:
+    commands:
+      - echo "Build started on $(date) - geting lastest image tag from ECR..."
+      - echo "Services: $SERVICES"
+      - for svc in $SERVICES; do
+          echo "Building $svc...";
+          docker build -t $ECR_REPO:${svc}-${IMAGE_TAG} ./services/${svc};
+          docker push  $ECR_REPO:${svc}-${IMAGE_TAG};
+        done
+  post_build:
+    commands:
+      - echo "Generating imagedefinitions.json..."
+      - first=1
+      - echo -n "[" > imagedefinitions.json
+      - for svc in $SERVICES; do
+          if [ $first -eq 1 ]; then first=0; else echo -n "," >> imagedefinitions.json; fi;
+          printf '{"name":"%s","imageUri":"%s"}' "$svc" "$ECR_REPO:${svc}-${IMAGE_TAG}" >> imagedefinitions.json;
+        done
+      - echo "]" >> imagedefinitions.json
+
+      # If you plan to have multiple ECS actions (one per service), emit per-service files too:
+      # for svc in $SERVICES; do
+      #   printf '[{"name":"%s","imageUri":"%s"}]\n' "$svc" "$ECR_REPO:${svc}-${IMAGE_TAG}" > imagedefinitions-$svc.json
+      # done
+
+artifacts:
+  files:
+    - imagedefinitions.json
+    # - imagedefinitions-*.json   # uncomment if you emit per-service files
