@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { useAuth } from '../lib/AuthContext.jsx'
+import { useAuth } from '../lib/AuthContext'
 import styles from './Login.module.css'
 
 export default function Login() {
@@ -38,19 +38,19 @@ export default function Login() {
   }, [])
 
   // Clear messages when user starts typing
-  const handleEmailChange = (e) => {
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value)
     if (info) setInfo('') // Clear success message when user starts typing
     if (error) setError('') // Clear error message when user starts typing
   }
 
-  const handlePasswordChange = (e) => {
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value)
     if (info) setInfo('') // Clear success message when user starts typing  
     if (error) setError('') // Clear error message when user starts typing
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError('')
     setInfo('') // Clear any success messages when attempting login
@@ -65,7 +65,7 @@ export default function Login() {
   // Firebase email/password sign-in
   await signIn(email, password)
   navigate('/app')
-    } catch (err) {
+    } catch (err: any) {
       const code = err?.code || ''
       let msg = 'Login failed. Please try again.'
       if (code === 'auth/invalid-email') msg = 'Invalid email address.'

@@ -2,18 +2,25 @@
  * User Service API Integration
  * Simple utility to create users in microservice with Firebase user_id
  */
+import { UserProfile } from '../types'
 
 const API_BASE = '/api'
 
+interface CreateUserData {
+  user_id: string
+  name: string
+  email: string
+}
+
 /**
  * Create a new user in the microservice with Firebase user_id
- * @param {Object} userData - User data from Firebase
+ * @param {CreateUserData} userData - User data from Firebase
  * @param {string} userData.user_id - Firebase user ID
  * @param {string} userData.name - User's name
  * @param {string} userData.email - User's email
- * @returns {Promise<Object>} Created user object
+ * @returns {Promise<UserProfile>} Created user object
  */
-export async function createUser(userData) {
+export async function createUser(userData: CreateUserData): Promise<UserProfile> {
   const response = await fetch(`${API_BASE}/user/create`, {
     method: 'POST',
     headers: {

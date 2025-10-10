@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import styles from './Login.module.css'
-import { useAuth } from '../lib/AuthContext.jsx'
+import { useAuth } from '../lib/AuthContext'
 
 export default function Signup() {
   const navigate = useNavigate()
@@ -28,7 +28,7 @@ export default function Signup() {
     return () => { mounted = false }
   }, [])
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError('')
 
@@ -68,7 +68,7 @@ export default function Signup() {
   try { localStorage.removeItem('profileSetupPending') } catch {}
   try { localStorage.setItem('signupMessage', 'Account created. Please sign in.') } catch {}
   navigate('/', { replace: true })
-    } catch (err) {
+    } catch (err: any) {
       const code = err?.code || ''
       let msg = 'Signup failed. Please try again.'
       if (code === 'auth/email-already-in-use') msg = 'Email already in use.'

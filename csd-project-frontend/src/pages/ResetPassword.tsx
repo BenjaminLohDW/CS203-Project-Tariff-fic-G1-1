@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { useAuth } from '../lib/AuthContext.jsx'
+import { useAuth } from '../lib/AuthContext'
 import styles from './Login.module.css'
 
 export default function ResetPassword() {
@@ -20,12 +20,12 @@ export default function ResetPassword() {
   }, [cooldown])
 
   // Enhanced email validation
-  const validateEmail = (email) => {
+  const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     return emailRegex.test(email)
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setError('')
 
@@ -50,7 +50,7 @@ export default function ResetPassword() {
       await resetPassword(email.trim().toLowerCase())
       setSuccess(true)
       setCooldown(60) // 60 second cooldown
-    } catch (err) {
+    } catch (err: any) {
       const code = err?.code || ''
       let msg = 'Failed to send reset email. Please try again.'
       

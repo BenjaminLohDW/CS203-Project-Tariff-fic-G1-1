@@ -1,8 +1,10 @@
 // Firebase initialization (client-side)
 // Fill the VITE_ envs in a .env.local file at project root when ready
-import { initializeApp } from 'firebase/app'
+import { initializeApp, type FirebaseApp } from 'firebase/app'
+import { type Analytics } from 'firebase/analytics'
+
 // Optional: Analytics only when measurementId is provided and in browser
-let getAnalytics
+let getAnalytics: ((app: FirebaseApp) => Analytics) | undefined
 try {
   // Lazy import to avoid SSR/build complaints when not configured
   // eslint-disable-next-line import/no-unresolved
@@ -20,8 +22,8 @@ const firebaseConfig = {
 }
 
 // Only initialize if required envs are present; otherwise fallback harmlessly
-let app = null
-let analytics = null
+let app: FirebaseApp | null = null
+let analytics: Analytics | null = null
 try {
   if (firebaseConfig.apiKey && firebaseConfig.projectId) {
     app = initializeApp(firebaseConfig)

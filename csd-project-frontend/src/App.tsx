@@ -1,28 +1,29 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from './lib/AuthContext.jsx'
-import { fetchCountries } from './lib/countryService.js'
-import { saveCalculation, getUserHistory, getHistoryTariffLines } from './lib/historyService.js'
-import ProductAutocomplete from './lib/ProductAutocomplete.jsx'
-import tariffService from './lib/tariffService.js'
+import { useAuth } from './lib/AuthContext'
+import { fetchCountries } from './lib/countryService'
+import { saveCalculation, getUserHistory, getHistoryTariffLines } from './lib/historyService'
+import ProductAutocomplete from './lib/ProductAutocomplete'
+import tariffService from './lib/tariffService'
+import { Country, ProductOption, TariffData, CalculationData } from './types'
 import './App.css'
 
 function App() {
   const navigate = useNavigate()
   const { userProfile, logOut, setUserProfile } = useAuth()
   // Ref for autoscroll to results section
-  const resultsRef = useRef(null)
+  const resultsRef = useRef<HTMLDivElement>(null)
   
   // State for page navigation
-  const [currentPage, setCurrentPage] = useState('calculation')
+  const [currentPage, setCurrentPage] = useState<string>('calculation')
   
   // State for storing selected values
-  const [selectedProduct, setSelectedProduct] = useState(null) // Changed to object for React Select
-  const [selectedImportingCountry, setSelectedImportingCountry] = useState('')
-  const [selectedExportingCountry, setSelectedExportingCountry] = useState('')
-  const [quantity, setQuantity] = useState('')
-  const [cost, setCost] = useState('')
-  const [date, setDate] = useState('')
+  const [selectedProduct, setSelectedProduct] = useState<ProductOption | null>(null) // Changed to object for React Select
+  const [selectedImportingCountry, setSelectedImportingCountry] = useState<string>('')
+  const [selectedExportingCountry, setSelectedExportingCountry] = useState<string>('')
+  const [quantity, setQuantity] = useState<string>('')
+  const [cost, setCost] = useState<string>('')
+  const [date, setDate] = useState<string>('')
   
   // Initialize date to current date on component mount
   useEffect(() => {
@@ -31,42 +32,42 @@ function App() {
   }, [])
   
   // State for manual tariff mode
-  const [isManualTariff, setIsManualTariff] = useState(false)
-  const [tariffRate, setTariffRate] = useState('')
+  const [isManualTariff, setIsManualTariff] = useState<boolean>(false)
+  const [tariffRate, setTariffRate] = useState<string>('')
   
   // State for calculated values (only updated when calculate button is clicked)
-  const [calculatedProduct, setCalculatedProduct] = useState('')
-  const [calculatedImportingCountry, setCalculatedImportingCountry] = useState('')
-  const [calculatedExportingCountry, setCalculatedExportingCountry] = useState('')
-  const [calculatedQuantity, setCalculatedQuantity] = useState('')
-  const [calculatedCost, setCalculatedCost] = useState('')
-  const [calculatedDate, setCalculatedDate] = useState('')
-  const [calculatedTariffRate, setCalculatedTariffRate] = useState('')
+  const [calculatedProduct, setCalculatedProduct] = useState<string>('')
+  const [calculatedImportingCountry, setCalculatedImportingCountry] = useState<string>('')
+  const [calculatedExportingCountry, setCalculatedExportingCountry] = useState<string>('')
+  const [calculatedQuantity, setCalculatedQuantity] = useState<string>('')
+  const [calculatedCost, setCalculatedCost] = useState<string>('')
+  const [calculatedDate, setCalculatedDate] = useState<string>('')
+  const [calculatedTariffRate, setCalculatedTariffRate] = useState<string>('')
   
   // State for API tariff data
-  const [tariffData, setTariffData] = useState([])
-  const [isLoadingTariffs, setIsLoadingTariffs] = useState(false)
+  const [tariffData, setTariffData] = useState<TariffData[]>([])
+  const [isLoadingTariffs, setIsLoadingTariffs] = useState<boolean>(false)
   
   // State for saved calculation history
-  const [calculationHistory, setCalculationHistory] = useState([])
-  const [isLoadingHistory, setIsLoadingHistory] = useState(false)
-  const [historyError, setHistoryError] = useState('')
+  const [calculationHistory, setCalculationHistory] = useState<CalculationData[]>([])
+  const [isLoadingHistory, setIsLoadingHistory] = useState<boolean>(false)
+  const [historyError, setHistoryError] = useState<string>('')
   
   // State for date validation
-  const [dateValidationError, setDateValidationError] = useState('')
+  const [dateValidationError, setDateValidationError] = useState<string>('')
   
   // State for country validation
-  const [countryValidationError, setCountryValidationError] = useState('')
+  const [countryValidationError, setCountryValidationError] = useState<string>('')
   
   // State to track if fields have been modified after calculation
-  const [fieldsModified, setFieldsModified] = useState(false)
+  const [fieldsModified, setFieldsModified] = useState<boolean>(false)
 
   // State for countries from API
-  const [countries, setCountries] = useState([])
-  const [isLoadingCountries, setIsLoadingCountries] = useState(true)
+  const [countries, setCountries] = useState<Country[]>([])
+  const [isLoadingCountries, setIsLoadingCountries] = useState<boolean>(true)
   
   // State for detailed tariff view modal
-  const [selectedHistoryDetail, setSelectedHistoryDetail] = useState(null)
+  const [selectedHistoryDetail, setSelectedHistoryDetail] = useState<CalculationData | null>(null)
   const [loadingTariffDetails, setLoadingTariffDetails] = useState(false)
 
   // Fetch countries from API on component mount
@@ -90,14 +91,14 @@ function App() {
   // Helper function to get country code from country name
   // TODO: Backend team - Update tariff API to accept country names instead of ISO codes
   // Current workaround: Frontend maps country names to ISO codes before API calls
-  const getCountryCode = (countryName) => {
+  const getCountryCode = (countryName: string): string | null => {
     if (!countryName) return null
     const country = countries.find(c => c.name === countryName)
     return country ? country.code : null
   }
 
   // Handle dropdown changes
-  const handleProductChange = (selectedOption) => {
+  const handleProductChange = (selectedOption: ProductOption | null) => {
     setSelectedProduct(selectedOption)
     // Mark fields as modified if there are calculated values
     if (calculatedProduct) {
@@ -105,7 +106,7 @@ function App() {
     }
   }
 
-  const handleImportingCountryChange = (e) => {
+  const handleImportingCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newImportingCountry = e.target.value
     setSelectedImportingCountry(newImportingCountry)
     
@@ -122,7 +123,7 @@ function App() {
     }
   }
 
-  const handleExportingCountryChange = (e) => {
+  const handleExportingCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newExportingCountry = e.target.value
     setSelectedExportingCountry(newExportingCountry)
     
@@ -139,7 +140,7 @@ function App() {
     }
   }
 
-  const handleQuantityChange = (e) => {
+  const handleQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     // Only allow positive whole numbers
     if (value === '' || (Number.isInteger(Number(value)) && Number(value) >= 1)) {
@@ -151,10 +152,10 @@ function App() {
     }
   }
 
-  const handleCostChange = (e) => {
+  const handleCostChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     // Allow positive numbers (including decimals)
-    if (value === '' || (!isNaN(value) && Number(value) >= 0)) {
+    if (value === '' || (!isNaN(Number(value)) && Number(value) >= 0)) {
       setCost(value)
       // Mark fields as modified if there are calculated values
       if (calculatedProduct) {
@@ -163,7 +164,7 @@ function App() {
     }
   }
 
-  const handleManualTariffChange = (e) => {
+  const handleManualTariffChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIsManualTariff(e.target.checked)
     // Mark fields as modified if there are calculated values
     if (calculatedProduct) {
@@ -174,10 +175,10 @@ function App() {
     setDateValidationError('')
   }
 
-  const handleTariffRateChange = (e) => {
+  const handleTariffRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value
     // Only allow numbers between 0 and 100 (inclusive, with decimals)
-    if (value === '' || (!isNaN(value) && Number(value) >= 0 && Number(value) <= 100)) {
+    if (value === '' || (!isNaN(Number(value)) && Number(value) >= 0 && Number(value) <= 100)) {
       setTariffRate(value)
       // Mark fields as modified if there are calculated values
       if (calculatedProduct) {
@@ -186,7 +187,7 @@ function App() {
     }
   }
 
-  const handleDateChange = (e) => {
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newDate = e.target.value
     setDate(newDate)
     
@@ -200,12 +201,12 @@ function App() {
   }
 
   // Tariff calculation functions
-  const calculateSpecificTariff = (quantity, tariffAmount) => {
+  const calculateSpecificTariff = (quantity: string | number, tariffAmount: string | number): number => {
     // Specific tariff: fixed amount per unit (tariffAmount is cost per unit)
     return Number(quantity) * Number(tariffAmount)
   }
 
-  const calculateAdValoremTariff = (baseValue, tariffRate) => {
+  const calculateAdValoremTariff = (baseValue: string | number, tariffRate: string | number): number => {
     // Ad valorem tariff: percentage of the value (tariffRate is percentage)
     console.log('🧮 Ad Valorem calculation inputs:', { baseValue, tariffRate })
     const result = Number(baseValue) * (Number(tariffRate) / 100)
@@ -224,10 +225,10 @@ function App() {
   }
 
   // Function to calculate tariff amount based on type
-  const calculateTariffAmount = (tariffType, quantity, baseValue, tariffAmount) => {
+  const calculateTariffAmount = (tariffType: string, quantity: string | number, baseValue: string | number, tariffAmount: string | number): number => {
     console.log('🧮 Calculating tariff:', { tariffType, quantity, baseValue, tariffAmount })
     
-    const calculationFunction = tariffCalculationMap[tariffType.toLowerCase()]
+    const calculationFunction = tariffCalculationMap[tariffType.toLowerCase() as keyof typeof tariffCalculationMap]
     
     if (!calculationFunction) {
       console.warn(`❌ Unknown tariff type: ${tariffType}`)
@@ -412,7 +413,7 @@ function App() {
         const result = tariffService.calculateTariffAmount(
           tariff.originalData, // Pass the original tariff object from API
           baseAmount,          // Pass the goods value
-          calculatedQuantity   // Pass quantity so specific tariffs multiply per unit
+          Number(calculatedQuantity)   // Pass quantity so specific tariffs multiply per unit
         )
         return sum + result.tariffAmount
       }, 0) : 0
@@ -431,7 +432,7 @@ function App() {
         const result = tariffService.calculateTariffAmount(
           tariff.originalData, // Pass the original tariff object from API
           baseAmount,          // Pass the goods value
-          calculatedQuantity   // Pass quantity so specific tariffs multiply per unit
+          Number(calculatedQuantity)   // Pass quantity so specific tariffs multiply per unit
         )
         return {
           description: tariff["Tariff Description"] || tariff["Tariff Type"],
@@ -640,7 +641,7 @@ function App() {
   }
 
   // Function to load tariff details on-demand and restore calculation
-  const restoreCalculationFromHistory = async (calculationData) => {
+  const restoreCalculationFromHistory = async (calculationData: CalculationData): Promise<void> => {
     try {
       // Load tariff lines if not already loaded
       if (!calculationData.tariffLinesLoaded && calculationData.id) {
@@ -686,8 +687,8 @@ function App() {
       setIsManualTariff(isManualMode)
       
       // Populate input fields
-      setQuantity(calculationData.quantity !== 'Not specified' ? calculationData.quantity : '')
-      setCost(calculationData.cost !== 'Not specified' ? calculationData.cost : '')
+      setQuantity(calculationData.quantity !== 'Not specified' ? String(calculationData.quantity) : '')
+      setCost(calculationData.cost !== 'Not specified' ? String(calculationData.cost) : '')
       
       if (!isManualMode) {
         // Standard mode - populate all fields
@@ -700,17 +701,17 @@ function App() {
         setDate(calculationData.date || calculationData.originalApiData?.created_at?.split('T')[0] || new Date().toISOString().split('T')[0])
       } else {
         // Manual tariff mode - populate tariff rate
-        setTariffRate(calculationData.tariffRate !== 'Not specified' ? calculationData.tariffRate : '')
+        setTariffRate(calculationData.tariffRate !== 'Not specified' ? String(calculationData.tariffRate || '') : '')
       }
       
       // Set calculated values
       setCalculatedProduct(calculationData.productType !== 'Not specified' ? calculationData.productType : '')
       setCalculatedImportingCountry(calculationData.importingCountry !== 'Not specified' ? calculationData.importingCountry : '')
       setCalculatedExportingCountry(calculationData.exportingCountry !== 'Not specified' ? calculationData.exportingCountry : '')
-      setCalculatedQuantity(calculationData.quantity !== 'Not specified' ? calculationData.quantity : '')
-      setCalculatedCost(calculationData.cost !== 'Not specified' ? calculationData.cost : '')
+      setCalculatedQuantity(calculationData.quantity !== 'Not specified' ? String(calculationData.quantity) : '')
+      setCalculatedCost(calculationData.cost !== 'Not specified' ? String(calculationData.cost) : '')
       setCalculatedDate(calculationData.date || calculationData.originalApiData?.created_at?.split('T')[0] || new Date().toISOString().split('T')[0])
-      setCalculatedTariffRate(calculationData.tariffRate !== 'Not specified' ? calculationData.tariffRate : '')
+      setCalculatedTariffRate(calculationData.tariffRate !== 'Not specified' ? String(calculationData.tariffRate || '') : '')
       
       // Restore tariff data if it exists (now loaded on-demand)
       if (calculationData.tariffs && calculationData.tariffs.length > 0) {
@@ -891,7 +892,10 @@ function App() {
                 value={date}
                 onChange={handleDateChange}
                 className="w-full p-3 text-base border-2 border-gray-300 rounded-lg bg-white text-gray-900 transition-colors hover:border-blue-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 cursor-pointer"
-                onClick={(e) => e.target.showPicker && e.target.showPicker()}
+                onClick={(e) => {
+                  const target = e.target as HTMLInputElement;
+                  if (target.showPicker) target.showPicker();
+                }}
               />
             </div>
             
@@ -992,7 +996,7 @@ function App() {
                     const result = tariffService.calculateTariffAmount(
                       tariff.originalData, // Pass the original tariff object from API
                       baseAmount,          // Pass the goods value
-                      calculatedQuantity   // quantity for specific tariffs
+                      Number(calculatedQuantity)   // quantity for specific tariffs
                     )
                     const tariffAmount = result.tariffAmount
                     
@@ -1030,7 +1034,7 @@ function App() {
                           const result = tariffService.calculateTariffAmount(
                             tariff.originalData, // Pass the original tariff object from API
                             baseAmount,          // Pass the goods value
-                            calculatedQuantity   // quantity for specific tariffs
+                            Number(calculatedQuantity)   // quantity for specific tariffs
                           )
                           return sum + result.tariffAmount
                         }, 0)
@@ -1282,7 +1286,7 @@ function App() {
                   <div>
                     <p><strong>Quantity:</strong> {selectedHistoryDetail.quantity}</p>
                     <p><strong>Cost:</strong> ${Number(selectedHistoryDetail.cost).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
-                    <p><strong>Date:</strong> {new Date(selectedHistoryDetail.originalApiData?.created_at).toLocaleDateString()}</p>
+                    <p><strong>Date:</strong> {selectedHistoryDetail.originalApiData?.created_at ? new Date(selectedHistoryDetail.originalApiData.created_at).toLocaleDateString() : 'N/A'}</p>
                     <p><strong>Status:</strong> <span className={`font-semibold ${selectedHistoryDetail.status === 'Completed' ? 'text-green-600' : 'text-yellow-600'}`}>{selectedHistoryDetail.status}</span></p>
                   </div>
                 </div>

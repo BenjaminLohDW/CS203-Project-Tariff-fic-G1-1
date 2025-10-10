@@ -1,13 +1,23 @@
 // History Service - API calls to the history microservice
+import { CalculationData } from '../types'
 
 const HISTORY_API_URL = import.meta.env.VITE_HISTORY_API_URL || 'http://localhost:5003'
 
+interface HistoryApiResponse {
+  code: number
+  message?: string
+  data?: any
+  page?: number
+  size?: number
+  total?: number
+}
+
 /**
  * Save a calculation to user's history
- * @param {Object} calculationData - The calculation data to save
- * @returns {Promise<Object>} Saved calculation with history_id
+ * @param {CalculationData} calculationData - The calculation data to save
+ * @returns {Promise<any>} Saved calculation with history_id
  */
-export const saveCalculation = async (calculationData) => {
+export const saveCalculation = async (calculationData: CalculationData): Promise<any> => {
   try {
     const response = await fetch(`${HISTORY_API_URL}/api/history/create`, {
       method: 'POST',
@@ -39,9 +49,9 @@ export const saveCalculation = async (calculationData) => {
  * @param {string} userId - The user's ID
  * @param {number} page - Page number (default: 1)
  * @param {number} size - Page size (default: 20)
- * @returns {Promise<Object>} Paginated history data
+ * @returns {Promise<any>} Paginated history data
  */
-export const getUserHistory = async (userId, page = 1, size = 20) => {
+export const getUserHistory = async (userId: string, page = 1, size = 20): Promise<any> => {
   try {
     const response = await fetch(`${HISTORY_API_URL}/api/users/${userId}/history?page=${page}&size=${size}`)
     
@@ -76,9 +86,9 @@ export const getUserHistory = async (userId, page = 1, size = 20) => {
  * @param {string} historyId - The history ID
  * @param {number} page - Page number (default: 1)
  * @param {number} size - Page size (default: 20)
- * @returns {Promise<Object>} Tariff line details
+ * @returns {Promise<any>} Tariff line details
  */
-export const getHistoryTariffLines = async (historyId, page = 1, size = 20) => {
+export const getHistoryTariffLines = async (historyId: string, page = 1, size = 20): Promise<any> => {
   try {
     const response = await fetch(`${HISTORY_API_URL}/api/history/${historyId}?page=${page}&size=${size}`)
     
@@ -102,9 +112,9 @@ export const getHistoryTariffLines = async (historyId, page = 1, size = 20) => {
 /**
  * Delete a calculation from history
  * @param {string} historyId - The history ID to delete
- * @returns {Promise<Object>} Deletion confirmation
+ * @returns {Promise<any>} Deletion confirmation
  */
-export const deleteCalculationFromHistory = async (historyId) => {
+export const deleteCalculationFromHistory = async (historyId: string): Promise<any> => {
   try {
     const response = await fetch(`${HISTORY_API_URL}/api/history/${historyId}`, {
       method: 'DELETE'

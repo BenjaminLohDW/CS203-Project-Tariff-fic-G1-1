@@ -9,9 +9,9 @@ class TariffService {
   /**
    * Get tariffs by HS Code only
    * @param {string} hsCode - The HS Code to search for
-   * @returns {Promise<Array>} Array of tariff objects
+   * @returns {Promise<any[]>} Array of tariff objects
    */
-  async getTariffsByHsCode(hsCode) {
+  async getTariffsByHsCode(hsCode: string): Promise<any[]> {
     try {
       const response = await fetch(`${TARIFF_BASE_URL}/api/tariffs/by-hs/${encodeURIComponent(hsCode)}`, {
         method: 'GET',
@@ -28,7 +28,7 @@ class TariffService {
       return tariffs
     } catch (error) {
       console.error('Error fetching tariffs by HS code:', error)
-      throw new Error(`Failed to fetch tariffs: ${error.message}`)
+      throw new Error(`Failed to fetch tariffs: ${(error as any).message}`)
     }
   }
 
@@ -37,9 +37,9 @@ class TariffService {
    * @param {string} hsCode - The HS Code
    * @param {string} importer - Importer country name
    * @param {string} exporter - Exporter country name
-   * @returns {Promise<Array>} Array of tariff objects
+   * @returns {Promise<any[]>} Array of tariff objects
    */
-  async getTariffsByCombo(hsCode, importer, exporter) {
+  async getTariffsByCombo(hsCode: string, importer: string, exporter: string): Promise<any[]> {
     try {
       const params = new URLSearchParams({
         hs_code: hsCode,
@@ -62,7 +62,7 @@ class TariffService {
       return tariffs
     } catch (error) {
       console.error('Error fetching tariffs by combo:', error)
-      throw new Error(`Failed to fetch tariffs: ${error.message}`)
+      throw new Error(`Failed to fetch tariffs: ${(error as any).message}`)
     }
   }
 
@@ -72,9 +72,9 @@ class TariffService {
    * @param {string} importer - Importer country name
    * @param {string} exporter - Exporter country name
    * @param {string} date - Date in YYYY-MM-DD format
-   * @returns {Promise<Object|null>} Single tariff object or null
+   * @returns {Promise<any|null>} Single tariff object or null
    */
-  async getEffectiveTariff(hsCode, importer, exporter, date) {
+  async getEffectiveTariff(hsCode: string, importer: string, exporter: string, date: string): Promise<any | null> {
     try {
       const params = new URLSearchParams({
         hs_code: hsCode,
@@ -102,16 +102,16 @@ class TariffService {
       return tariff
     } catch (error) {
       console.error('Error fetching effective tariff:', error)
-      throw new Error(`Failed to fetch effective tariff: ${error.message}`)
+      throw new Error(`Failed to fetch effective tariff: ${(error as any).message}`)
     }
   }
 
   /**
    * Get effective tariff by names (POST request)
-   * @param {Object} request - Request object with hsCode, importerName, exporterName, date
-   * @returns {Promise<Object|null>} Single tariff object or null
+   * @param {any} request - Request object with hsCode, importerName, exporterName, date
+   * @returns {Promise<any|null>} Single tariff object or null
    */
-  async getEffectiveTariffByNames(request) {
+  async getEffectiveTariffByNames(request: any): Promise<any | null> {
     try {
       const response = await fetch(`${TARIFF_BASE_URL}/api/tariffs/effective/by-names`, {
         method: 'POST',
@@ -133,18 +133,18 @@ class TariffService {
       return tariff
     } catch (error) {
       console.error('Error fetching effective tariff by names:', error)
-      throw new Error(`Failed to fetch effective tariff: ${error.message}`)
+      throw new Error(`Failed to fetch effective tariff: ${(error as any).message}`)
     }
   }
 
   /**
    * Calculate tariff amount based on tariff data and value
-   * @param {Object} tariff - Tariff object from API
+   * @param {any} tariff - Tariff object from API
    * @param {number} goodsValue - Value of goods
-   * @returns {Object} Calculation result with breakdown
+   * @returns {any} Calculation result with breakdown
    */
   // qty is optional number of units; used for specific tariffs (per-unit)
-  calculateTariffAmount(tariff, goodsValue, qty = 1) {
+  calculateTariffAmount(tariff: any, goodsValue: number, qty = 1): any {
     if (!tariff) {
       return {
         tariffAmount: 0,
@@ -209,10 +209,10 @@ class TariffService {
 
   /**
    * Format tariff data for display
-   * @param {Object} tariff - Tariff object from API
-   * @returns {Object} Formatted tariff data
+   * @param {any} tariff - Tariff object from API
+   * @returns {any} Formatted tariff data
    */
-  formatTariffForDisplay(tariff) {
+  formatTariffForDisplay(tariff: any): any {
     if (!tariff) return null
 
     return {
@@ -234,10 +234,10 @@ class TariffService {
 
   /**
    * Check if tariff is currently active
-   * @param {Object} tariff - Tariff object
+   * @param {any} tariff - Tariff object
    * @returns {boolean} True if tariff is active
    */
-  isTariffActive(tariff) {
+  isTariffActive(tariff: any): boolean {
     if (!tariff.startDate) return true // No start date means always active
     
     const today = new Date()
