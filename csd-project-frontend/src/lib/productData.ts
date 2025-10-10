@@ -224,7 +224,7 @@ export const productCategories = [
 ]
 
 // Function to extract the first meaningful word from product names
-const extractShortName = (productName) => {
+const extractShortName = (productName: string) => {
   // Define common words to skip when creating short names
   const skipWords = ['and', 'or', 'the', 'a', 'an', 'with', 'for', 'in', 'on', 'at', 'to', 'of']
   
@@ -245,7 +245,7 @@ const extractShortName = (productName) => {
 }
 
 // Flatten all products into a single searchable array
-export const allProducts = productCategories.reduce((acc, category) => {
+export const allProducts = productCategories.reduce((acc: any[], category) => {
   const categoryProducts = category.products.map(product => ({
     value: product.toLowerCase().replace(/[^a-z0-9]/g, '-'),
     label: extractShortName(product),

@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import tariffService from './tariffService.js'
 
 const TariffDemo = () => {
   const [hsCode, setHsCode] = useState('')
-  const [tariffs, setTariffs] = useState([])
+  const [tariffs, setTariffs] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -25,7 +25,7 @@ const TariffDemo = () => {
         setError('No tariffs found for this HS Code')
       }
     } catch (err) {
-      setError(`Error: ${err.message}`)
+      setError(`Error: ${(err as any).message}`)
     } finally {
       setLoading(false)
     }

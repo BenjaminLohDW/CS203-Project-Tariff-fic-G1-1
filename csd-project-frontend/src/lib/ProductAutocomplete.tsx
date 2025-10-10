@@ -1,6 +1,14 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import Select from 'react-select'
-import { allProducts, groupedProducts, popularProducts } from './productData'
+import { groupedProducts } from './productData'
+
+interface ProductAutocompleteProps {
+  value: any
+  onChange: (value: any) => void
+  placeholder?: string
+  disabled?: boolean
+  className?: string
+}
 
 const ProductAutocomplete = ({ 
   value, 
@@ -8,12 +16,12 @@ const ProductAutocomplete = ({
   placeholder = "Enter HS Code (e.g., 8517120000)...",
   disabled = false,
   className = ""
-}) => {
+}: ProductAutocompleteProps) => {
   const [isHsCodeMode, setIsHsCodeMode] = useState(true) // Default to HS code mode
   const [hsCodeValue, setHsCodeValue] = useState('')
   // Custom styles for React Select to match Tailwind design
   const customStyles = {
-    control: (provided, state) => ({
+    control: (provided: any, state: any) => ({
       ...provided,
       minHeight: '48px', // Matches Tailwind p-3 height
       border: state.isFocused ? '2px solid #3b82f6' : '2px solid #d1d5db',
@@ -27,29 +35,29 @@ const ProductAutocomplete = ({
       fontSize: '16px',
       fontFamily: 'inherit'
     }),
-    placeholder: (provided) => ({
+    placeholder: (provided: any) => ({
       ...provided,
       color: '#6b7280',
       fontSize: '16px'
     }),
-    singleValue: (provided) => ({
+    singleValue: (provided: any) => ({
       ...provided,
       color: '#111827',
       fontSize: '16px'
     }),
-    menu: (provided) => ({
+    menu: (provided: any) => ({
       ...provided,
       borderRadius: '8px',
       boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
       border: '1px solid #e5e7eb',
       zIndex: 9999
     }),
-    menuList: (provided) => ({
+    menuList: (provided: any) => ({
       ...provided,
       maxHeight: '300px',
       borderRadius: '8px'
     }),
-    option: (provided, state) => ({
+    option: (provided: any, state: any) => ({
       ...provided,
       backgroundColor: state.isSelected 
         ? '#3b82f6' 
@@ -64,7 +72,7 @@ const ProductAutocomplete = ({
         backgroundColor: state.isSelected ? '#3b82f6' : '#eff6ff'
       }
     }),
-    groupHeading: (provided) => ({
+    groupHeading: (provided: any) => ({
       ...provided,
       backgroundColor: '#f3f4f6',
       color: '#374151',
@@ -76,13 +84,13 @@ const ProductAutocomplete = ({
       top: 0,
       zIndex: 1
     }),
-    noOptionsMessage: (provided) => ({
+    noOptionsMessage: (provided: any) => ({
       ...provided,
       color: '#6b7280',
       fontSize: '15px',
       padding: '12px 16px'
     }),
-    loadingMessage: (provided) => ({
+    loadingMessage: (provided: any) => ({
       ...provided,
       color: '#6b7280',
       fontSize: '15px',
@@ -91,7 +99,7 @@ const ProductAutocomplete = ({
     indicatorSeparator: () => ({
       display: 'none'
     }),
-    dropdownIndicator: (provided, state) => ({
+    dropdownIndicator: (provided: any, state: any) => ({
       ...provided,
       color: state.isFocused ? '#3b82f6' : '#6b7280',
       '&:hover': {
@@ -102,7 +110,7 @@ const ProductAutocomplete = ({
   }
 
   // Filter function for fast searching
-  const filterOption = (option, inputValue) => {
+  const filterOption = (option: any, inputValue: any) => {
     if (!inputValue) return true
     
     const searchTerm = inputValue.toLowerCase()
@@ -117,7 +125,7 @@ const ProductAutocomplete = ({
   }
 
   // Custom option component to show category and full name
-  const formatOptionLabel = (option, { context }) => {
+  const formatOptionLabel = (option: any, { context }: any) => {
     if (context === 'menu') {
       return (
         <div className="flex flex-col">
@@ -135,17 +143,17 @@ const ProductAutocomplete = ({
   }
 
   // Show popular products when no search term
-  const getOptions = (inputValue) => {
-    if (!inputValue || inputValue.length < 2) {
-      return [
-        {
-          label: "Popular Products",
-          options: popularProducts
-        }
-      ]
-    }
-    return groupedProducts
-  }
+  // const getOptions = (inputValue: any) => {
+  //   if (!inputValue || inputValue.length < 2) {
+  //     return [
+  //       {
+  //         label: "Popular Products",
+  //         options: popularProducts
+  //       }
+  //     ]
+  //   }
+  //   return groupedProducts
+  // }
 
   // Handle mode toggle
   const handleModeToggle = () => {
@@ -161,7 +169,7 @@ const ProductAutocomplete = ({
   }
 
   // Handle HS code input
-  const handleHsCodeChange = (e) => {
+  const handleHsCodeChange = (e: any) => {
     const newValue = e.target.value
     setHsCodeValue(newValue)
     
@@ -177,7 +185,7 @@ const ProductAutocomplete = ({
   }
 
   // Validate HS code format (basic validation - adjust as needed)
-  const isValidHsCode = (code) => {
+  const isValidHsCode = (code: any) => {
     // HS codes are typically 6-10 digits
     return /^\d{4,10}$/.test(code)
   }

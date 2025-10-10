@@ -3,14 +3,7 @@ import { CalculationData } from '../types'
 
 const HISTORY_API_URL = import.meta.env.VITE_HISTORY_API_URL || 'http://localhost:5003'
 
-interface HistoryApiResponse {
-  code: number
-  message?: string
-  data?: any
-  page?: number
-  size?: number
-  total?: number
-}
+
 
 /**
  * Save a calculation to user's history

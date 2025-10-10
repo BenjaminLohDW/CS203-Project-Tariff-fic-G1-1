@@ -200,60 +200,6 @@ function App() {
     setDateValidationError('')
   }
 
-  // Tariff calculation functions
-  const calculateSpecificTariff = (quantity: string | number, tariffAmount: string | number): number => {
-    // Specific tariff: fixed amount per unit (tariffAmount is cost per unit)
-    return Number(quantity) * Number(tariffAmount)
-  }
-
-  const calculateAdValoremTariff = (baseValue: string | number, tariffRate: string | number): number => {
-    // Ad valorem tariff: percentage of the value (tariffRate is percentage)
-    console.log('🧮 Ad Valorem calculation inputs:', { baseValue, tariffRate })
-    const result = Number(baseValue) * (Number(tariffRate) / 100)
-    console.log('🧮 Ad Valorem calculation result:', result)
-    return result
-  }
-
-  // Hashmap/Dictionary mapping tariff types to calculation functions
-  const tariffCalculationMap = {
-    'specific': calculateSpecificTariff,
-    'ad valorem': calculateAdValoremTariff,
-    'ad_valorem': calculateAdValoremTariff, // Handle underscore version
-    'percentage': calculateAdValoremTariff, // Handle percentage type
-    'compound': calculateAdValoremTariff, // Can be extended later for compound tariffs
-    'quota': calculateAdValoremTariff // Can be extended later for quota tariffs
-  }
-
-  // Function to calculate tariff amount based on type
-  const calculateTariffAmount = (tariffType: string, quantity: string | number, baseValue: string | number, tariffAmount: string | number): number => {
-    console.log('🧮 Calculating tariff:', { tariffType, quantity, baseValue, tariffAmount })
-    
-    const calculationFunction = tariffCalculationMap[tariffType.toLowerCase() as keyof typeof tariffCalculationMap]
-    
-    if (!calculationFunction) {
-      console.warn(`❌ Unknown tariff type: ${tariffType}`)
-      return 0
-    }
-
-    let result = 0
-    const normalizedType = tariffType.toLowerCase()
-    
-    switch (normalizedType) {
-      case 'specific':
-        result = calculationFunction(quantity, tariffAmount)
-        break
-      case 'ad valorem':
-      case 'ad_valorem':
-      case 'percentage':
-      default:
-        result = calculationFunction(baseValue, tariffAmount)
-        break
-    }
-    
-    console.log(`✅ Tariff calculation result: ${result} (type: ${tariffType})`)
-    return result
-  }
-
   // Fetch tariff data from Tariff microservice
   const fetchTariffData = async () => {
     setIsLoadingTariffs(true)
@@ -351,7 +297,7 @@ function App() {
       }
     } catch (error) {
       console.error('Failed to fetch tariff data:', error)
-      alert(`Failed to fetch tariff data: ${error.message}`)
+      alert(`Failed to fetch tariff data: ${(error as any).message}`)
       setTariffData([])
     } finally {
       setIsLoadingTariffs(false)
@@ -449,7 +395,7 @@ function App() {
 
     try {
       // Save to history microservice
-      const response = await saveCalculation(calculationData)
+      const response = await saveCalculation(calculationData as any)
       
       // Log the response for debugging
       console.log('History save response:', response)
@@ -457,9 +403,9 @@ function App() {
       console.log('History ID:', response?.history?.history_id)
       
       // Also add to local state for immediate UI update
-      const localHistoryEntry = {
+      const localHistoryEntry: CalculationData = {
         id: Date.now(),
-        date: new Date().toISOString().split('T')[0],
+        date: calculatedDate || new Date().toISOString().split('T')[0],
         timestamp: new Date().toLocaleString(),
         mode: isManualTariff ? 'Manual Tariff' : 'Standard',
         productType: calculationData.product_type,
@@ -468,9 +414,8 @@ function App() {
         quantity: calculationData.total_qty,
         cost: calculatedCost || 0,
         tariffRate: calculatedTariffRate || 0,
-        date: calculatedDate || new Date().toISOString().split('T')[0],
         baseAmount: calculationData.base_cost.toFixed(2),
-        tariffs: calculationData.tariff_lines.map(line => ({
+        tariffs: calculationData.tariff_lines.map((line: any) => ({
           type: line.type,
           description: line.description,
           rate: line.rate,
@@ -508,7 +453,7 @@ function App() {
       alert(`Found ${history.total || 0} history records for user: ${userId}`)
     } catch (error) {
       console.error('Error getting user history:', error)
-      alert(`Failed to get history for user: ${userId}. Error: ${error.message}`)
+      alert(`Failed to get history for user: ${userId}. Error: ${(error as any).message}`)
     }
   }
 
@@ -529,7 +474,7 @@ function App() {
       
       if (response.code === 200 && response.data) {
         // Transform API response - ONLY basic info for cards (lightweight)
-        const transformedHistory = response.data.map(apiHistory => ({
+        const transformedHistory = response.data.map((apiHistory: any) => ({
           id: apiHistory.history_id,
           date: apiHistory.created_at ? apiHistory.created_at.split('T')[0] : new Date().toISOString().split('T')[0],
           timestamp: apiHistory.created_at ? new Date(apiHistory.created_at).toLocaleString() : new Date().toLocaleString(),
@@ -577,7 +522,7 @@ function App() {
   }
 
   // Function to load detailed tariff information for a history item
-  const loadDetailedTariffInfo = async (historyItem) => {
+  const loadDetailedTariffInfo = async (historyItem: any) => {
     setLoadingTariffDetails(true)
     setSelectedHistoryDetail(null)
     
@@ -598,7 +543,7 @@ function App() {
       const tariffResponse = await getHistoryTariffLines(historyItem.id)
       
       if (tariffResponse.code === 200 && tariffResponse.data) {
-        const tariffLines = tariffResponse.data.map(line => ({
+        const tariffLines = tariffResponse.data.map((line: any) => ({
           type: line.tariff_type || 'N/A',
           description: line.tariff_desc || 'No description available',
           rate: line.rate_str || '0%',
@@ -648,10 +593,10 @@ function App() {
         console.log('Loading tariff details for history:', calculationData.id)
         
         try {
-          const tariffResponse = await getHistoryTariffLines(calculationData.id)
+          const tariffResponse = await getHistoryTariffLines(calculationData.id.toString())
           
           if (tariffResponse.code === 200 && tariffResponse.data) {
-            const tariffLines = tariffResponse.data.map(line => ({
+            const tariffLines = tariffResponse.data.map((line: any) => ({
               type: line.tariff_type,
               description: line.tariff_desc,
               rate: line.rate_str,
@@ -718,7 +663,7 @@ function App() {
         const restoredTariffData = calculationData.tariffs.map(tariff => ({
           "Tariff Type": tariff.type,
           "Tariff Description": tariff.description,
-          "Tariff amount": parseFloat(tariff.rate.replace(/[^0-9.-]/g, '')) || 0
+          "Tariff amount": typeof tariff.rate === 'string' ? parseFloat(tariff.rate.replace(/[^0-9.-]/g, '')) || 0 : tariff.rate
         }))
         setTariffData(restoredTariffData)
       } else {

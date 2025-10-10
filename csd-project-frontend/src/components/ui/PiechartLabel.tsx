@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {LabelList, Pie, PieChart} from 'recharts';
 
 import {Card, CardContent, CardHeader, CardTitle} from './Card';

@@ -28,7 +28,7 @@ export interface TariffData {
 export interface TariffLine {
   type: string
   description: string
-  rate: string
+  rate: string | number
   amount: string
 }
 
