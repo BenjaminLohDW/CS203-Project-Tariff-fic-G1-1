@@ -4,7 +4,7 @@
  */
 import { UserProfile } from '../types'
 
-const API_BASE = '/api'
+const USER_API_URL = import.meta.env.VITE_USER_API_URL || 'http://localhost:5001'
 
 interface CreateUserData {
   user_id: string
@@ -21,7 +21,7 @@ interface CreateUserData {
  * @returns {Promise<UserProfile>} Created user object
  */
 export async function createUser(userData: CreateUserData): Promise<UserProfile> {
-  const response = await fetch(`${API_BASE}/user/create`, {
+  const response = await fetch(`${USER_API_URL}/api/user/create`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
