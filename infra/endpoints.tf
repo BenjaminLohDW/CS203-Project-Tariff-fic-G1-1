@@ -2,8 +2,6 @@
 # endpoints.tf
 ############################
 
-variable "enable_endpoints" { type = bool default = true }
-
 # S3 Gateway endpoint (works across the whole VPC)
 resource "aws_vpc_endpoint" "s3" {
   count             = var.enable_endpoints ? 1 : 0

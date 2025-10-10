@@ -3,7 +3,9 @@
  * Simple utility to create users in microservice with Firebase user_id
  */
 
-const API_BASE = '/api'
+// const API_BASE = '/api'
+const USER_API_URL = import.meta.env.VITE_USER_API_URL || 'http://localhost:5001'
+
 
 /**
  * Create a new user in the microservice with Firebase user_id
@@ -14,7 +16,7 @@ const API_BASE = '/api'
  * @returns {Promise<Object>} Created user object
  */
 export async function createUser(userData) {
-  const response = await fetch(`${API_BASE}/user/create`, {
+  const response = await fetch(`${USER_API_URL}/user/create`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

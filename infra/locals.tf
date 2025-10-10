@@ -1,34 +1,38 @@
+############################
+# locals.tf
+# Local values used across the infrastructure
+############################
+
 locals {
-  #build name prefix 
+  # Build name prefix from project and environment
   name_prefix = "${var.project_name}-${var.env}"
 
-  # container for each service
+  # Service definitions - MUST match your actual microservices
+  # Each service needs a unique port and path prefix
   services = {
-    user = { path = "/user/*",    port = 8000, health = "/health" }
-    history = { path = "/history/*", port = 8001, health = "/health" }
-    country = { path = "/country/*", port = 8002, health = "/health" }
-    product = { path = "/product/*", port = 8003, health = "/product" }
-    tariff  = { path = "/tariff/*",  port = 8003, health = "/health" }
+    user     = { path = "/user/*",     port = 5001, health = "/health" }
+    product  = { path = "/product/*",  port = 5002, }
+    history  = { path = "/history/*",  port = 5003, health = "/health" }
+    forecast = { path = "/forecast/*", port = 5004}
+    country  = { path = "/countries/*",  port = 5005, health = "/health" }
+    tariff   = { path = "/tariff/*",   port = 5006}
   }
 
-  interface_endpoints = [
-  "ecr.api", "ecr.dkr", "logs", "secretsmanager",
-  "ssm", "ssmmessages", "ec2messages"
-  ]
-
-
-  tags = {
-    Project = var.project_name
-    Env     = var.env
-    Owner   = var.owner
-  }
-
-  # Optional default desired count per service
+  # Default desired count per service (can be overridden in variables)
   desired_counts = {
-    user = 1
-    history = 1
-    country = 1
-    product = 1
-    tariff = 1
+    user     = 1
+    history  = 1
+    country  = 1
+    product  = 1
+    forecast = 1
+    tariff   = 1
+  }
+
+  # Common tags applied to all resources
+  tags = {
+    Project     = var.project_name
+    Environment = var.env
+    Owner       = var.owner
+    ManagedBy   = "OpenTofu"
   }
 }

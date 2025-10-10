@@ -102,6 +102,24 @@ services:
       - DB_HOST=db
       - DB_PORT=5432
 
+    ##------------------------ FORECAST #------------------------
+  forecast:
+    container_name: forecast
+    build:
+      context: ./forecast
+      dockerfile: Dockerfile
+    ports:
+      - "5004:5004"
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - ./forecast/.env
+    environment:
+      - FLASK_APP=app.py
+      - DB_HOST=db
+      - DB_PORT=5432
+
   #------------------------ COUNTRY ------------------------
   country-migrate:
     build: ./country
@@ -241,6 +259,9 @@ services:
   # 1. For local frontend + containerized backend: Use localhost URLs (current setup)
   # 2. For full containerization: Use container names in URLs (see commented config above)
   # 3. For cloud deployment: Use actual domain names or service discovery
+
+
+
 
 volumes:
   pgdata:

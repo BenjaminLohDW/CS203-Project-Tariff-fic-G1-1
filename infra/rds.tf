@@ -1,11 +1,3 @@
-variable "db_name"        { type = string  default = "appdb" }
-variable "db_username"    { type = string  default = "appuser" }
-variable "db_password"    { type = string  sensitive = true }
-variable "db_instance"    { type = string  default = "db.t4g.small" }
-variable "db_allocated"   { type = number  default = 20 }   # gp3 size (GB)
-variable "db_multi_az"    { type = bool    default = true } # HA for writer
-variable "enable_read_replica" { type = bool default = true }
-
 #security group that allows ecs to talk to postgres (port 5432)
 resource "aws_security_group" "rds" {
     name = "${local.name_prefix}-rds-sg"

@@ -52,9 +52,27 @@ class User(db.Model):
             "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }
     
+#---- Healthcheck api for ALB ----
+@app.route("/health", methods=["GET"])
+def healthcheck():
+    #healthcheck for ALB target group 
+    try:
+        # Quick DB connection check
+        db.session.execute(db.text("SELECT 1"))
+        return jsonify({
+            "status": "healthy",
+            "service": "user",
+            "timestamp": datetime.utcnow().isoformat()
+        }), 200
+    except Exception as e:
+        return jsonify({
+            "status": "unhealthy",
+            "service": "user",
+            "error": str(e)
+        }), 503
 
 #----api routes----
-@app.route("/api/users", methods=["GET"])
+@app.route("/user", methods=["GET"])
 def get_all_users():
     try:
         #pagination of rows; max return 100 rows per page, default 20
@@ -83,7 +101,7 @@ def get_all_users():
         }), 500
     
 
-@app.route("/api/user/<string:user_id>", methods=["GET"])
+@app.route("/user/<string:user_id>", methods=["GET"])
 def get_user(user_id):
     try:
         user = User.query.filter_by(user_id=user_id).first()
@@ -105,7 +123,7 @@ def get_user(user_id):
         }), 500
     
 
-@app.route("/api/user/create", methods=["POST"])
+@app.route("/user/create", methods=["POST"])
 def create_user():
     data = request.get_json()
     required = ['name', 'email']
@@ -137,7 +155,7 @@ def create_user():
     }), 200
 
 
-@app.route("/api/users/<string:user_id>", methods=["PATCH"])
+@app.route("/user/<string:user_id>", methods=["PATCH"])
 def update_user(user_id):
     try:
         user = User.query.filter_by(user_id=user_id).first()
@@ -175,7 +193,7 @@ def update_user(user_id):
         }), 500
     
 
-@app.route("/api/users/<string:user_id>", methods=["DELETE"])
+@app.route("/user/<string:user_id>", methods=["DELETE"])
 def delete_user(user_id):
     user = User.query.filter_by(user_id=user_id).first()
     if not user:

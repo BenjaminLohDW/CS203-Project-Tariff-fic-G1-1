@@ -87,9 +87,27 @@ class HistoryTariffLine(db.Model):
             "amount_str": self.amount_str
         }
 
+# ---- Healthcheck api for ALB ----
+@app.route("/health", methods=["GET"])
+def healthcheck():
+    #healthcheck for ALB target group
+    try:
+        # Quick DB connection check
+        db.session.execute(db.text("SELECT 1"))
+        return jsonify({
+            "status": "healthy",
+            "service": "history",
+            "timestamp": datetime.utcnow().isoformat()
+        }), 200
+    except Exception as e:
+        return jsonify({
+            "status": "unhealthy",
+            "service": "history",
+            "error": str(e)
+        }), 503
 
 #--------------- api routes ---------------
-@app.route("/api/users/<string:user_id>/history", methods=["GET"])
+@app.route("/user/<string:user_id>/history", methods=["GET"])
 def get_user_history(user_id):
     try:
         #pagination of rows; max return 100 rows per page, default 20
@@ -118,7 +136,7 @@ def get_user_history(user_id):
         }), 500
     
 
-@app.route("/api/history/<string:history_id>", methods=["GET"])
+@app.route("/history/<string:history_id>", methods=["GET"])
 def get_specific_user_history(history_id):
     try:
         page = max(int(request.args.get("page", 1)), 1)
@@ -141,7 +159,7 @@ def get_specific_user_history(history_id):
         }), 500
     
 
-@app.route("/api/history/create", methods=["POST"])
+@app.route("/history/create", methods=["POST"])
 def save_calculation():
     try:
         data = request.get_json()
@@ -198,7 +216,7 @@ def history_tariff_lines(history_id):
     return HistoryTariffLine.query.filter_by(history_id=history_id).order_by(HistoryTariffLine.line_order).all()
 
 
-@app.route("/api/history/<string:history_id>", methods=["DELETE"])
+@app.route("/history/<string:history_id>", methods=["DELETE"])
 def delete_history(history_id):
     try:
         history = History.query.filter_by(history_id=history_id).first()

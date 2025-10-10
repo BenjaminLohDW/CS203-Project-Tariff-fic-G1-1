@@ -1,5 +1,5 @@
 // Tariff Service - API calls to the tariff microservice
-const TARIFF_BASE_URL = import.meta.env.VITE_TARIFF_API_URL || 'http://localhost:5004'
+const TARIFF_BASE_URL = import.meta.env.VITE_TARIFF_API_URL || 'http://localhost:5006'
 
 /**
  * Tariff Service for connecting to the tariff microservice

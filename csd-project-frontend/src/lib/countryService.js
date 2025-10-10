@@ -8,7 +8,7 @@ const COUNTRY_API_URL = import.meta.env.VITE_COUNTRY_API_URL || 'http://localhos
  */
 export const fetchCountries = async () => {
   try {
-    const response = await fetch(`${COUNTRY_API_URL}/api/countries`)
+    const response = await fetch(`${COUNTRY_API_URL}/countries`)
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
@@ -46,7 +46,7 @@ export const fetchCountries = async () => {
  */
 export const fetchCountryById = async (countryId) => {
   try {
-    const response = await fetch(`${COUNTRY_API_URL}/api/countries/${countryId}`)
+    const response = await fetch(`${COUNTRY_API_URL}/countries/${countryId}`)
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
@@ -76,7 +76,7 @@ export const fetchCountryById = async (countryId) => {
  */
 export const fetchCountryByName = async (countryName) => {
   try {
-    const response = await fetch(`${COUNTRY_API_URL}/api/countries/by-name?name=${encodeURIComponent(countryName)}`)
+    const response = await fetch(`${COUNTRY_API_URL}/countries/by-name?name=${encodeURIComponent(countryName)}`)
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)

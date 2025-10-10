@@ -1,3 +1,5 @@
+#---------------------------- task_definition for EACH service ---------------------------------
+
 # Optional private DNS namespace for Cloud Map
 resource "aws_service_discovery_private_dns_namespace" "ns" {
   count       = var.enable_cloud_map ? 1 : 0
@@ -6,6 +8,7 @@ resource "aws_service_discovery_private_dns_namespace" "ns" {
   vpc         = module.vpc.vpc_id
   tags        = local.tags
 }
+
 
 #one cloud mapdiscovery per service
 resource "aws_service_discovery_service" "svc" {
@@ -25,6 +28,8 @@ resource "aws_service_discovery_service" "svc" {
   tags = local.tags
 }
 
+
+#task definition - fargate configuration
 resource "aws_ecs_task_definition" "svc" {
   for_each                 = local.services
   family                   = "${local.name_prefix}-${each.key}"
@@ -37,15 +42,31 @@ resource "aws_ecs_task_definition" "svc" {
 
   container_definitions = jsonencode([
     {
-      name         = each.key,
-      image        = "${aws_ecr_repository.app.repository_url}:${each.key}-${var.container_image_tag}",
-      essential    = true,
+      name         = each.key
+      image        = "${aws_ecr_repository.app.repository_url}:${each.key}-${var.container_image_tag}"
+      essential    = true
       portMappings = [{
         containerPort = each.value.port
         protocol      = "tcp"
-      }],
+      }]
+
+      #----- DB configs ------
+      environment = [
+        { name = "DB_HOST",     value = var.enable_rds_proxy ? aws_db_proxy.this[0].endpoint : aws.db_instance.writer.address },
+        { name = "DB_PORT",     value = var.db_port },
+        { name = "DB_NAME",     value = var.db_name },
+        { name = "DB_USER",     value = var.db_username },
+        { name = "DB_SSLMODE",  value = var.db_sslmode },
+        { name = "DB_APPROLE",  value = var.db_approle },  # optional
+        { name = "DB_SECRET_ARN", value = var.enable_rds_proxy ? aws_secretsmanager_secret.db.arn : "" }, # optional
+        { name = "DB_PROXY_ENDPOINT", value = var.enable_rds_proxy ? aws_db_proxy.this[0].endpoint : "" }, # optional
+        { name = "REDIS_HOST",  value = var.enable_redis ? aws_elasticache_replication_group.redis[0].primary_endpoint_address : "" }, # optional
+        { name = "REDIS_PORT",  value = var.enable_redis ? aws_elasticache_replication_group.redis[0].port : "" } # optional
+        { name = "AWS_REGION",  value = var.aws_region } # for SDK calls
+      ]
+
       logConfiguration = {
-        logDriver = "awslogs",
+        logDriver = "awslogs"
         options = {
           awslogs-group         = aws_cloudwatch_log_group.svc[each.key].name,
           awslogs-region        = var.aws_region,
