@@ -86,6 +86,7 @@ resource "aws_codebuild_project" "build" {
 
   source {
     type = "CODEPIPELINE"
+    buildspec = "buildspec.yml"  # Add this line - specify the path to your buildspec
   }
 
   environment {
