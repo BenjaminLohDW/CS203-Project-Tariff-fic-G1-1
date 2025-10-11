@@ -87,3 +87,13 @@ resource "aws_vpc_security_group_egress_rule" "endpoints_all" {
   ip_protocol      = "-1"
   cidr_ipv4        = "0.0.0.0/0"
 }
+
+resource "aws_vpc_security_group_ingress_rule" "endpoints_from_vpc" {
+  count             = var.enable_endpoints ? 1 : 0
+  security_group_id = aws_security_group.endpoints[0].id
+  cidr_ipv4         = var.vpc_cidr
+  from_port         = 443
+  to_port           = 443
+  ip_protocol       = "tcp"
+  description       = "Allow HTTPS from VPC to reach VPC endpoints"
+}

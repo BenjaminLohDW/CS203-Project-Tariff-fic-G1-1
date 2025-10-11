@@ -1,10 +1,9 @@
 #!/bin/bash
 set -e
 
-for svc in $SERVICES; do
-  echo "Creating imagedefinitions-${svc}.json"
-  printf '[{"name":"%s","imageUri":"%s"}]\n' "$svc" "$ECR_REPO:${svc}-${IMAGE_TAG}" > imagedefinitions-${svc}.json
-  cat imagedefinitions-${svc}.json
-done
+
+echo "Creating imagedefinitions-${SERVICE}.json"
+printf '[{"name":"%s","imageUri":"%s"}]\n' "$SERVICE" "$ECR_REPO:${SERVICE}-${IMAGE_TAG}" > imagedefinitions-${SERVICE}.json
+cat imagedefinitions-${SERVICE}.json
 
 echo "Build completed"

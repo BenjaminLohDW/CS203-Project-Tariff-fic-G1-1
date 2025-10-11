@@ -32,3 +32,4 @@ resource "aws_vpc_endpoint" "interfaces" {
   private_dns_enabled = true
   tags              = local.tags
 }
+

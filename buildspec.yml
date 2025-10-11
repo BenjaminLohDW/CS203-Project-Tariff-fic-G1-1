@@ -71,8 +71,7 @@ phases:
   
   build:
     commands:
-      - echo "Build started"
-      - echo "Services - $SERVICES"
+      - echo "Building service $SERVICE"
       - chmod +x ./build.sh
       - ./build.sh
   
