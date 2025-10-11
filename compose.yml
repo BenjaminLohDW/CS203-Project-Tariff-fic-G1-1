@@ -260,6 +260,7 @@ services:
   # 2. For full containerization: Use container names in URLs (see commented config above)
   # 3. For cloud deployment: Use actual domain names or service discovery
 
+#------testing for CI/CD pipeline------
 
 
 
