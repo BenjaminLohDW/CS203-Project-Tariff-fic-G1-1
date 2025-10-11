@@ -58,6 +58,33 @@
 #   files:
 #     - 'imagedefinitions-*.json'
 
+# version: 0.2
+
+# phases:
+#   pre_build:
+#     commands:
+#       - echo "Pre-Build Phase - ECR Login"
+#       - aws --version
+#       - docker --version
+#       - echo "Logging in to Amazon ECR..."
+#       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPO
+  
+#   build:
+#     commands:
+#       - echo "Building service $SERVICE"
+#       - chmod +x ./build.sh
+#       - ./build.sh
+  
+#   post_build:
+#     commands:
+#       - chmod +x ./post-build.sh
+#       - ./post-build.sh
+
+# artifacts:
+#   files:
+#     - imagedefinitions-*.json
+
+
 version: 0.2
 
 phases:
@@ -71,14 +98,34 @@ phases:
   
   build:
     commands:
-      - echo "Building service $SERVICE"
-      - chmod +x ./build.sh
-      - ./build.sh
+      - echo "Building service - $SERVICE"
+      - |
+        if [ ! -d "./$SERVICE" ]; then
+          echo "ERROR: Directory ./$SERVICE not found!"
+          ls -la ./
+          exit 1
+        fi
+        
+        if [ ! -f "./$SERVICE/Dockerfile" ]; then
+          echo "ERROR: Dockerfile not found in ./$SERVICE/"
+          exit 1
+        fi
+        
+        echo "Building Docker image: $ECR_REPO:${SERVICE}-${IMAGE_TAG}"
+        docker build -t $ECR_REPO:${SERVICE}-${IMAGE_TAG} ./${SERVICE}
+        
+        echo "Pushing image to ECR..."
+        docker push $ECR_REPO:${SERVICE}-${IMAGE_TAG}
+        
+        echo "Successfully built and pushed $SERVICE"
   
   post_build:
     commands:
-      - chmod +x ./post-build.sh
-      - ./post-build.sh
+      - |
+        echo "Creating imagedefinitions-${SERVICE}.json"
+        printf '[{"name":"%s","imageUri":"%s"}]\n' "$SERVICE" "$ECR_REPO:${SERVICE}-${IMAGE_TAG}" > imagedefinitions-${SERVICE}.json
+        cat imagedefinitions-${SERVICE}.json
+      - echo "Build completed"
 
 artifacts:
   files:
