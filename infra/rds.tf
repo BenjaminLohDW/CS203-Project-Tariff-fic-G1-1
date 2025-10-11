@@ -54,6 +54,7 @@ resource "aws_db_instance" "writer" {
 
   backup_retention_period    = 7
   auto_minor_version_upgrade = true
+  skip_final_snapshot = true
 
   tags = local.tags
 }
@@ -70,5 +71,6 @@ resource "aws_db_instance" "reader" {
   publicly_accessible        = false
   # vpc_security_group_ids     = [aws_security_group.rds.id]
   auto_minor_version_upgrade = true
+  skip_final_snapshot = true
   tags = local.tags
 }

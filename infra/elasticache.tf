@@ -53,6 +53,7 @@ resource "aws_elasticache_replication_group" "this" {
 
   at_rest_encryption_enabled    = true
   transit_encryption_enabled    = false
+  final_snapshot_identifier     = null
 
   tags = local.tags
 }
