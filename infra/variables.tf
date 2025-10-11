@@ -232,7 +232,7 @@ variable "github_owner" {
 variable "github_repo" {
   description = "GitHub repository name"
   type        = string
-  default     = "CS203Project-G1-1"
+  default     = "CS203-Project-Tariff-fic-G1-1"
 }
 
 variable "github_branch" {
