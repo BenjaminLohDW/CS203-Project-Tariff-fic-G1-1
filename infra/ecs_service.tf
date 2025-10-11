@@ -1,5 +1,7 @@
 #---------------------------- task_definition for EACH service ---------------------------------
 
+
+#===================== SERVICE DISCOVERY (CLOUD MAP) =====================
 # Optional private DNS namespace for Cloud Map
 resource "aws_service_discovery_private_dns_namespace" "ns" {
   count       = var.enable_cloud_map ? 1 : 0
@@ -12,7 +14,7 @@ resource "aws_service_discovery_private_dns_namespace" "ns" {
 
 #one cloud mapdiscovery per service
 resource "aws_service_discovery_service" "svc" {
-  for_each = var.enable_cloud_map ? locals.services : {}
+  for_each = var.enable_cloud_map ? local.services : {}
 
   name  = each.key
 
@@ -29,6 +31,7 @@ resource "aws_service_discovery_service" "svc" {
 }
 
 
+# ================= ECS TASK DEFINITION (FARGATE) =================
 #task definition - fargate configuration
 resource "aws_ecs_task_definition" "svc" {
   for_each                 = local.services
@@ -52,16 +55,16 @@ resource "aws_ecs_task_definition" "svc" {
 
       #----- DB configs ------
       environment = [
-        { name = "DB_HOST",     value = var.enable_rds_proxy ? aws_db_proxy.this[0].endpoint : aws.db_instance.writer.address },
-        { name = "DB_PORT",     value = var.db_port },
+        { name = "DB_HOST",     value = var.enable_rds_proxy ? aws_db_proxy.this[0].endpoint : aws_db_instance.writer.address },
+        { name = "DB_PORT",     value = tostring(var.db_port) },
         { name = "DB_NAME",     value = var.db_name },
         { name = "DB_USER",     value = var.db_username },
         { name = "DB_SSLMODE",  value = var.db_sslmode },
-        { name = "DB_APPROLE",  value = var.db_approle },  # optional
+        # { name = "DB_APPROLE",  value = var.db_approle },  # optional
         { name = "DB_SECRET_ARN", value = var.enable_rds_proxy ? aws_secretsmanager_secret.db.arn : "" }, # optional
         { name = "DB_PROXY_ENDPOINT", value = var.enable_rds_proxy ? aws_db_proxy.this[0].endpoint : "" }, # optional
-        { name = "REDIS_HOST",  value = var.enable_redis ? aws_elasticache_replication_group.redis[0].primary_endpoint_address : "" }, # optional
-        { name = "REDIS_PORT",  value = var.enable_redis ? aws_elasticache_replication_group.redis[0].port : "" } # optional
+        { name = "REDIS_HOST",  value = var.enable_redis ? aws_elasticache_replication_group.this[0].primary_endpoint_address : "" }, # optional
+        { name = "REDIS_PORT",  value = "6379"}, # optional
         { name = "AWS_REGION",  value = var.aws_region } # for SDK calls
       ]
 
@@ -84,6 +87,7 @@ resource "aws_ecs_task_definition" "svc" {
   tags = local.tags
 }
 
+# ================= ECS SERVICES (ACTUAL SERVICE DEFINITION) =================
 resource "aws_ecs_service" "svc" {
   for_each        = local.services
   name            = "${local.name_prefix}-${each.key}"
@@ -114,9 +118,9 @@ resource "aws_ecs_service" "svc" {
   deployment_minimum_healthy_percent = 50
   deployment_maximum_percent         = 200
 
-  depends_on = concat(
-    [aws_lb_listener.http],
-    var.acm_certificate_arn == "" ? [] : [aws_lb_listener.https]
-  )
-  tags       = local.tags
+  depends_on = [
+    aws_lb_listener.http
+  ]
+
+  tags = local.tags
 }

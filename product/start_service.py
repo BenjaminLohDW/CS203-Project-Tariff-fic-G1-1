@@ -1,11 +1,25 @@
 """
 Startup script for HS Code Scraper Microservice
 """
-
+from fastapi import FastAPI
+from fastapi.responses import JSONResponse
 import os
 import sys
 import subprocess
 import time
+
+app = FastAPI();
+
+@app.get("/health")
+async def health_check():
+    """Simple health check - just confirms the service is running"""
+    return JSONResponse(
+        status_code=200,
+        content={
+            "status": "healthy",
+            "service": "product-scraper"
+        }
+    )
 
 def install_dependencies():
     """Install required dependencies"""
@@ -104,6 +118,7 @@ def main():
     
     # Start the service
     start_service()
+    
 
 if __name__ == "__main__":
     main()

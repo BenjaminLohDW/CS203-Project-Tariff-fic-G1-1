@@ -270,24 +270,3 @@ resource "aws_codepipeline" "this" {
 
 data "aws_caller_identity" "current" {}
 
-# ===== OUTPUTS =====
-
-output "codepipeline_name" {
-  description = "Name of the CodePipeline"
-  value       = aws_codepipeline.this.name
-}
-
-output "codebuild_project_name" {
-  description = "Name of the CodeBuild project"
-  value       = aws_codebuild_project.build.name
-}
-
-output "codestar_connection_arn" {
-  description = "ARN of CodeStar GitHub connection (requires manual activation)"
-  value       = aws_codestarconnections_connection.github.arn
-}
-
-output "artifacts_bucket" {
-  description = "S3 bucket for pipeline artifacts"
-  value       = aws_s3_bucket.codepipeline_artifacts.bucket
-}

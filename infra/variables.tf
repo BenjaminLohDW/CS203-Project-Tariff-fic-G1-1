@@ -153,10 +153,26 @@ variable "db_password" {
   }
 }
 
+variable "db_port" {
+  description = "PostgreSQL database port"
+  type        = number
+  default     = 5432
+}
+
 variable "db_instance" {
   description = "RDS instance class"
   type        = string
   default     = "db.t4g.micro"
+}
+
+variable "db_sslmode" {
+  description = "PostgreSQL SSL mode (disable, require, verify-ca, verify-full)"
+  type        = string
+  default     = "require"
+  validation {
+    condition     = contains(["disable", "require", "verify-ca", "verify-full"], var.db_sslmode)
+    error_message = "SSL mode must be one of: disable, require, verify-ca, verify-full"
+  }
 }
 
 variable "db_allocated" {
@@ -228,7 +244,7 @@ variable "github_branch" {
 variable "services" {
   description = "List of microservices to build and deploy"
   type        = list(string)
-  default     = ["user", "history", "country", "product", "agreement", "tariff"]
+  default     = ["user", "history", "country", "product", "forecast", "tariff"]
   validation {
     condition     = length(var.services) > 0
     error_message = "At least one service must be defined"

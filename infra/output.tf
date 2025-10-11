@@ -153,6 +153,7 @@ output "db_secret_arn" {
 
 output "helpful_commands" {
   description = "Useful commands for working with this infrastructure"
+  sensitive   = true
   value = {
     view_logs          = "aws logs tail /ecs/${local.name_prefix}-<service-name> --follow"
     list_tasks         = "aws ecs list-tasks --cluster ${aws_ecs_cluster.this.name}"

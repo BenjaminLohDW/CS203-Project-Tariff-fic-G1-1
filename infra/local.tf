@@ -11,11 +11,11 @@ locals {
   # Each service needs a unique port and path prefix
   services = {
     user     = { path = "/user/*",     port = 5001, health = "/health" }
-    product  = { path = "/product/*",  port = 5002, }
+    product  = { path = "/product/*",  port = 5002, health = "/health" }
     history  = { path = "/history/*",  port = 5003, health = "/health" }
-    forecast = { path = "/forecast/*", port = 5004}
+    forecast = { path = "/forecast/*", port = 5004, health = "/health" }
     country  = { path = "/countries/*",  port = 5005, health = "/health" }
-    tariff   = { path = "/tariff/*",   port = 5006}
+    tariff   = { path = "api/tariff/*",   port = 5006, health = "/health" }
   }
 
   # Default desired count per service (can be overridden in variables)

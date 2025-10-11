@@ -12,23 +12,6 @@ resource "aws_vpc_endpoint" "s3" {
   tags              = local.tags
 }
 
-# Interface endpoints in private subnets with an SG
-resource "aws_security_group" "endpoints" {
-  count       = var.enable_endpoints ? 1 : 0
-  name        = "${local.name_prefix}-endpoints-sg"
-  description = "Interface endpoints"
-  vpc_id      = module.vpc.vpc_id
-  tags        = local.tags
-}
-
-# allow ECS to talk to the endpoints
-resource "aws_vpc_security_group_ingress_rule" "endpoints_from_ecs" {
-  count                         = var.enable_endpoints ? 1 : 0
-  security_group_id             = aws_security_group.endpoints[0].id
-  referenced_security_group_id  = aws_security_group.ecs.id
-  ip_protocol                   = "-1"
-}
-
 # Common interface endpoints to cut NAT use: ECR (api+dkr), CW Logs, Secrets
 locals {
   interface_endpoints = [

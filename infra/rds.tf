@@ -63,12 +63,12 @@ resource "aws_db_instance" "writer" {
 resource "aws_db_instance" "reader" {
   count                      = var.enable_read_replica ? 1 : 0
   identifier                 = "${local.name_prefix}-pg-replica"
-  replicate_source_db        = aws_db_instance.writer.identifier
+  replicate_source_db        = aws_db_instance.writer.arn
   engine                     = "postgres"
   instance_class             = var.db_instance
-  db_subnet_group_name       = aws_db_subnet_group.this.name
+  # db_subnet_group_name       = aws_db_subnet_group.this.name
   publicly_accessible        = false
-  vpc_security_group_ids     = [aws_security_group.rds.id]
+  # vpc_security_group_ids     = [aws_security_group.rds.id]
   auto_minor_version_upgrade = true
   tags = local.tags
 }

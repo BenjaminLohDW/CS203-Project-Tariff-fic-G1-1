@@ -52,13 +52,14 @@ resource "aws_cloudfront_distribution" "frontend" {
 
   price_class = "PriceClass_200"
 
-  restrictions { geo_restriction { restriction_type = "none" } }
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
 
   viewer_certificate {
     cloudfront_default_certificate = true
-    # For custom domain:
-    # acm_certificate_arn = var.frontend_acm_arn
-    # ssl_support_method  = "sni-only"
   }
 
   tags = local.tags

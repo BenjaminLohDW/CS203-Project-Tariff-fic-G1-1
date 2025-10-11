@@ -34,6 +34,16 @@ resource "aws_vpc_security_group_egress_rule" "alb_all" {
   ip_protocol       = "-1"
 }
 
+# service-to-service communication
+resource "aws_vpc_security_group_ingress_rule" "ecs_from_ecs" {
+  security_group_id            = aws_security_group.ecs.id
+  referenced_security_group_id = aws_security_group.ecs.id
+  ip_protocol                  = "tcp"
+  from_port                    = 0
+  to_port                      = 65535
+  description                  = "Allow ECS tasks to communicate with each other"
+}
+
 
 # ------------------- ECS tasks - private subnet -------------------
 resource "aws_security_group" "ecs" {

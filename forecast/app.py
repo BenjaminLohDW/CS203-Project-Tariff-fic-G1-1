@@ -20,6 +20,14 @@ forecaster = TariffForecaster()
 forecaster.init_graph() 
 forecaster.train()
 
+
+#---- health check endpoint ----
+@app.get("/health")
+def health():
+    return {"status": "healthy"}
+
+
+#----- API ENDPOINTS -----
 @app.route("/api/forecast", methods=["POST"])
 def forecast_tariff():
     try:

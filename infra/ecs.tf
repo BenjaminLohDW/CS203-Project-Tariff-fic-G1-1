@@ -1,3 +1,5 @@
+
+#ecs.tf => cluster definition and IAM roles for tasks
 #single ecs cluster for all services (scaling the clusters, not the services)
 
 resource "aws_ecs_cluster" "this" {
