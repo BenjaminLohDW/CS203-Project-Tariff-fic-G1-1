@@ -260,7 +260,9 @@ def health_check():
         'timestamp': datetime.datetime.utcnow().isoformat()
     }), 200
 
-@app.route('/api/countries', methods=['GET'])
+
+#======================== COUNTRY ==========================
+@app.route('/countries', methods=['GET'])
 def list_countries():
     """
     Get list of all countries
@@ -310,7 +312,7 @@ def list_countries():
 
 # I add 2 endpoints here, search by id or name - just delete the one you dont want :D or comment out 
 # This returns the country object if found, else 404
-@app.route('/api/countries/<int:country_id>', methods=['GET'])
+@app.route('/countries/<int:country_id>', methods=['GET'])
 def get_country_by_id(country_id):
     """
     Get country by ID
@@ -377,7 +379,7 @@ def get_country_by_id(country_id):
         return jsonify({'code': 500, 'error': str(e)}), 500
 
 
-@app.route('/api/countries/by-name', methods=['GET'])
+@app.route('/countries/by-name', methods=['GET'])
 def get_country_by_name():
     """
     Get country by name
@@ -447,7 +449,8 @@ def get_country_by_name():
         return jsonify({'code': 500, 'error': str(e)}), 500
 
 
-@app.route('/api/country-relation/current', methods=["GET"])
+#======================== COUNTRY RELATIONS ==========================
+@app.route('/countries/relation/current', methods=["GET"])
 def current_relation():
     """
     Get current relationship between two countries
@@ -527,8 +530,9 @@ def current_relation():
         "weight": w}
     }), 200
 
-
-@app.route('/api/countries/seed', methods=['POST'])
+#============================== SEEDING ENDPOINTS ==============================
+# --------------- SEEDING NORMAL LIST OF COUNTRIES ---------------
+@app.route('/countries/seed', methods=['POST'])
 def seed_countries_endpoint():
     """
     Seed countries data from CSV file
@@ -598,7 +602,6 @@ def seed_countries_endpoint():
     except Exception as e:
         return jsonify({'code': 500, 'error': str(e)}), 500
 
-
 def seed_countries(csv_path=None):
     """Seed countries into the DB. If csv_path is None, use a small built-in list."""
     # Prefer a full CSV shipped with the project if available
@@ -641,7 +644,8 @@ def seed_countries(csv_path=None):
     return seeded
 
 
-@app.route('/api/country/relations/', methods=["POST"])
+# --------------- SEEDING COUNTRY RELATIONSHIPS (WEIGHTS BTWN COUNTRIES) ---------------
+@app.route('/countries/relations/', methods=["POST"])
 def seed_country_rel_endpoint():
     """
     Seed country relationships data from CSV file

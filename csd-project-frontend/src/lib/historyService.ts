@@ -12,7 +12,7 @@ const HISTORY_API_URL = import.meta.env.VITE_HISTORY_API_URL || 'http://localhos
  */
 export const saveCalculation = async (calculationData: CalculationData): Promise<any> => {
   try {
-    const response = await fetch(`${HISTORY_API_URL}/api/history/create`, {
+    const response = await fetch(`${HISTORY_API_URL}/history/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ export const saveCalculation = async (calculationData: CalculationData): Promise
  */
 export const getUserHistory = async (userId: string, page = 1, size = 20): Promise<any> => {
   try {
-    const response = await fetch(`${HISTORY_API_URL}/api/users/${userId}/history?page=${page}&size=${size}`)
+    const response = await fetch(`${HISTORY_API_URL}/user/${userId}/history?page=${page}&size=${size}`)
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
@@ -83,7 +83,7 @@ export const getUserHistory = async (userId: string, page = 1, size = 20): Promi
  */
 export const getHistoryTariffLines = async (historyId: string, page = 1, size = 20): Promise<any> => {
   try {
-    const response = await fetch(`${HISTORY_API_URL}/api/history/${historyId}?page=${page}&size=${size}`)
+    const response = await fetch(`${HISTORY_API_URL}/history/${historyId}?page=${page}&size=${size}`)
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
@@ -109,7 +109,7 @@ export const getHistoryTariffLines = async (historyId: string, page = 1, size = 
  */
 export const deleteCalculationFromHistory = async (historyId: string): Promise<any> => {
   try {
-    const response = await fetch(`${HISTORY_API_URL}/api/history/${historyId}`, {
+    const response = await fetch(`${HISTORY_API_URL}/history/${historyId}`, {
       method: 'DELETE'
     })
     

@@ -2,8 +2,6 @@
 # rds_proxy.tf
 ############################
 
-variable "enable_rds_proxy" { type = bool default = true }
-
 # IAM role for RDS Proxy to read Secrets Manager
 resource "aws_iam_role" "rds_proxy" {
   name               = "${local.name_prefix}-rds-proxy-role"
@@ -14,7 +12,10 @@ resource "aws_iam_role" "rds_proxy" {
 data "aws_iam_policy_document" "rds_proxy_assume" {
   statement {
     actions = ["sts:AssumeRole"]
-    principals { type = "Service" identifiers = ["rds.amazonaws.com"] }
+    principals { 
+      type = "Service" 
+      identifiers = ["rds.amazonaws.com"] 
+    }
   }
 }
 
@@ -88,5 +89,5 @@ resource "aws_db_proxy_target" "writer" {
   count            = var.enable_rds_proxy ? 1 : 0
   db_proxy_name    = aws_db_proxy.this[0].name
   target_group_name= aws_db_proxy_default_target_group.this[0].name
-  db_instance_identifier = aws_db_instance.writer.id
+  db_instance_identifier = aws_db_instance.writer.identifier
 }

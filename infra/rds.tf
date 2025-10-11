@@ -1,11 +1,3 @@
-variable "db_name"        { type = string  default = "appdb" }
-variable "db_username"    { type = string  default = "appuser" }
-variable "db_password"    { type = string  sensitive = true }
-variable "db_instance"    { type = string  default = "db.t4g.small" }
-variable "db_allocated"   { type = number  default = 20 }   # gp3 size (GB)
-variable "db_multi_az"    { type = bool    default = true } # HA for writer
-variable "enable_read_replica" { type = bool default = true }
-
 #security group that allows ecs to talk to postgres (port 5432)
 resource "aws_security_group" "rds" {
     name = "${local.name_prefix}-rds-sg"
@@ -62,6 +54,7 @@ resource "aws_db_instance" "writer" {
 
   backup_retention_period    = 7
   auto_minor_version_upgrade = true
+  skip_final_snapshot = true
 
   tags = local.tags
 }
@@ -71,12 +64,13 @@ resource "aws_db_instance" "writer" {
 resource "aws_db_instance" "reader" {
   count                      = var.enable_read_replica ? 1 : 0
   identifier                 = "${local.name_prefix}-pg-replica"
-  replicate_source_db        = aws_db_instance.writer.identifier
+  replicate_source_db        = aws_db_instance.writer.arn
   engine                     = "postgres"
   instance_class             = var.db_instance
-  db_subnet_group_name       = aws_db_subnet_group.this.name
+  # db_subnet_group_name       = aws_db_subnet_group.this.name
   publicly_accessible        = false
-  vpc_security_group_ids     = [aws_security_group.rds.id]
+  # vpc_security_group_ids     = [aws_security_group.rds.id]
   auto_minor_version_upgrade = true
+  skip_final_snapshot = true
   tags = local.tags
 }

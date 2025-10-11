@@ -1,29 +1,16 @@
-########################################
-# Variables (customize these)
-########################################
-variable "github_owner"  { type = string  default = "BenjaminLohDW"}                      # e.g., "youruser"
-variable "github_repo"   { type = string default = "CS203Project-G1-1" }                      # e.g., "yourrepo"
-variable "github_branch" { type = string  default = "main" }    # branch to build
-variable "services"      { type = list(string) default = ["user","history","product","forecast","country", "tariff"] }
-variable "container_image_tag" { type = string default = "latest" } # must match ECS task defs (e.g., latest)
+############################
+# pipeline.tf
+# CI/CD Pipeline: GitHub -> CodeBuild -> ECR -> ECS
+############################
 
-# Assumes you already have:
-# - local.name_prefix, local.tags, var.aws_region
-# - aws_ecr_repository.app (single repo for all service images)
-
-
-########################################
-# CodeStar GitHub Connection
-########################################
+# ================= CodeStar GitHub Connection =================
 resource "aws_codestarconnections_connection" "github" {
   name          = "${local.name_prefix}-github"
   provider_type = "GitHub"
   tags          = local.tags
 }
 
-########################################
-# Artifact bucket for CodePipeline
-########################################
+# ================= Artifact bucket for CodePipeline =================
 resource "aws_s3_bucket" "codepipeline_artifacts" {
   bucket        = "${local.name_prefix}-cp-artifacts"
   force_destroy = true
@@ -32,13 +19,17 @@ resource "aws_s3_bucket" "codepipeline_artifacts" {
 
 resource "aws_s3_bucket_versioning" "cp_artifacts_versioning" {
   bucket = aws_s3_bucket.codepipeline_artifacts.id
-  versioning_configuration { status = "Enabled" }
+  versioning_configuration {
+    status = "Enabled"
+  }
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "cp_artifacts_sse" {
   bucket = aws_s3_bucket.codepipeline_artifacts.id
   rule {
-    apply_server_side_encryption_by_default { sse_algorithm = "AES256" }
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
+    }
   }
 }
 
@@ -50,13 +41,14 @@ resource "aws_s3_bucket_public_access_block" "cp_artifacts_pab" {
   ignore_public_acls      = true
 }
 
-########################################
-# CodeBuild: IAM role
-########################################
+# ================= 1. Codebuild: define IAM roles and permissions =================
 data "aws_iam_policy_document" "codebuild_assume" {
   statement {
     actions = ["sts:AssumeRole"]
-    principals { type = "Service", identifiers = ["codebuild.amazonaws.com"] }
+    principals {
+      type        = "Service"
+      identifiers = ["codebuild.amazonaws.com"]
+    }
   }
 }
 
@@ -66,40 +58,63 @@ resource "aws_iam_role" "codebuild" {
   tags               = local.tags
 }
 
-# Permissions (fast start; tighten later if you want least privilege)
+# Permissions for CodeBuild
 resource "aws_iam_role_policy_attachment" "codebuild_ecr" {
   role       = aws_iam_role.codebuild.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
 }
+
 resource "aws_iam_role_policy_attachment" "codebuild_logs" {
   role       = aws_iam_role.codebuild.name
   policy_arn = "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
 }
+
 resource "aws_iam_role_policy_attachment" "codebuild_s3" {
   role       = aws_iam_role.codebuild.name
   policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
 }
 
-########################################
-# CodeBuild: Project
-########################################
+
+# ================= 2. CodeBuild Project: actul packaging of images into services =================
 resource "aws_codebuild_project" "build" {
   name         = "${local.name_prefix}-build"
   service_role = aws_iam_role.codebuild.arn
 
-  artifacts { type = "CODEPIPELINE" }
-  source    { type = "CODEPIPELINE" }
+  artifacts {
+    type = "CODEPIPELINE"
+  }
+
+  source {
+    type = "CODEPIPELINE"
+  }
 
   environment {
-    type                = "LINUX_CONTAINER"
-    image               = "aws/codebuild/standard:7.0"
-    compute_type        = "BUILD_GENERAL1_SMALL"
-    privileged_mode     = true # docker-in-docker
+    type            = "LINUX_CONTAINER"
+    image           = "aws/codebuild/standard:7.0"
+    compute_type    = "BUILD_GENERAL1_SMALL"
+    privileged_mode = true # Required for Docker
 
-    # Passed into buildspec
-    environment_variable { name = "ECR_REPO", value = aws_ecr_repository.app.repository_url }
-    environment_variable { name = "SERVICES",  value = join(" ", var.services) }           # space-separated
-    environment_variable { name = "IMAGE_TAG", value = var.container_image_tag }
+    # Environment variables passed to buildspec
+    environment_variable {
+      name  = "ECR_REPO"
+      value = aws_ecr_repository.app.repository_url
+    }
+    environment_variable {
+      name  = "SERVICES"
+      value = join(" ", var.services)
+    }
+    environment_variable {
+      name  = "IMAGE_TAG"
+      value = var.container_image_tag
+    }
+    environment_variable {
+      name  = "AWS_DEFAULT_REGION"
+      value = var.aws_region
+    }
+    environment_variable {
+      name  = "AWS_ACCOUNT_ID"
+      value = data.aws_caller_identity.current.account_id
+    }
   }
 
   logs_config {
@@ -108,17 +123,18 @@ resource "aws_codebuild_project" "build" {
       stream_name = "build"
     }
   }
-
   tags = local.tags
 }
 
-########################################
-# CodePipeline: IAM role
-########################################
+
+# ================= 3. CodePipeline: define IAM roles and permissions =================
 data "aws_iam_policy_document" "codepipeline_assume" {
   statement {
     actions = ["sts:AssumeRole"]
-    principals { type = "Service", identifiers = ["codepipeline.amazonaws.com"] }
+    principals {
+      type        = "Service"
+      identifiers = ["codepipeline.amazonaws.com"]
+    }
   }
 }
 
@@ -128,14 +144,59 @@ resource "aws_iam_role" "codepipeline" {
   tags               = local.tags
 }
 
-resource "aws_iam_role_policy_attachment" "codepipeline_policy" {
-  role       = aws_iam_role.codepipeline.name
-  policy_arn = "arn:aws:iam::aws:policy/AWSCodePipelineFullAccess"
+# Custom policy for CodePipeline permissions
+data "aws_iam_policy_document" "codepipeline_policy" {
+  statement {
+    actions = [
+      "s3:GetObject",
+      "s3:GetObjectVersion",
+      "s3:PutObject"
+    ]
+    resources = [
+      "${aws_s3_bucket.codepipeline_artifacts.arn}/*"
+    ]
+  }
+
+  statement {
+    actions = [
+      "codebuild:BatchGetBuilds",
+      "codebuild:StartBuild"
+    ]
+    resources = [
+      aws_codebuild_project.build.arn
+    ]
+  }
+
+  statement {
+    actions = [
+      "codestar-connections:UseConnection"
+    ]
+    resources = [
+      aws_codestarconnections_connection.github.arn
+    ]
+  }
+
+  statement {
+    actions = [
+      "ecs:*",
+      "iam:PassRole"
+    ]
+    resources = ["*"]
+  }
 }
 
-########################################
-# CodePipeline
-########################################
+resource "aws_iam_policy" "codepipeline" {
+  name   = "${local.name_prefix}-codepipeline-policy"
+  policy = data.aws_iam_policy_document.codepipeline_policy.json
+}
+
+resource "aws_iam_role_policy_attachment" "codepipeline" {
+  role       = aws_iam_role.codepipeline.name
+  policy_arn = aws_iam_policy.codepipeline.arn
+}
+
+# =================== 4. CodePipeline: define the pipeline stages to push the image into ecr  =================
+
 resource "aws_codepipeline" "this" {
   name     = "${local.name_prefix}-pipeline"
   role_arn = aws_iam_role.codepipeline.arn
@@ -145,7 +206,7 @@ resource "aws_codepipeline" "this" {
     type     = "S3"
   }
 
-  # Stage 1: Source from GitHub via CodeStar Connection
+  # Stage 1: Source from GitHub
   stage {
     name = "Source"
     action {
@@ -180,38 +241,32 @@ resource "aws_codepipeline" "this" {
     }
   }
 
-  # Optional Stage 3: ECS Deploy (one ECS action updates ONE service)
-  # To auto-deploy all services, add one action per service with its own
-  # imagedefinitions-<svc>.json file (see buildspec notes).
-  # stage {
-  #   name = "Deploy"
-  #   action {
-  #     name            = "Deploy-Customer"
-  #     category        = "Deploy"
-  #     owner           = "AWS"
-  #     provider        = "ECS"
-  #     version         = "1"
-  #     input_artifacts = ["build_output"]
-  #     configuration = {
-  #       ClusterName = aws_ecs_cluster.this.name
-  #       ServiceName = aws_ecs_service.svc["customer"].name
-  #       FileName    = "imagedefinitions-customer.json"
-  #     }
-  #   }
-  # }
+  # Stage 3: Deploy to ECS (one action per service)
+  stage {
+    name = "Deploy"
+
+    dynamic "action" {
+      for_each = var.services
+      content {
+        name            = "Deploy-${action.value}"
+        category        = "Deploy"
+        owner           = "AWS"
+        provider        = "ECS"
+        version         = "1"
+        input_artifacts = ["build_output"]
+        configuration = {
+          ClusterName = aws_ecs_cluster.this.name
+          ServiceName = aws_ecs_service.svc[action.value].name
+          FileName    = "imagedefinitions-${action.value}.json"
+        }
+      }
+    }
+  }
 
   tags = local.tags
 }
 
-########################################
-# (Optional) Outputs
-########################################
-output "codepipeline_name" {
-  value = aws_codepipeline.this.name
-}
-output "codebuild_project_name" {
-  value = aws_codebuild_project.build.name
-}
-output "codestar_connection_arn" {
-  value = aws_codestarconnections_connection.github.arn
-}
+# ===== DATA SOURCES =====
+
+data "aws_caller_identity" "current" {}
+

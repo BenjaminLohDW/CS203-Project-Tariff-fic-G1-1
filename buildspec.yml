@@ -1,0 +1,89 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo "========================================="
+      - echo "Pre-Build Phase - ECR Login"
+      - echo "========================================="
+      - echo "AWS CLI version:"
+      - aws --version
+      - echo "Docker version:"
+      - docker --version
+      - echo "Logging in to Amazon ECR..."
+      - aws --version
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPO
+  build:
+    commands:
+      - echo "Build started on $(date) - geting lastest image tag from ECR..."
+      - echo "Services: $SERVICES"
+      - |
+        for svc in $SERVICES; do
+          echo ""
+          echo "========================================="
+          echo "Building service: $svc"
+          echo "========================================="
+          
+          # Check if service directory exists
+          if [ ! -d "./services/$svc" ]; then
+            echo "ERROR: Directory ./services/$svc not found!"
+            echo "Available directories:"
+            ls -la ./services/
+            exit 1
+          fi
+          
+          # Check if Dockerfile exists
+          if [ ! -f "./services/$svc/Dockerfile" ]; then
+            echo "ERROR: Dockerfile not found in ./services/$svc/"
+            exit 1
+          fi
+          
+          # Build Docker image
+          echo "Building Docker image: $ECR_REPO:${svc}-${IMAGE_TAG}"
+          docker build -t $ECR_REPO:${svc}-${IMAGE_TAG} ./services/${svc}
+          
+          if [ $? -ne 0 ]; then
+            echo "ERROR: Docker build failed for $svc"
+            exit 1
+          fi
+          
+          # Push to ECR
+          echo "Pushing image to ECR..."
+          docker push $ECR_REPO:${svc}-${IMAGE_TAG}
+          
+          if [ $? -ne 0 ]; then
+            echo "ERROR: Docker push failed for $svc"
+            exit 1
+          fi
+          
+          echo "✓ Successfully built and pushed $svc"
+        done
+  post_build:
+    commands:
+      - |
+        for svc in $SERVICES; do
+          echo "Creating imagedefinitions-${svc}.json"
+          printf '[{"name":"%s","imageUri":"%s"}]\n' \
+            "$svc" \
+            "$ECR_REPO:${svc}-${IMAGE_TAG}" \
+            > imagedefinitions-${svc}.json
+          
+          echo "Contents of imagedefinitions-${svc}.json:"
+          cat imagedefinitions-${svc}.json
+        done
+      
+      - echo ""
+      - echo "========================================="
+      - echo "Build Complete!"
+      - echo "========================================="
+      - echo "Build completed on $(date)"
+      - echo "All services built and pushed successfully:"
+      - |
+        for svc in $SERVICES; do
+          echo "  ✓ $svc: $ECR_REPO:${svc}-${IMAGE_TAG}"
+        done
+
+artifacts:
+  files:
+    - imagedefinitions.json
+    # - imagedefinitions-*.json   # uncomment if you emit per-service files

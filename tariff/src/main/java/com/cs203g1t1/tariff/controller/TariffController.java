@@ -129,4 +129,9 @@ public class TariffController {
   public ResponseEntity<List<TariffResponse>> listAll() {
     return ResponseEntity.ok(service.listAll());
   }
+
+  @GetMapping("/health")
+  public Map<String, String> healthCheck() {
+    return Map.of("status", "Tariff service is healthy");
+  }
 }

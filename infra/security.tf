@@ -1,6 +1,6 @@
 # ALB SG – internet to 80/443
 
-# ------------------- security group for alb -------------------
+# ------------------- security group for alb (public) -------------------
 resource "aws_security_group" "alb" {
   name        = "${local.name_prefix}-alb-sg"
   description = "ALB security group"
@@ -34,6 +34,16 @@ resource "aws_vpc_security_group_egress_rule" "alb_all" {
   ip_protocol       = "-1"
 }
 
+# service-to-service communication
+resource "aws_vpc_security_group_ingress_rule" "ecs_from_ecs" {
+  security_group_id            = aws_security_group.ecs.id
+  referenced_security_group_id = aws_security_group.ecs.id
+  ip_protocol                  = "tcp"
+  from_port                    = 0
+  to_port                      = 65535
+  description                  = "Allow ECS tasks to communicate with each other"
+}
+
 
 # ------------------- ECS tasks - private subnet -------------------
 resource "aws_security_group" "ecs" {
@@ -60,3 +70,20 @@ resource "aws_vpc_security_group_egress_rule" "ecs_all" {
 
 
 # DB SG – only from ECS SG on 5432/3306 etc (created in rds.tf when enabled)
+
+
+# ------------------- endpoints -------------------
+resource "aws_security_group" "endpoints" {
+  count       = var.enable_endpoints ? 1 : 0
+  name        = "${local.name_prefix}-endpoints-sg"
+  description = "SG for Interface Endpoints"
+  vpc_id      = module.vpc.vpc_id
+  tags        = local.tags
+}
+
+resource "aws_vpc_security_group_egress_rule" "endpoints_all" {
+  count            = var.enable_endpoints ? 1 : 0
+  security_group_id= aws_security_group.endpoints[0].id
+  ip_protocol      = "-1"
+  cidr_ipv4        = "0.0.0.0/0"
+}

@@ -20,7 +20,7 @@ interface ApiResponse {
  */
 export const fetchCountries = async (): Promise<Country[]> => {
   try {
-    const response = await fetch(`${COUNTRY_API_URL}/api/countries`)
+    const response = await fetch(`${COUNTRY_API_URL}/countries`)
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
@@ -59,7 +59,7 @@ export const fetchCountries = async (): Promise<Country[]> => {
  */
 export const fetchCountryById = async (countryId: string | number): Promise<Country> => {
   try {
-    const response = await fetch(`${COUNTRY_API_URL}/api/countries/${countryId}`)
+    const response = await fetch(`${COUNTRY_API_URL}/countries/${countryId}`)
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
@@ -90,7 +90,7 @@ export const fetchCountryById = async (countryId: string | number): Promise<Coun
  */
 export const fetchCountryByName = async (countryName: string): Promise<Country> => {
   try {
-    const response = await fetch(`${COUNTRY_API_URL}/api/countries/by-name?name=${encodeURIComponent(countryName)}`)
+    const response = await fetch(`${COUNTRY_API_URL}/countries/by-name?name=${encodeURIComponent(countryName)}`)
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)

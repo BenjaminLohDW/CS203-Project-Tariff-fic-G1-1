@@ -2,16 +2,15 @@
 # elasticache.tf
 ############################
 
-variable "enable_redis" { type = bool default = true }
-
 resource "aws_security_group" "redis" {
-  count       = var.enable_redis ? 1 : 0
+  count       = var.enable_redis ? 1 : 0  #if true create 1 else 0; by default var is true
   name        = "${local.name_prefix}-redis-sg"
   description = "ElastiCache Redis"
   vpc_id      = module.vpc.vpc_id
   tags        = local.tags
 }
 
+# security groups for ingress and egress; link up with vpc
 # ECS -> Redis:6379
 resource "aws_vpc_security_group_ingress_rule" "redis_from_ecs" {
   count                         = var.enable_redis ? 1 : 0
@@ -29,6 +28,7 @@ resource "aws_vpc_security_group_egress_rule" "redis_all" {
   cidr_ipv4        = "0.0.0.0/0"
 }
 
+
 resource "aws_elasticache_subnet_group" "this" {
   count      = var.enable_redis ? 1 : 0
   name       = "${local.name_prefix}-redis-subnets"
@@ -40,8 +40,8 @@ resource "aws_elasticache_replication_group" "this" {
   replication_group_id          = "${local.name_prefix}-redis"
   description                   = "Primary + replica with Multi-AZ"
   engine                        = "redis"
-  engine_version                = "7.1"
-  node_type                     = "cache.t4g.micro"
+  engine_version                = var.redis_engine_version
+  node_type                     = var.redis_node_type
   automatic_failover_enabled    = true
   multi_az_enabled              = true
   num_node_groups               = 1
@@ -53,6 +53,7 @@ resource "aws_elasticache_replication_group" "this" {
 
   at_rest_encryption_enabled    = true
   transit_encryption_enabled    = false
+  final_snapshot_identifier     = null
 
   tags = local.tags
 }
