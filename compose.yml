@@ -53,7 +53,7 @@ services:
       - DB_PORT=5432
 
   # #------------------------ PRODUCT ------------------------
-  # product microservice (HS Code Scraper)
+  # product microservice (HS Code Scraper + AI Search)
   product:
     container_name: product
     build:
@@ -67,6 +67,13 @@ services:
       - FLASK_PORT=5002
       - HEADLESS_MODE=true
       - LOG_LEVEL=INFO
+      - BATCH_MAX_WORKERS=5
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
 
   # #------------------------ HISTORY ------------------------
   history-migrate:
@@ -103,22 +110,22 @@ services:
       - DB_PORT=5432
 
     ##------------------------ FORECAST #------------------------
-  forecast:
-    container_name: forecast
-    build:
-      context: ./forecast
-      dockerfile: Dockerfile
-    ports:
-      - "5004:5004"
-    depends_on:
-      db:
-        condition: service_healthy
-    env_file:
-      - ./forecast/.env
-    environment:
-      - FLASK_APP=app.py
-      - DB_HOST=db
-      - DB_PORT=5432
+  # forecast:
+  #   container_name: forecast
+  #   build:
+  #     context: ./forecast
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "5004:5004"
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   env_file:
+  #     - ./forecast/.env
+  #   environment:
+  #     - FLASK_APP=app.py
+  #     - DB_HOST=db
+  #     - DB_PORT=5432
 
   #------------------------ COUNTRY ------------------------
   country-migrate:

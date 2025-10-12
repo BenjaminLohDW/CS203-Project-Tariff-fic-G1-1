@@ -24,16 +24,35 @@ COPY api_requirements.txt .
 COPY requirements.txt .
 
 # Install Python dependencies
-RUN pip install --no-cache-dir -r api_requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+# Install torch first (it's huge and benefits from caching)
+# Use PyTorch 2.6.0+ (required by sentence-transformers 2.6.1 for CVE-2025-32434 fix)
+RUN pip install --no-cache-dir torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cpu && \
+    echo "✅ PyTorch 2.6.0 (CPU) installed"
+
+# Install other dependencies
+RUN pip install --no-cache-dir -r api_requirements.txt && \
+    echo "✅ API requirements installed"
+
+RUN pip install --no-cache-dir -r requirements.txt && \
+    echo "✅ Main requirements installed"
 
 # Copy application code
 COPY src/ ./src/
 COPY start_service.py ./
+COPY build_embeddings.py ./
+COPY test_search.py ./
+
+# Copy HS nomenclature data
+COPY hs_nomenclature/ ./hs_nomenclature/
 
 # Create directories
 RUN mkdir -p /app/downloads/hsresults
 RUN mkdir -p /app/logs
+RUN mkdir -p /app/hs_nomenclature/embeddings
+
+# Optional: Pre-build embeddings (uncomment if you want embeddings built in image)
+# This increases build time by 10-30 minutes but makes container startup faster
+# RUN python build_embeddings.py || echo "Warning: Failed to build embeddings"
 
 # Expose port
 EXPOSE 5002

@@ -6,3 +6,9 @@ flask==3.0.0
 flask-cors==4.0.0
 python-dotenv==1.0.0
 fastapi==0.95.0
+# sentence-transformers 2.6.0+ is compatible with huggingface-hub 0.35+ and PyTorch 2.2+
+sentence-transformers==2.6.1
+# torch is installed separately in Dockerfile (CPU version for smaller size)
+# torch==2.2.0
+numpy>=1.24.0
+pandas>=2.0.0
