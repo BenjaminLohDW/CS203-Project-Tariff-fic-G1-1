@@ -4,6 +4,10 @@ from flasgger import Swagger, swag_from
 import logging
 import os
 import sys
+import tempfile
+import shutil
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import Any, Dict, List
 from datetime import datetime
 
 # Add the parent directory to sys.path to enable absolute imports
@@ -68,6 +72,36 @@ swagger_template = {
 }
 
 swagger = Swagger(app, config=swagger_config, template=swagger_template)
+
+def _parse_max_workers():
+  try:
+    value = int(os.getenv('BATCH_MAX_WORKERS', '5'))
+    return value if value > 0 else 1
+  except (TypeError, ValueError):
+    logging.warning('Invalid BATCH_MAX_WORKERS value; defaulting to 1 (sequential).')
+    return 1
+
+
+BATCH_MAX_WORKERS = _parse_max_workers()
+
+
+def _lookup_single_query(query: str):
+  """
+  Lookup a single query with its own isolated download directory.
+  This prevents race conditions when multiple workers run concurrently.
+  """
+  # Create a unique per-call download directory to avoid cross-worker collisions
+  download_dir = tempfile.mkdtemp(prefix="hs_results_")
+  try:
+    with CaptchaResistantScraper(download_dir=download_dir) as scraper:
+      return scraper.scrape_with_retry(query)
+  finally:
+    # Best-effort cleanup: remove temp dir if empty (scraper moves files to hsresults)
+    try:
+      if os.path.exists(download_dir) and not os.listdir(download_dir):
+        shutil.rmtree(download_dir)
+    except Exception:
+      pass
 
 @app.route('/health', methods=['GET'])
 def health_check():
@@ -214,25 +248,25 @@ def lookup_hs_code():
     """
     try:
         data = request.get_json()
-        
+
         if not data or 'query' not in data:
             return jsonify({
                 'error': 'Missing required field: query',
                 'example': {'query': 'Apple iPhone smartphone'}
             }), 400
-        
+
         query = data['query'].strip()
         if not query:
             return jsonify({
                 'error': 'Query cannot be empty'
             }), 400
-        
+
         # Perform HS code lookup
         with CaptchaResistantScraper() as scraper:
             result = scraper.scrape_with_retry(query)
-        
+
         return jsonify(result.to_dict())
-        
+
     except Exception as e:
         logging.error(f"Error in HS code lookup: {str(e)}")
         return jsonify({
@@ -362,43 +396,71 @@ def batch_lookup_hs_code():
     """
     try:
         data = request.get_json()
-        
+
         if not data or 'queries' not in data:
             return jsonify({
                 'error': 'Missing required field: queries',
                 'example': {'queries': ['Apple iPhone', 'Samsung Galaxy']}
             }), 400
-        
+
         queries = data['queries']
         if not isinstance(queries, list) or len(queries) == 0:
             return jsonify({
                 'error': 'Queries must be a non-empty list'
             }), 400
-        
+
         if len(queries) > 10:  # Limit batch size
             return jsonify({
                 'error': 'Maximum 10 queries allowed per batch'
             }), 400
-        
-        results = []
-        
-        with CaptchaResistantScraper() as scraper:
-            for query in queries:
-                if query and query.strip():
-                    result = scraper.scrape_with_retry(query.strip())
-                    results.append(result.to_dict())
-                else:
-                    results.append({
-                        'query': query,
-                        'success': False,
-                        'error_message': 'Empty query'
-                    })
-        
+
+        results: List[Any] = [None] * len(queries)
+
+        if BATCH_MAX_WORKERS <= 1:
+            with CaptchaResistantScraper() as scraper:
+                for idx, query in enumerate(queries):
+                    trimmed = query.strip() if isinstance(query, str) else ''
+                    if trimmed:
+                        result = scraper.scrape_with_retry(trimmed)
+                        results[idx] = result.to_dict()
+                    else:
+                        results[idx] = {
+                            'query': query,
+                            'success': False,
+                            'error_message': 'Empty query'
+                        }
+        else:
+            futures: Dict[Any, Any] = {}
+            with ThreadPoolExecutor(max_workers=BATCH_MAX_WORKERS) as executor:
+                for idx, query in enumerate(queries):
+                    trimmed = query.strip() if isinstance(query, str) else ''
+                    if not trimmed:
+                        results[idx] = {
+                            'query': query,
+                            'success': False,
+                            'error_message': 'Empty query'
+                        }
+                        continue
+                    futures[executor.submit(_lookup_single_query, trimmed)] = (idx, trimmed)
+
+                for future in as_completed(futures):
+                    idx, trimmed_query = futures[future]
+                    try:
+                        result = future.result()
+                        results[idx] = result.to_dict()
+                    except Exception as exc:  # noqa: BLE001
+                        logging.error('Batch lookup failed for query "%s": %s', trimmed_query, exc)
+                        results[idx] = {
+                            'query': trimmed_query,
+                            'success': False,
+                            'error_message': str(exc)
+                        }
+
         return jsonify({
             'results': results,
             'total_processed': len(results)
         })
-        
+
     except Exception as e:
         logging.error(f"Error in batch HS code lookup: {str(e)}")
         return jsonify({

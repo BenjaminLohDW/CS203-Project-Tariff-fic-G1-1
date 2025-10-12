@@ -1,0 +1,337 @@
+ 
+ 
+Chapter 2 
+ 
+Meat and edible meat offal 
+ 
+Note. 
+1.- This Chapter does not cover : 
+ 
+(a) Products of the kinds described in headings 02.01 to 02.08 or 02.10, unfit or unsuitable for human 
+consumption; 
+ 
+(b)  Edible, non-living insects (heading 04.10); 
+ 
+(c) Guts, bladders or stomachs of animals (heading 05.04) or animal blood (heading 05.11 or 30.02); or 
+ 
+(d) Animal fat, other than products of heading 02.09 (Chapter 15). 
+_________________ 
+Heading 
+H.S.  
+Code 
+ 
+02.01 
+ 
+Meat of bovine animals, fresh or chilled. 
+ 
+0201.10 
+- Carcasses and half-carcasses 
+ 
+0201.20 
+- Other cuts with bone in 
+ 
+0201.30 
+- Boneless 
+ 
+ 
+ 
+02.02 
+ 
+Meat of bovine animals, frozen. 
+ 
+0202.10 
+- Carcasses and half-carcasses 
+ 
+0202.20 
+- Other cuts with bone in 
+ 
+0202.30 
+- Boneless 
+ 
+ 
+ 
+02.03 
+ 
+Meat of swine, fresh, chilled or frozen. 
+ 
+ 
+- Fresh or chilled : 
+ 
+0203.11 
+-- Carcasses and half-carcasses 
+ 
+0203.12 
+-- Hams, shoulders and cuts thereof, with bone in 
+ 
+0203.19 
+-- Other 
+ 
+ 
+- Frozen : 
+ 
+0203.21 
+-- Carcasses and half-carcasses 
+ 
+0203.22 
+-- Hams, shoulders and cuts thereof, with bone in 
+ 
+0203.29 
+-- Other 
+ 
+ 
+ 
+02.04 
+ 
+Meat of sheep or goats, fresh, chilled or frozen. 
+ 
+0204.10 
+- Carcasses and half-carcasses of lamb, fresh or chilled 
+ 
+ 
+- Other meat of sheep, fresh or chilled : 
+ 
+0204.21 
+-- Carcasses and half-carcasses 
+ 
+0204.22 
+-- Other cuts with bone in 
+ 
+0204.23 
+-- Boneless 
+ 
+0204.30 
+- Carcasses and half-carcasses of lamb, frozen 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+ 
+ 
+- Other meat of sheep, frozen : 
+ 
+0204.41 
+-- Carcasses and half-carcasses 
+ 
+0204.42 
+-- Other cuts with bone in 
+ 
+0204.43 
+-- Boneless 
+ 
+0204.50 
+- Meat of goats 
+ 
+ 
+ 
+02.05 
+0205.00 
+Meat of horses, asses, mules or hinnies, fresh, chilled or frozen. 
+ 
+ 
+ 
+02.06 
+ 
+Edible offal of bovine animals, swine, sheep, goats, horses, asses, 
+mules or hinnies, fresh, chilled or frozen. 
+ 
+0206.10 
+- Of bovine animals, fresh or chilled 
+ 
+ 
+- Of bovine animals, frozen : 
+ 
+0206.21 
+-- Tongues 
+ 
+0206.22 
+-- Livers 
+ 
+0206.29 
+-- Other 
+ 
+0206.30 
+- Of swine, fresh or chilled 
+ 
+ 
+- Of swine, frozen : 
+ 
+0206.41 
+-- Livers 
+ 
+0206.49 
+-- Other 
+ 
+0206.80 
+- Other, fresh or chilled 
+ 
+0206.90 
+- Other, frozen 
+ 
+ 
+ 
+02.07 
+ 
+Meat and edible offal, of the poultry of heading 01.05, fresh, 
+chilled or frozen. 
+ 
+ 
+- Of fowls of the species Gallus domesticus : 
+ 
+0207.11 
+-- Not cut in pieces, fresh or chilled 
+ 
+0207.12 
+-- Not cut in pieces, frozen 
+ 
+0207.13 
+-- Cuts and offal, fresh or chilled 
+ 
+0207.14 
+-- Cuts and offal, frozen 
+ 
+ 
+- Of turkeys : 
+ 
+0207.24 
+-- Not cut in pieces, fresh or chilled 
+ 
+0207.25 
+-- Not cut in pieces, frozen 
+ 
+0207.26 
+-- Cuts and offal, fresh or chilled 
+ 
+0207.27 
+-- Cuts and offal, frozen 
+ 
+ 
+- Of ducks : 
+ 
+0207.41 
+-- Not cut in pieces, fresh or chilled 
+ 
+0207.42 
+-- Not cut in pieces, frozen 
+ 
+0207.43 
+-- Fatty livers, fresh or chilled 
+ 
+0207.44 
+-- Other, fresh or chilled 
+ 
+0207.45 
+-- Other, frozen 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+ 
+ 
+- Of geese : 
+ 
+0207.51 
+-- Not cut in pieces, fresh or chilled 
+ 
+0207.52 
+-- Not cut in pieces, frozen 
+ 
+0207.53 
+-- Fatty livers, fresh or chilled 
+ 
+0207.54 
+-- Other, fresh or chilled 
+ 
+0207.55 
+-- Other, frozen 
+ 
+0207.60 
+- Of guinea fowls 
+ 
+ 
+ 
+02.08 
+ 
+Other meat and edible meat offal, fresh, chilled or frozen. 
+ 
+0208.10 
+- Of rabbits or hares 
+ 
+0208.30 
+- Of primates 
+ 
+0208.40 
+- Of whales, dolphins and porpoises (mammals of the order 
+Cetacea); of manatees and dugongs (mammals of the order 
+Sirenia); of seals, sea lions and walruses (mammals of the 
+suborder Pinnipedia) 
+ 
+0208.50 
+- Of reptiles (including snakes and turtles) 
+ 
+0208.60 
+- Of camels and other camelids (Camelidae) 
+ 
+0208.90 
+- Other 
+ 
+ 
+ 
+02.09 
+ 
+Pig fat, free of lean meat, and poultry fat, not rendered or 
+otherwise extracted, fresh, chilled, frozen, salted, in brine, dried 
+or smoked. 
+ 
+0209.10 
+- Of pigs 
+ 
+0209.90 
+- Other 
+ 
+ 
+ 
+02.10 
+ 
+Meat and edible meat offal, salted, in brine, dried or smoked; 
+edible flours and meals of meat or meat offal. 
+ 
+ 
+- Meat of swine : 
+ 
+0210.11 
+-- Hams, shoulders and cuts thereof, with bone in 
+ 
+0210.12 
+-- Bellies (streaky) and cuts thereof 
+ 
+0210.19 
+-- Other 
+ 
+0210.20 
+- Meat of bovine animals 
+ 
+ 
+- Other, including edible flours and meals of meat or meat offal : 
+ 
+0210.91 
+-- Of primates 
+ 
+0210.92 
+-- Of whales, dolphins and porpoises (mammals of the order 
+Cetacea); of manatees and dugongs (mammals of the order 
+Sirenia); of seals, sea lions and walruses (mammals of the 
+suborder Pinnipedia) 
+ 
+0210.93 
+-- Of reptiles (including snakes and turtles) 
+ 
+0210.99 
+-- Other 
+_________________ 
+ 

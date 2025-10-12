@@ -1,0 +1,435 @@
+ 
+ 
+Chapter 74 
+ 
+Copper and articles thereof 
+ 
+Note. 
+1.- In this Chapter the following expressions have the meanings hereby assigned to them : 
+ 
+(a) Refined copper 
+ 
+ 
+Metal containing at least 99.85 % by weight of copper; or 
+  
+Metal containing at least 97.5 % by weight of copper, provided that the content by weight of any 
+other element does not exceed the limit specified in the following table : 
+ 
+ 
+TABLE - Other elements 
+Element 
+Limiting content % by weight 
+ 
+Ag   
+   Silver 
+As   
+   Arsenic 
+Cd   
+   Cadmium 
+Cr   
+   Chromium 
+Mg  
+   Magnesium 
+Pb   
+   Lead 
+S    
+   Sulphur 
+Sn   
+   Tin 
+Te   
+   Tellurium 
+Zn   
+   Zinc 
+Zr   
+   Zirconium 
+Other elements*, each 
+ 
+  0.25 
+0.5 
+1.3 
+1.4 
+0.8 
+1.5 
+0.7 
+0.8 
+0.8 
+                              1 
+0.3 
+0.3 
+ 
+  
+* Other elements are, for example, Al, Be, Co, Fe, Mn, Ni, Si. 
+ 
+(b) Copper alloys 
+ 
+ 
+Metallic substances other than unrefined copper in which copper predominates by weight over each 
+of the other elements, provided that : 
+ 
+ 
+(i)  the content by weight of at least one of the other elements is greater than the limit specified in 
+the foregoing table; or 
+ 
+ 
+(ii)  the total content by weight of such other elements exceeds 2.5 %. 
+ 
+(c) Master alloys 
+ 
+ 
+Alloys containing with other elements more than 10 % by weight of copper, not usefully malleable 
+and commonly used as an additive in the manufacture of other alloys or as de-oxidants, de-
+sulphurising agents or for similar uses in the metallurgy of non-ferrous metals. However, copper 
+phosphide (phosphor copper) containing more than 15 % by weight of phosphorus falls in heading 
+28.53. 
+Subheading Note. 
+1.- In this Chapter the following expressions have the meanings hereby assigned to them : 
+ 
+(a) Copper-zinc base alloys (brasses) 
+ 
+ 
+Alloys of copper and zinc, with or without other elements.  When other elements are present :  
+ 
+ 
+- 
+zinc predominates by weight over each of such other elements; 
+ 
+ 
+- 
+any nickel content by weight is less than 5 % (see copper-nickel-zinc alloys (nickel silvers)); and 
+
+ 
+ 
+ 
+ 
+- any tin content by weight is less than 3 % (see copper-tin alloys (bronzes)). 
+ 
+(b) Copper-tin base alloys (bronzes) 
+ 
+ 
+Alloys of copper and tin, with or without other elements.  When other elements are present, tin 
+predominates by weight over each of such other elements, except that when the tin content is 3 % 
+or more the zinc content by weight may exceed that of tin but must be less than 10 %. 
+ 
+(c) Copper-nickel-zinc base alloys (nickel silvers) 
+ 
+ 
+Alloys of copper, nickel and zinc, with or without other elements.  The nickel content is 5 % or more 
+by weight (see copper-zinc alloys (brasses)). 
+ 
+(d) Copper-nickel base alloys 
+ 
+ 
+Alloys of copper and nickel, with or without other elements but in any case containing by weight not 
+more than 1 % of zinc.  When other elements are present, nickel predominates by weight over each 
+of such other elements. 
+_________________ 
+Heading 
+H.S.  
+Code 
+ 
+74.01 
+7401.00 
+Copper mattes; cement copper (precipitated copper). 
+ 
+ 
+ 
+74.02 
+7402.00 
+Unrefined copper; copper anodes for electrolytic refining. 
+ 
+ 
+ 
+74.03 
+ 
+Refined copper and copper alloys, unwrought. 
+ 
+ 
+- Refined copper : 
+ 
+7403.11 
+-- Cathodes and sections of cathodes 
+ 
+7403.12 
+-- Wire-bars 
+ 
+7403.13 
+-- Billets 
+ 
+7403.19 
+-- Other 
+ 
+ 
+- Copper alloys : 
+ 
+7403.21 
+-- Copper-zinc base alloys (brass) 
+ 
+7403.22 
+-- Copper-tin base alloys (bronze) 
+ 
+7403.29 
+-- Other copper alloys (other than master alloys of heading 74.05) 
+ 
+ 
+ 
+74.04 
+7404.00 
+Copper waste and scrap. 
+ 
+ 
+ 
+74.05 
+7405.00 
+Master alloys of copper. 
+ 
+ 
+ 
+74.06 
+ 
+Copper powders and flakes. 
+ 
+7406.10 
+- Powders of non-lamellar structure 
+ 
+7406.20 
+- Powders of lamellar structure; flakes 
+ 
+ 
+ 
+74.07 
+ 
+Copper bars, rods and profiles. 
+ 
+7407.10 
+- Of refined copper 
+ 
+ 
+- Of copper alloys : 
+ 
+7407.21 
+-- Of copper-zinc base alloys (brass) 
+ 
+7407.29 
+-- Other 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+74.08 
+ 
+Copper wire. 
+ 
+ 
+- Of refined copper : 
+ 
+7408.11 
+-- Of which the maximum cross-sectional dimension exceeds 6 mm 
+ 
+7408.19 
+-- Other 
+ 
+ 
+- Of copper alloys : 
+ 
+7408.21 
+-- Of copper-zinc base alloys (brass) 
+ 
+7408.22 
+-- Of copper-nickel base alloys (cupro-nickel) or copper-nickel-zinc 
+base alloys (nickel silver) 
+ 
+7408.29 
+-- Other 
+ 
+ 
+ 
+74.09 
+ 
+Copper plates, sheets and strip, of a thickness exceeding 0.15 mm. 
+ 
+ 
+- Of refined copper : 
+ 
+7409.11 
+-- In coils 
+ 
+7409.19 
+-- Other 
+ 
+ 
+- Of copper-zinc base alloys (brass) : 
+ 
+7409.21 
+-- In coils 
+ 
+7409.29 
+-- Other 
+ 
+ 
+- Of copper-tin base alloys (bronze) : 
+ 
+7409.31 
+-- In coils 
+ 
+7409.39 
+-- Other 
+ 
+7409.40 
+- Of copper-nickel base alloys (cupro-nickel) or copper-nickel-zinc 
+base alloys (nickel silver) 
+ 
+7409.90 
+- Of other copper alloys 
+ 
+ 
+ 
+74.10 
+ 
+Copper foil (whether or not printed or backed with paper, 
+paperboard, plastics or similar backing materials) of a thickness 
+(excluding any backing) not exceeding 0.15 mm. 
+ 
+ 
+- Not backed : 
+ 
+7410.11 
+-- Of refined copper 
+ 
+7410.12 
+-- Of copper alloys 
+ 
+ 
+- Backed : 
+ 
+7410.21 
+-- Of refined copper 
+ 
+7410.22 
+-- Of copper alloys 
+ 
+ 
+ 
+74.11 
+ 
+Copper tubes and pipes. 
+ 
+7411.10 
+- Of refined copper 
+ 
+ 
+- Of copper alloys : 
+ 
+7411.21 
+-- Of copper-zinc base alloys (brass) 
+ 
+7411.22 
+-- Of copper-nickel base alloys (cupro-nickel) or copper-nickel-zinc 
+base alloys (nickel silver) 
+ 
+7411.29 
+-- Other 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+74.12 
+ 
+Copper tube or pipe fittings (for example, couplings, elbows, 
+sleeves). 
+ 
+7412.10 
+- Of refined copper 
+ 
+7412.20 
+- Of copper alloys 
+ 
+ 
+ 
+74.13 
+7413.00 
+Stranded wire, cables, plaited bands and the like, of copper, not 
+electrically insulated. 
+ 
+ 
+ 
+[74.14] 
+ 
+ 
+ 
+ 
+ 
+74.15 
+ 
+Nails, tacks, drawing pins, staples (other than those of 
+heading 83.05) and similar articles, of copper or of iron or steel 
+with heads of copper; screws, bolts, nuts, screw hooks, rivets, 
+cotters, cotter-pins, washers (including spring washers) and 
+similar articles, of copper. 
+ 
+7415.10 
+- Nails and tacks, drawing pins, staples and similar articles 
+ 
+ 
+- Other articles, not threaded : 
+ 
+7415.21 
+-- Washers (including spring washers) 
+ 
+7415.29 
+-- Other 
+ 
+ 
+- Other threaded articles : 
+ 
+7415.33 
+-- Screws; bolts and nuts 
+ 
+7415.39 
+-- Other 
+ 
+ 
+ 
+[74.16] 
+ 
+ 
+ 
+ 
+ 
+[74.17] 
+ 
+ 
+ 
+ 
+ 
+74.18 
+ 
+Table, kitchen or other household articles and parts thereof, of 
+copper; pot scourers and scouring or polishing pads, gloves and 
+the like, of copper; sanitary ware and parts thereof, of copper. 
+ 
+7418.10 
+- Table, kitchen or other household articles and parts thereof; pot 
+scourers and scouring or polishing pads, gloves and the like  
+ 
+7418.20 
+- Sanitary ware and parts thereof 
+ 
+ 
+ 
+74.19 
+ 
+Other articles of copper. 
+ 
+7419.20 
+- Cast, moulded, stamped or forged, but not further worked 
+ 
+7419.80 
+- Other 
+_________________ 
+ 

@@ -1,0 +1,332 @@
+ 
+ 
+Chapter 32 
+ 
+Tanning or dyeing extracts; tannins and their derivatives; dyes, 
+pigments and other colouring matter; 
+paints and varnishes; putty and other mastics; inks 
+ 
+Notes. 
+1.- This Chapter does not cover : 
+ 
+(a) Separate chemically defined elements or compounds (except those of heading 32.03 or 32.04, 
+inorganic products of a kind used as luminophores (heading 32.06), glass obtained from fused quartz 
+or other fused silica in the forms provided for in heading 32.07, and also dyes and other colouring 
+matter put up in forms or packings for retail sale, of heading 32.12); 
+ 
+(b) Tannates or other tannin derivatives of products of headings 29.36 to 29.39, 29.41 or 35.01 to 35.04; 
+or 
+ 
+(c) Mastics of asphalt or other bituminous mastics (heading 27.15). 
+2.- Heading 32.04 includes mixtures of stabilised diazonium salts and couplers for the production of azo 
+dyes. 
+3.- Headings 32.03, 32.04, 32.05 and 32.06 apply also to preparations based on colouring matter (including, 
+in the case of heading 32.06, colouring pigments of heading 25.30 or Chapter 28, metal flakes and metal 
+powders), of a kind used for colouring any material or used as ingredients in the manufacture of 
+colouring preparations.  The headings do not apply, however, to pigments dispersed in non-aqueous 
+media, in liquid or paste form, of a kind used in the manufacture of paints, including enamels 
+(heading 32.12), or to other preparations of heading 32.07, 32.08, 32.09, 32.10, 32.12, 32.13 or 32.15. 
+4.- Heading 32.08 includes solutions (other than collodions) consisting of any of the products specified in 
+headings 39.01 to 39.13 in volatile organic solvents when the weight of the solvent exceeds 50 % of the 
+weight of the solution. 
+5.- The expression “colouring matter” in this Chapter does not include products of a kind used as extenders 
+in oil paints, whether or not they are also suitable for colouring distempers. 
+6.- The expression “stamping foils” in heading 32.12 applies only to thin sheets of a kind used for printing, 
+for example, book covers or hat bands, and consisting of : 
+ 
+(a) Metallic powder (including powder of precious metal) or pigment, agglomerated with glue, gelatin 
+or other binder; or  
+ 
+(b) Metal (including precious metal) or pigment, deposited on a supporting sheet of any material. 
+_________________ 
+Heading 
+H.S.  
+Code 
+ 
+32.01 
+ 
+Tanning extracts of vegetable origin; tannins and their salts, 
+ethers, esters and other derivatives. 
+ 
+3201.10 
+- Quebracho extract 
+ 
+3201.20 
+- Wattle extract 
+ 
+3201.90 
+- Other 
+ 
+ 
+ 
+32.02 
+ 
+Synthetic organic tanning substances; inorganic tanning 
+substances; tanning preparations, whether or not containing 
+natural tanning substances; enzymatic preparations for pre-
+tanning. 
+ 
+3202.10 
+- Synthetic organic tanning substances 
+ 
+3202.90 
+- Other 
+ 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+32.03 
+3203.00 
+Colouring matter of vegetable or animal origin (including dyeing 
+extracts but excluding animal black), whether or not chemically 
+defined; preparations as specified in Note 3 to this Chapter based 
+on colouring matter of vegetable or animal origin. 
+ 
+ 
+ 
+32.04 
+ 
+Synthetic organic colouring matter, whether or not chemically 
+defined; preparations as specified in Note 3 to this Chapter based 
+on synthetic organic colouring matter; synthetic organic 
+products of a kind used as fluorescent brightening agents or as 
+luminophores, whether or not chemically defined. 
+ 
+ 
+- Synthetic organic colouring matter and preparations based thereon 
+as specified in Note 3 to this Chapter : 
+ 
+3204.11 
+-- Disperse dyes and preparations based thereon 
+ 
+3204.12 
+-- Acid dyes, whether or not premetallised, and preparations based 
+thereon; mordant dyes and preparations based thereon 
+ 
+3204.13 
+-- Basic dyes and preparations based thereon 
+ 
+3204.14 
+-- Direct dyes and preparations based thereon 
+ 
+3204.15 
+-- Vat dyes (including those usable in that state as pigments) and 
+preparations based thereon 
+ 
+3204.16 
+-- Reactive dyes and preparations based thereon 
+ 
+3204.17 
+-- Pigments and preparations based thereon 
+ 
+3204.18 
+-- Carotenoid colouring matters and preparations based thereon 
+ 
+3204.19 
+-- Other, including mixtures of colouring matter of two or more of 
+the subheadings 3204.11 to 3204.19 
+ 
+3204.20 
+- Synthetic organic products of a kind used as fluorescent brightening 
+agents 
+ 
+3204.90 
+- Other 
+ 
+ 
+ 
+32.05 
+3205.00 
+Colour lakes; preparations as specified in Note 3 to this 
+Chapter based on colour lakes. 
+ 
+ 
+ 
+32.06 
+ 
+Other colouring matter; preparations as specified in Note 3 to 
+this Chapter, other than those of heading 32.03, 32.04 or 32.05; 
+inorganic products of a kind used as luminophores, whether or 
+not chemically defined. 
+ 
+ 
+- Pigments and preparations based on titanium dioxide : 
+ 
+3206.11 
+-- Containing 80 % or more by weight of titanium dioxide calculated 
+on the dry matter 
+ 
+3206.19 
+-- Other 
+ 
+3206.20 
+- Pigments and preparations based on chromium compounds 
+ 
+ 
+- Other colouring matter and other preparations : 
+ 
+3206.41 
+-- Ultramarine and preparations based thereon 
+ 
+3206.42 
+-- Lithopone and other pigments and preparations based on zinc 
+sulphide 
+ 
+3206.49 
+-- Other 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+ 
+3206.50 
+- Inorganic products of a kind used as luminophores 
+ 
+ 
+ 
+32.07 
+ 
+Prepared pigments, prepared opacifiers and prepared colours, 
+vitrifiable enamels and glazes, engobes (slips), liquid lustres and 
+similar preparations, of a kind used in the ceramic, enamelling or 
+glass industry; glass frit and other glass, in the form of powder, 
+granules or flakes. 
+ 
+3207.10 
+- Prepared pigments, prepared opacifiers, prepared colours and 
+similar preparations 
+ 
+3207.20 
+- Vitrifiable enamels and glazes, engobes (slips) and similar 
+preparations 
+ 
+3207.30 
+- Liquid lustres and similar preparations 
+ 
+3207.40 
+- Glass frit and other glass, in the form of powder, granules or flakes 
+ 
+ 
+ 
+32.08 
+ 
+Paints and varnishes (including enamels and lacquers) based on 
+synthetic polymers or chemically modified natural polymers, 
+dispersed or dissolved in a non-aqueous medium; solutions as 
+defined in Note 4 to this Chapter. 
+ 
+3208.10 
+- Based on polyesters 
+ 
+3208.20 
+- Based on acrylic or vinyl polymers 
+ 
+3208.90 
+- Other 
+ 
+ 
+ 
+32.09 
+ 
+Paints and varnishes (including enamels and lacquers) based on 
+synthetic polymers or chemically modified natural polymers, 
+dispersed or dissolved in an aqueous medium. 
+ 
+3209.10 
+- Based on acrylic or vinyl polymers 
+ 
+3209.90 
+- Other 
+ 
+ 
+ 
+32.10 
+3210.00 
+Other paints and varnishes (including enamels, lacquers and 
+distempers); prepared water pigments of a kind used for 
+finishing leather. 
+ 
+ 
+ 
+32.11 
+3211.00 
+Prepared driers. 
+ 
+ 
+ 
+32.12 
+ 
+Pigments (including metallic powders and flakes) dispersed in 
+non-aqueous media, in liquid or paste form, of a kind used in the 
+manufacture of paints (including enamels); stamping foils; dyes 
+and other colouring matter put up in forms or packings for retail 
+sale. 
+ 
+3212.10 
+- Stamping foils 
+ 
+3212.90 
+- Other 
+ 
+ 
+ 
+32.13 
+ 
+Artists', students' or signboard painters' colours, modifying tints, 
+amusement colours and the like, in tablets, tubes, jars, bottles, 
+pans or in similar forms or packings. 
+ 
+3213.10 
+- Colours in sets 
+ 
+3213.90 
+- Other 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+32.14 
+ 
+Glaziers' putty, grafting putty, resin cements, caulking 
+compounds and other mastics; painters' fillings; non-refractory 
+surfacing preparations for façades, indoor walls, floors, ceilings 
+or the like. 
+ 
+3214.10 
+- Glaziers' putty, grafting putty, resin cements, caulking compounds 
+and other mastics; painters' fillings 
+ 
+3214.90 
+- Other 
+ 
+ 
+ 
+32.15 
+ 
+Printing ink, writing or drawing ink and other inks, whether or 
+not concentrated or solid. 
+ 
+ 
+- Printing ink : 
+ 
+3215.11 
+-- Black 
+ 
+3215.19 
+-- Other 
+ 
+3215.90 
+- Other 
+_________________ 
+ 
+ 

@@ -1,0 +1,2243 @@
+ 
+ 
+Chapter 29 
+ 
+Organic chemicals 
+ 
+Notes. 
+1.- Except where the context otherwise requires, the headings of this Chapter apply only to : 
+ 
+(a) Separate chemically defined organic compounds, whether or not containing impurities; 
+ 
+(b) Mixtures of two or more isomers of the same organic compound (whether or not containing 
+impurities), except mixtures of acyclic hydrocarbon isomers (other than stereoisomers), whether or 
+not saturated (Chapter 27);  
+ 
+(c) The products of headings 29.36 to 29.39 or the sugar ethers, sugar acetals and sugar esters, and their 
+salts, of heading 29.40, or the products of heading 29.41, whether or not chemically defined; 
+ 
+(d) The products mentioned in (a), (b) or (c) above dissolved in water; 
+ 
+(e) The products mentioned in (a), (b) or (c) above dissolved in other solvents provided that the solution 
+constitutes a normal and necessary method of putting up these products adopted solely for reasons of 
+safety or for transport and that the solvent does not render the product particularly suitable for 
+specific use rather than for general use;  
+ 
+(f) The products mentioned in (a), (b), (c), (d) or (e) above with an added stabiliser (including an anti-
+caking agent) necessary for their preservation or transport; 
+ 
+(g) The products mentioned in (a), (b), (c), (d), (e) or (f) above with an added anti-dusting agent or a 
+colouring or odoriferous substance or an emetic added to facilitate their identification or for safety 
+reasons, provided that the additions do not render the product particularly suitable for specific use 
+rather than for general use;  
+ 
+(h) The following products, diluted to standard strengths, for the production of azo dyes : diazonium 
+salts, couplers used for these salts and diazotisable amines and their salts. 
+2.- This Chapter does not cover : 
+ 
+(a) Goods of heading 15.04 or crude glycerol of heading 15.20; 
+ 
+(b) Ethyl alcohol (heading 22.07 or 22.08); 
+ 
+(c) Methane or propane (heading 27.11); 
+ 
+(d) The compounds of carbon mentioned in Note 2 to Chapter 28; 
+ 
+(e) Immunological products of heading 30.02; 
+ 
+(f) Urea (heading 31.02 or 31.05); 
+ 
+(g) Colouring matter of vegetable or animal origin (heading 32.03), synthetic organic colouring matter, 
+synthetic organic products of a kind used as fluorescent brightening agents or as luminophores 
+(heading 32.04) or dyes or other colouring matter put up in forms or packings for retail sale 
+(heading 32.12); 
+ 
+(h) Enzymes (heading 35.07); 
+ 
+(ij) Metaldehyde, hexamethylenetetramine or similar substances, put up in forms (for example, tablets, 
+sticks or similar forms) for use as fuels, or liquid or liquefied-gas fuels in containers of a kind used 
+for filling or refilling cigarette or similar lighters and of a capacity not exceeding 300 cm3 
+(heading 36.06); 
+ 
+(k) Products put up as charges for fire-extinguishers or put up in fire-extinguishing grenades, of 
+heading 38.13; ink removers put up in packings for retail sale, of heading 38.24; or 
+ 
+(l) Optical elements, for example, of ethylenediamine tartrate (heading 90.01). 
+3.- Goods which could be included in two or more of the headings of this Chapter are to be classified in that 
+one of those headings which occurs last in numerical order. 
+4.- In headings 29.04 to 29.06, 29.08 to 29.11 and 29.13 to 29.20, any reference to halogenated, 
+sulphonated, nitrated or nitrosated derivatives includes a reference to compound derivatives, such as 
+sulphohalogenated, nitrohalogenated, nitrosulphonated or nitrosulphohalogenated derivatives. 
+  Nitro or nitroso groups are not to be taken as “nitrogen-functions” for the purposes of heading 29.29. 
+  For the purposes of headings 29.11, 29.12, 29.14, 29.18 and 29.22, “oxygen function”, the 
+characteristic organic oxygen-containing group of those respective headings, is restricted to the 
+oxygen-functions referred to in headings 29.05 to 29.20. 
+ 
+
+ 
+ 
+5.- (A) The esters of acid-function organic compounds of sub-Chapters I to VII with organic compounds 
+of these sub-Chapters are to be classified with that compound which is classified in the 
+heading which occurs last in numerical order in these sub-Chapters. 
+ 
+(B) Esters of ethyl alcohol with acid-function organic compounds of sub-Chapters I to VII are to be 
+classified in the same heading as the corresponding acid-function compounds. 
+ 
+(C) Subject to Note 1 to Section VI and Note 2 to Chapter 28 : 
+ 
+ 
+(1) Inorganic salts of organic compounds such as acid-, phenol- or enol-function compounds or 
+organic bases, of sub-Chapters I to X or heading 29.42, are to be classified in the heading 
+appropriate to the organic compound; 
+ 
+ 
+(2) Salts formed between organic compounds of sub-Chapters I to X or heading 29.42 are to be 
+classified in the heading appropriate to the base or to the acid (including phenol- or enol-
+function compounds) from which they are formed, whichever occurs last in numerical order in 
+the Chapter; and 
+ 
+ 
+(3) Co-ordination compounds, other than products classifiable in sub-Chapter XI or heading 29.41, 
+are to be classified in the heading which occurs last in numerical order in Chapter 29, among 
+those appropriate to the fragments formed by "cleaving" of all metal bonds, other than metal-
+carbon bonds. 
+ 
+(D) Metal alcoholates are to be classified in the same heading as the corresponding alcohols except in 
+the case of ethanol (heading 29.05). 
+ 
+(E) Halides of carboxylic acids are to be classified in the same heading as the corresponding acids. 
+6.- The compounds of headings 29.30 and 29.31 are organic compounds the molecules of which contain, in 
+addition to atoms of hydrogen, oxygen or nitrogen, atoms of other non-metals or of metals (such as 
+sulphur, arsenic or lead) directly linked to carbon atoms. 
+  Heading 29.30 (organo-sulphur compounds) and heading 29.31 (other organo-inorganic compounds) do 
+not include sulphonated or halogenated derivatives (including compound derivatives) which, apart from 
+hydrogen, oxygen and nitrogen, only have directly linked to carbon the atoms of sulphur or of a halogen 
+which give them their nature of sulphonated or halogenated derivatives (or compound derivatives). 
+7.- Headings 29.32, 29.33 and 29.34 do not include epoxides with a three-membered ring, ketone peroxides, 
+cyclic polymers of aldehydes or of thioaldehydes, anhydrides of polybasic carboxylic acids, cyclic esters 
+of polyhydric alcohols or phenols with polybasic acids, or imides of polybasic acids. 
+  These provisions apply only when the ring-position hetero-atoms are those resulting solely from the 
+cyclising function or functions here listed. 
+8.- For the purposes of heading 29.37 : 
+ 
+(a) the term “hormones” includes hormone-releasing or hormone-stimulating factors, hormone 
+inhibitors and hormone antagonists (anti-hormones); 
+ 
+(b) the expression “used primarily as hormones” applies not only to hormone derivatives and 
+structural analogues used primarily for their hormonal effect, but also to those derivatives and 
+structural analogues used primarily as intermediates in the synthesis of products of this heading. 
+Subheading Notes. 
+1.- Within any one heading of this Chapter, derivatives of a chemical compound (or group of chemical 
+compounds) are to be classified in the same subheading as that compound (or group of compounds) 
+provided that they are not more specifically covered by any other subheading and that there is no 
+residual subheading named “Other” in the series of subheadings concerned. 
+2.- Note 3 to Chapter 29 does not apply to the subheadings of this Chapter. 
+_________________
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+ 
+ 
+I.- HYDROCARBONS AND THEIR HALOGENATED, 
+SULPHONATED, NITRATED OR NITROSATED 
+DERIVATIVES 
+ 
+ 
+ 
+29.01 
+ 
+Acyclic hydrocarbons. 
+ 
+2901.10 
+- Saturated 
+ 
+ 
+- Unsaturated : 
+ 
+2901.21 
+-- Ethylene 
+ 
+2901.22 
+-- Propene (propylene) 
+ 
+2901.23 
+-- Butene (butylene) and isomers thereof 
+ 
+2901.24 
+-- Buta-1,3-diene and isoprene 
+ 
+2901.29 
+-- Other 
+ 
+ 
+ 
+29.02 
+ 
+Cyclic hydrocarbons. 
+ 
+ 
+- Cyclanes, cyclenes and cycloterpenes : 
+ 
+2902.11 
+-- Cyclohexane 
+ 
+2902.19 
+-- Other 
+ 
+2902.20 
+- Benzene 
+ 
+2902.30 
+- Toluene 
+ 
+ 
+- Xylenes : 
+ 
+2902.41 
+-- o-Xylene 
+ 
+2902.42 
+-- m-Xylene 
+ 
+2902.43 
+-- p-Xylene 
+ 
+2902.44 
+-- Mixed xylene isomers 
+ 
+2902.50 
+- Styrene 
+ 
+2902.60 
+- Ethylbenzene 
+ 
+2902.70 
+- Cumene 
+ 
+2902.90 
+- Other 
+ 
+ 
+ 
+29.03 
+ 
+Halogenated derivatives of hydrocarbons. 
+ 
+ 
+- Saturated chlorinated derivatives of acyclic hydrocarbons : 
+ 
+2903.11 
+-- Chloromethane (methyl chloride) and chloroethane (ethyl 
+chloride) 
+ 
+2903.12 
+-- Dichloromethane (methylene chloride) 
+ 
+2903.13 
+-- Chloroform (trichloromethane) 
+ 
+2903.14 
+-- Carbon tetrachloride 
+ 
+2903.15 
+-- Ethylene dichloride (ISO) (1,2-dichloroethane) 
+ 
+2903.19 
+-- Other 
+ 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+ 
+ 
+- Unsaturated chlorinated derivatives of acyclic hydrocarbons : 
+ 
+2903.21 
+-- Vinyl chloride (chloroethylene) 
+ 
+2903.22 
+-- Trichloroethylene 
+ 
+2903.23 
+-- Tetrachloroethylene (perchloroethylene) 
+ 
+2903.29 
+-- Other 
+ 
+ 
+- Saturated fluorinated derivatives of acyclic hydrocarbons : 
+ 
+2903.41 
+-- Trifluoromethane (HFC-23) 
+ 
+2903.42 
+-- Difluoromethane (HFC-32) 
+ 
+2903.43 
+-- Fluoromethane (HFC-41), 1,2-difluoroethane (HFC-152) and 
+1,1-difluoroethane (HFC-152a) 
+ 
+2903.44 
+-- Pentafluoroethane (HFC-125), 1,1,1-trifluoroethane (HFC-143a) 
+and 1,1,2-trifluoroethane (HFC-143) 
+ 
+2903.45 
+-- 1,1,1,2-Tetrafluoroethane (HFC-134a) and 1,1,2,2-
+tetrafluoroethane (HFC-134) 
+ 
+2903.46 
+-- 1,1,1,2,3,3,3-Heptafluoropropane 
+(HFC-227ea), 
+1,1,1,2,2,3-
+hexafluoropropane (HFC-236cb), 1,1,1,2,3,3-hexafluoropropane 
+(HFC-236ea) and 1,1,1,3,3,3-hexafluoropropane (HFC-236fa) 
+ 
+2903.47 
+-- 1,1,1,3,3-Pentafluoropropane 
+(HFC-245fa) 
+and 
+1,1,2,2,3-
+pentafluoropropane  (HFC-245ca) 
+ 
+2903.48 
+-- 1,1,1,3,3-Pentafluorobutane (HFC-365mfc) and 
+1,1,1,2,2,3,4,5,5,5-decafluoropentane (HFC-43-10mee) 
+ 
+2903.49 
+-- Other 
+ 
+ 
+- Unsaturated fluorinated derivatives of acyclic hydrocarbons : 
+ 
+2903.51 
+-- 2,3,3,3-Tetrafluoropropene (HFO-1234yf), 1,3,3,3-
+tetrafluoropropene (HFO-1234ze) and (Z)-1,1,1,4,4,4-
+hexafluoro-2-butene (HFO-1336mzz) 
+ 
+2903.59 
+-- Other 
+ 
+ 
+- Brominated or iodinated derivatives of acyclic hydrocarbons : 
+ 
+2903.61 
+-- Methyl bromide (bromomethane) 
+ 
+2903.62 
+-- Ethylene dibromide (ISO) (1,2-dibromoethane) 
+ 
+2903.69 
+-- Other 
+ 
+ 
+- Halogenated derivatives of acyclic hydrocarbons containing two or 
+more different halogens : 
+ 
+2903.71 
+-- Chlorodifluoromethane (HCFC-22) 
+ 
+2903.72 
+-- Dichlorotrifluoroethanes (HCFC-123) 
+ 
+2903.73 
+-- Dichlorofluoroethanes (HCFC-141, 141b) 
+ 
+2903.74 
+-- Chlorodifluoroethanes (HCFC-142, 142b) 
+ 
+2903.75 
+-- Dichloropentafluoropropanes (HCFC-225, 225ca, 225cb) 
+ 
+2903.76 
+-- Bromochlorodifluoromethane (Halon-1211), 
+bromotrifluoromethane (Halon-1301) and 
+dibromotetrafluoroethanes (Halon-2402) 
+ 
+2903.77 
+-- Other, perhalogenated only with fluorine and chlorine 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+ 
+2903.78 
+-- Other perhalogenated derivatives 
+ 
+2903.79 
+-- Other 
+ 
+ 
+- Halogenated derivatives of cyclanic, cyclenic or cycloterpenic 
+hydrocarbons : 
+ 
+2903.81 
+-- 1,2,3,4,5,6-Hexachlorocyclohexane (HCH (ISO)), including 
+lindane (ISO, INN) 
+ 
+2903.82 
+-- Aldrin (ISO), chlordane (ISO) and heptachlor (ISO) 
+ 
+2903.83 
+-- Mirex (ISO) 
+ 
+2903.89 
+-- Other 
+ 
+ 
+- Halogenated derivatives of aromatic hydrocarbons : 
+ 
+2903.91 
+-- Chlorobenzene, o-dichlorobenzene and p-dichlorobenzene 
+ 
+2903.92 
+-- Hexachlorobenzene (ISO) and DDT (ISO) (clofenotane (INN), 
+1,1,1-trichloro-2,2-bis(p-chlorophenyl)ethane) 
+ 
+2903.93 
+-- Pentachlorobenzene (ISO) 
+ 
+2903.94 
+-- Hexabromobiphenyls 
+ 
+2903.99 
+-- Other 
+ 
+ 
+ 
+29.04 
+ 
+Sulphonated, nitrated or nitrosated derivatives of hydrocarbons, 
+whether or not halogenated. 
+ 
+2904.10 
+- Derivatives containing only sulpho groups, their salts and ethyl 
+esters 
+ 
+2904.20 
+- Derivatives containing only nitro or only nitroso groups 
+ 
+ 
+- Perfluorooctane sulphonic acid, its salts and perfluorooctane 
+sulphonyl fluoride : 
+ 
+2904.31 
+-- Perfluorooctane sulphonic acid 
+ 
+2904.32 
+-- Ammonium perfluorooctane sulphonate 
+ 
+2904.33 
+-- Lithium perfluorooctane sulphonate 
+ 
+2904.34 
+-- Potassium perfluorooctane sulphonate 
+ 
+2904.35 
+-- Other salts of perfluorooctane sulphonic acid 
+ 
+2904.36 
+-- Perfluorooctane sulphonyl fluoride 
+ 
+ 
+- Other : 
+ 
+2904.91 
+-- Trichloronitromethane (chloropicrin) 
+ 
+2904.99 
+-- Other 
+ 
+ 
+ 
+ 
+ 
+II.- ALCOHOLS AND THEIR HALOGENATED, 
+SULPHONATED, NITRATED OR NITROSATED 
+DERIVATIVES 
+ 
+ 
+ 
+29.05 
+ 
+Acyclic alcohols and their halogenated, sulphonated, nitrated or 
+nitrosated derivatives. 
+ 
+ 
+- Saturated monohydric alcohols : 
+ 
+2905.11 
+-- Methanol (methyl alcohol) 
+ 
+2905.12 
+-- Propan-1-ol (propyl alcohol) and propan-2-ol (isopropyl alcohol) 
+ 
+2905.13 
+-- Butan-1-ol (n-butyl alcohol) 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+ 
+2905.14 
+-- Other butanols 
+ 
+2905.16 
+-- Octanol (octyl alcohol) and isomers thereof 
+ 
+2905.17 
+-- Dodecan-1-ol (lauryl alcohol), hexadecan-1-ol (cetyl alcohol) and 
+octadecan-1-ol (stearyl alcohol) 
+ 
+2905.19 
+-- Other 
+ 
+ 
+- Unsaturated monohydric alcohols : 
+ 
+2905.22 
+-- Acyclic terpene alcohols 
+ 
+2905.29 
+-- Other 
+ 
+ 
+- Diols : 
+ 
+2905.31 
+-- Ethylene glycol (ethanediol) 
+ 
+2905.32 
+-- Propylene glycol (propane-1,2-diol) 
+ 
+2905.39 
+-- Other 
+ 
+ 
+- Other polyhydric alcohols : 
+ 
+2905.41 
+-- 2-Ethyl-2-(hydroxymethyl)propane-1,3-diol (trimethylolpropane) 
+ 
+2905.42 
+-- Pentaerythritol 
+ 
+2905.43 
+-- Mannitol 
+ 
+2905.44 
+-- D-glucitol (sorbitol) 
+ 
+2905.45 
+-- Glycerol 
+ 
+2905.49 
+-- Other 
+ 
+ 
+- Halogenated, sulphonated, nitrated or nitrosated derivatives of 
+acyclic alcohols : 
+ 
+2905.51 
+-- Ethchlorvynol (INN) 
+ 
+2905.59 
+-- Other 
+ 
+ 
+ 
+29.06 
+ 
+Cyclic alcohols and their halogenated, sulphonated, nitrated or 
+nitrosated derivatives. 
+ 
+ 
+- Cyclanic, cyclenic or cycloterpenic : 
+ 
+2906.11 
+-- Menthol 
+ 
+2906.12 
+-- Cyclohexanol, methylcyclohexanols and dimethylcyclo-hexanols 
+ 
+2906.13 
+-- Sterols and inositols 
+ 
+2906.19 
+-- Other 
+ 
+ 
+- Aromatic : 
+ 
+2906.21 
+-- Benzyl alcohol 
+ 
+2906.29 
+-- Other 
+ 
+ 
+ 
+ 
+ 
+III.- PHENOLS, PHENOL-ALCOHOLS, AND THEIR 
+HALOGENATED, SULPHONATED, NITRATED OR 
+NITROSATED DERIVATIVES 
+ 
+ 
+ 
+29.07 
+ 
+Phenols; phenol-alcohols. 
+ 
+ 
+- Monophenols : 
+ 
+2907.11 
+-- Phenol (hydroxybenzene) and its salts 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+ 
+2907.12 
+-- Cresols and their salts 
+ 
+2907.13 
+-- Octylphenol, nonylphenol and their isomers; salts thereof 
+ 
+2907.15 
+-- Naphthols and their salts 
+ 
+2907.19 
+-- Other 
+ 
+ 
+- Polyphenols; phenol-alcohols : 
+ 
+2907.21 
+-- Resorcinol and its salts 
+ 
+2907.22 
+-- Hydroquinone (quinol) and its salts 
+ 
+2907.23 
+-- 4,4'-Isopropylidenediphenol (bisphenol A, diphenylolpropane) 
+and its salts 
+ 
+2907.29 
+-- Other 
+ 
+ 
+ 
+29.08 
+ 
+Halogenated, sulphonated, nitrated or nitrosated derivatives of 
+phenols or phenol-alcohols. 
+ 
+ 
+- Derivatives containing only halogen substituents and their salts : 
+ 
+2908.11 
+-- Pentachlorophenol (ISO) 
+ 
+2908.19 
+-- Other 
+ 
+ 
+- Other : 
+ 
+2908.91 
+-- Dinoseb (ISO) and its salts 
+ 
+2908.92 
+-- 4,6-Dinitro-o-cresol (DNOC (ISO)) and its salts 
+ 
+2908.99 
+-- Other 
+ 
+ 
+ 
+ 
+ 
+IV.- ETHERS, ALCOHOL PEROXIDES, ETHER PEROXIDES, 
+ACETAL AND HEMIACETAL PEROXIDES, KETONE 
+PEROXIDES, EPOXIDES WITH A THREE-MEMBERED RING, 
+ACETALS AND HEMIACETALS, AND THEIR 
+HALOGENATED, SULPHONATED, NITRATED OR 
+NITROSATED DERIVATIVES 
+ 
+ 
+ 
+29.09 
+ 
+Ethers, ether-alcohols, ether-phenols, ether-alcohol-phenols, 
+alcohol peroxides, ether peroxides, acetal and hemiacetal 
+peroxides, ketone peroxides (whether or not chemically defined), 
+and their halogenated, sulphonated, nitrated or nitrosated 
+derivatives. 
+ 
+ 
+- Acyclic ethers and their halogenated, sulphonated, nitrated or 
+nitrosated derivatives : 
+ 
+2909.11 
+-- Diethyl ether 
+ 
+2909.19 
+-- Other 
+ 
+2909.20 
+- Cyclanic, cyclenic or cycloterpenic ethers and their halogenated, 
+sulphonated, nitrated or nitrosated derivatives 
+ 
+2909.30 
+- Aromatic ethers and their halogenated, sulphonated, nitrated or 
+nitrosated derivatives 
+ 
+ 
+- Ether-alcohols and their halogenated, sulphonated, nitrated or 
+nitrosated derivatives : 
+ 
+2909.41 
+-- 2,2'-Oxydiethanol (diethylene glycol, digol) 
+ 
+2909.43 
+-- Monobutyl ethers of ethylene glycol or of diethylene glycol 
+ 
+2909.44 
+-- Other monoalkylethers of ethylene glycol or of diethylene glycol 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+ 
+2909.49 
+-- Other 
+ 
+2909.50 
+- Ether-phenols, 
+ether-alcohol-phenols 
+and 
+their 
+halogenated, 
+sulphonated, nitrated or nitrosated derivatives 
+ 
+2909.60 
+- Alcohol peroxides, ether peroxides, acetal and hemiacetal 
+peroxides, ketone peroxides and their halogenated, sulphonated, 
+nitrated or nitrosated derivatives 
+ 
+ 
+ 
+29.10 
+ 
+Epoxides, epoxyalcohols, epoxyphenols and epoxyethers, with a 
+three-membered ring, and their halogenated, sulphonated, 
+nitrated or nitrosated derivatives. 
+ 
+2910.10 
+- Oxirane (ethylene oxide) 
+ 
+2910.20 
+- Methyloxirane (propylene oxide) 
+ 
+2910.30 
+- 1-Chloro-2,3-epoxypropane (epichlorohydrin) 
+ 
+2910.40 
+- Dieldrin (ISO, INN) 
+ 
+2910.50 
+- Endrin (ISO) 
+ 
+2910.90 
+- Other 
+ 
+ 
+ 
+29.11 
+2911.00 
+Acetals and hemiacetals, whether or not with other oxygen 
+function, and their halogenated, sulphonated, nitrated or 
+nitrosated derivatives. 
+ 
+ 
+ 
+ 
+ 
+V.- ALDEHYDE-FUNCTION COMPOUNDS 
+ 
+ 
+ 
+29.12 
+ 
+Aldehydes, whether or not with other oxygen function; cyclic 
+polymers of aldehydes; paraformaldehyde. 
+ 
+ 
+- Acyclic aldehydes without other oxygen function : 
+ 
+2912.11 
+-- Methanal (formaldehyde) 
+ 
+2912.12 
+-- Ethanal (acetaldehyde) 
+ 
+2912.19 
+-- Other 
+ 
+ 
+- Cyclic aldehydes without other oxygen function : 
+ 
+2912.21 
+-- Benzaldehyde 
+ 
+2912.29 
+-- Other 
+ 
+ 
+- Aldehyde-alcohols, aldehyde-ethers, aldehyde-phenols and 
+aldehydes with other oxygen function : 
+ 
+2912.41 
+-- Vanillin (4-hydroxy-3-methoxybenzaldehyde) 
+ 
+2912.42 
+-- Ethylvanillin (3-ethoxy-4-hydroxybenzaldehyde) 
+ 
+2912.49 
+-- Other 
+ 
+2912.50 
+- Cyclic polymers of aldehydes 
+ 
+2912.60 
+- Paraformaldehyde 
+ 
+ 
+ 
+29.13 
+2913.00 
+Halogenated, sulphonated, nitrated or nitrosated derivatives of 
+products of heading 29.12. 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+ 
+ 
+VI.- KETONE-FUNCTION COMPOUNDS AND  
+QUINONE-FUNCTION COMPOUNDS 
+ 
+ 
+ 
+29.14 
+ 
+Ketones and quinones, whether or not with other oxygen 
+function, and their halogenated, sulphonated, nitrated or 
+nitrosated derivatives. 
+ 
+ 
+- Acyclic ketones without other oxygen function : 
+ 
+2914.11 
+-- Acetone 
+ 
+2914.12 
+-- Butanone (methyl ethyl ketone) 
+ 
+2914.13 
+-- 4-Methylpentan-2-one (methyl isobutyl ketone) 
+ 
+2914.19 
+-- Other 
+ 
+ 
+- Cyclanic, cyclenic or cycloterpenic ketones without other oxygen 
+function : 
+ 
+2914.22 
+-- Cyclohexanone and methylcyclohexanones 
+ 
+2914.23 
+-- Ionones and methylionones 
+ 
+2914.29 
+-- Other 
+ 
+ 
+- Aromatic ketones without other oxygen function : 
+ 
+2914.31 
+-- Phenylacetone (phenylpropan-2-one) 
+ 
+2914.39 
+-- Other 
+ 
+2914.40 
+- Ketone-alcohols and ketone-aldehydes 
+ 
+2914.50 
+- Ketone-phenols and ketones with other oxygen function 
+ 
+ 
+- Quinones : 
+ 
+2914.61 
+-- Anthraquinone 
+ 
+2914.62 
+-- Coenzyme Q10 (ubidecarenone (INN)) 
+ 
+2914.69 
+-- Other 
+ 
+ 
+- Halogenated, sulphonated, nitrated or nitrosated derivatives : 
+ 
+2914.71 
+-- Chlordecone (ISO) 
+ 
+2914.79 
+-- Other 
+ 
+ 
+ 
+ 
+ 
+VII.- CARBOXYLIC ACIDS AND THEIR ANHYDRIDES, 
+HALIDES, PEROXIDES AND PEROXYACIDS AND THEIR 
+HALOGENATED, SULPHONATED, NITRATED OR 
+NITROSATED DERIVATIVES 
+ 
+ 
+ 
+29.15 
+ 
+Saturated acyclic monocarboxylic acids and their anhydrides, 
+halides, 
+peroxides 
+and 
+peroxyacids; 
+their 
+halogenated, 
+sulphonated, nitrated or nitrosated derivatives. 
+ 
+ 
+- Formic acid, its salts and esters : 
+ 
+2915.11 
+-- Formic acid 
+ 
+2915.12 
+-- Salts of formic acid 
+ 
+2915.13 
+-- Esters of formic acid 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+ 
+ 
+- Acetic acid and its salts; acetic anhydride : 
+ 
+2915.21 
+-- Acetic acid 
+ 
+2915.24 
+-- Acetic anhydride 
+ 
+2915.29 
+-- Other 
+ 
+ 
+- Esters of acetic acid : 
+ 
+2915.31 
+-- Ethyl acetate 
+ 
+2915.32 
+-- Vinyl acetate 
+ 
+2915.33 
+-- n-Butyl acetate 
+ 
+2915.36 
+-- Dinoseb (ISO) acetate 
+ 
+2915.39 
+-- Other 
+ 
+2915.40 
+- Mono-, di- or trichloroacetic acids, their salts and esters 
+ 
+2915.50 
+- Propionic acid, its salts and esters 
+ 
+2915.60 
+- Butanoic acids, pentanoic acids, their salts and esters 
+ 
+2915.70 
+- Palmitic acid, stearic acid, their salts and esters 
+ 
+2915.90 
+- Other 
+ 
+ 
+ 
+29.16 
+ 
+Unsaturated acyclic monocarboxylic acids, cyclic monocarboxylic 
+acids, their anhydrides, halides, peroxides and peroxyacids; their 
+halogenated, sulphonated, nitrated or nitrosated derivatives. 
+ 
+ 
+- Unsaturated acyclic monocarboxylic acids, their anhydrides, 
+halides, peroxides, peroxyacids and their derivatives : 
+ 
+2916.11 
+-- Acrylic acid and its salts 
+ 
+2916.12 
+-- Esters of acrylic acid 
+ 
+2916.13 
+-- Methacrylic acid and its salts 
+ 
+2916.14 
+-- Esters of methacrylic acid 
+ 
+2916.15 
+-- Oleic, linoleic or linolenic acids, their salts and esters 
+ 
+2916.16 
+-- Binapacryl (ISO) 
+ 
+2916.19 
+-- Other 
+ 
+2916.20 
+- Cyclanic, cyclenic or cycloterpenic monocarboxylic acids, their 
+anhydrides, halides, peroxides, peroxyacids and their derivatives 
+ 
+ 
+- Aromatic monocarboxylic acids, their anhydrides, halides, 
+peroxides, peroxyacids and their derivatives : 
+ 
+2916.31 
+-- Benzoic acid, its salts and esters 
+ 
+2916.32 
+-- Benzoyl peroxide and benzoyl chloride 
+ 
+2916.34 
+-- Phenylacetic acid and its salts 
+ 
+2916.39 
+-- Other 
+ 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+29.17 
+ 
+Polycarboxylic acids, their anhydrides, halides, peroxides and 
+peroxyacids; their halogenated, sulphonated, nitrated or 
+nitrosated derivatives. 
+ 
+ 
+- Acyclic polycarboxylic acids, their anhydrides, halides, peroxides, 
+peroxyacids and their derivatives : 
+ 
+2917.11 
+-- Oxalic acid, its salts and esters 
+ 
+2917.12 
+-- Adipic acid, its salts and esters 
+ 
+2917.13 
+-- Azelaic acid, sebacic acid, their salts and esters 
+ 
+2917.14 
+-- Maleic anhydride 
+ 
+2917.19 
+-- Other 
+ 
+2917.20 
+- Cyclanic, cyclenic or cycloterpenic polycarboxylic acids, their 
+anhydrides, halides, peroxides, peroxyacids and their derivatives 
+ 
+ 
+- Aromatic polycarboxylic acids, their anhydrides, halides, peroxides, 
+peroxyacids and their derivatives : 
+ 
+2917.32 
+-- Dioctyl orthophthalates 
+ 
+2917.33 
+-- Dinonyl or didecyl orthophthalates 
+ 
+2917.34 
+-- Other esters of orthophthalic acid 
+ 
+2917.35 
+-- Phthalic anhydride 
+ 
+2917.36 
+-- Terephthalic acid and its salts 
+ 
+2917.37 
+-- Dimethyl terephthalate 
+ 
+2917.39 
+-- Other 
+ 
+ 
+ 
+29.18 
+ 
+Carboxylic acids with additional oxygen function and their 
+anhydrides, 
+halides, 
+peroxides 
+and 
+peroxyacids; 
+their 
+halogenated, sulphonated, nitrated or nitrosated derivatives. 
+ 
+ 
+- Carboxylic acids with alcohol function but without other oxygen 
+function, their anhydrides, halides, peroxides, peroxyacids and their 
+derivatives : 
+ 
+2918.11 
+-- Lactic acid, its salts and esters 
+ 
+2918.12 
+-- Tartaric acid 
+ 
+2918.13 
+-- Salts and esters of tartaric acid 
+ 
+2918.14 
+-- Citric acid 
+ 
+2918.15 
+-- Salts and esters of citric acid 
+ 
+2918.16 
+-- Gluconic acid, its salts and esters 
+ 
+2918.17 
+-- 2,2-Diphenyl-2-hydroxyacetic acid (benzilic acid) 
+ 
+2918.18 
+-- Chlorobenzilate (ISO) 
+ 
+2918.19 
+-- Other 
+ 
+ 
+- Carboxylic acids with phenol function but without other oxygen 
+function, their anhydrides, halides, peroxides, peroxyacids and their 
+derivatives : 
+ 
+2918.21 
+-- Salicylic acid and its salts 
+ 
+2918.22 
+-- O-Acetylsalicylic acid, its salts and esters 
+ 
+2918.23 
+-- Other esters of salicylic acid and their salts 
+ 
+2918.29 
+-- Other 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+ 
+2918.30 
+- Carboxylic acids with aldehyde or ketone function but without other 
+oxygen function, their anhydrides, halides, peroxides, peroxyacids 
+and their derivatives 
+ 
+ 
+- Other : 
+ 
+2918.91 
+-- 2,4,5-T (ISO) (2,4,5-trichlorophenoxyacetic acid), its salts and 
+esters 
+ 
+2918.99 
+-- Other 
+ 
+ 
+ 
+ 
+ 
+VIII.- ESTERS OF INORGANIC ACIDS OF NON-METALS 
+AND THEIR SALTS, AND THEIR HALOGENATED, 
+SULPHONATED, NITRATED OR NITROSATED 
+DERIVATIVES 
+ 
+ 
+ 
+29.19 
+ 
+Phosphoric esters and their salts, including lactophosphates; 
+their 
+halogenated, 
+sulphonated, 
+nitrated 
+or 
+nitrosated 
+derivatives. 
+ 
+2919.10 
+- Tris(2,3-dibromopropyl) phosphate 
+ 
+2919.90 
+- Other 
+ 
+ 
+ 
+29.20 
+ 
+Esters of other inorganic acids of non-metals (excluding esters 
+of hydrogen halides) and their salts; their halogenated, 
+sulphonated, nitrated or nitrosated derivatives. 
+ 
+ 
+- Thiophosphoric esters (phosphorothioates) and their salts; their 
+halogenated, sulphonated, nitrated or nitrosated derivatives : 
+ 
+2920.11 
+-- Parathion (ISO) and parathion-methyl (ISO) (methyl-parathion) 
+ 
+2920.19 
+-- Other 
+ 
+ 
+- Phosphite esters and their salts; their halogenated, sulphonated, 
+nitrated or nitrosated derivatives : 
+ 
+2920.21 
+-- Dimethyl phosphite 
+ 
+2920.22 
+-- Diethyl phosphite 
+ 
+2920.23 
+-- Trimethyl phosphite 
+ 
+2920.24 
+-- Triethyl phosphite 
+ 
+2920.29 
+-- Other 
+ 
+2920.30 
+- Endosulfan (ISO) 
+ 
+2920.90 
+- Other 
+ 
+ 
+ 
+ 
+ 
+IX.- NITROGEN-FUNCTION COMPOUNDS 
+ 
+ 
+ 
+29.21 
+ 
+Amine-function compounds. 
+ 
+ 
+- Acyclic monoamines and their derivatives; salts thereof : 
+ 
+2921.11 
+-- Methylamine, di- or trimethylamine and their salts 
+ 
+2921.12 
+-- 2-(N,N-Dimethylamino)ethylchloride hydrochloride 
+ 
+2921.13 
+-- 2-(N,N-Diethylamino)ethylchloride hydrochloride 
+ 
+2921.14 
+-- 2-(N,N-Diisopropylamino)ethylchloride hydrochloride 
+ 
+2921.19 
+-- Other 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+ 
+ 
+- Acyclic polyamines and their derivatives; salts thereof : 
+ 
+2921.21 
+-- Ethylenediamine and its salts 
+ 
+2921.22 
+-- Hexamethylenediamine and its salts 
+ 
+2921.29 
+-- Other 
+ 
+2921.30 
+- Cyclanic, cyclenic or cycloterpenic mono- or polyamines, and their 
+derivatives; salts thereof 
+ 
+ 
+- Aromatic monoamines and their derivatives; salts thereof :  
+ 
+2921.41 
+-- Aniline and its salts 
+ 
+2921.42 
+-- Aniline derivatives and their salts 
+ 
+2921.43 
+-- Toluidines and their derivatives; salts thereof 
+ 
+2921.44 
+-- Diphenylamine and its derivatives; salts thereof 
+ 
+2921.45 
+-- 1-Naphthylamine (alpha-naphthylamine), 2-naphthylamine (beta-
+naphthylamine) and their derivatives; salts thereof 
+ 
+2921.46 
+-- Amfetamine (INN), benzfetamine (INN), dexamfetamine (INN), 
+etilamfetamine (INN), fencamfamin (INN), lefetamine (INN), 
+levamfetamine (INN), mefenorex (INN) and phentermine 
+(INN); salts thereof 
+ 
+2921.49 
+-- Other 
+ 
+ 
+- Aromatic polyamines and their derivatives; salts thereof : 
+ 
+2921.51 
+-- o-, 
+m-, 
+p-Phenylenediamine, 
+diaminotoluenes, 
+and 
+their 
+derivatives; salts thereof 
+ 
+2921.59 
+-- Other 
+ 
+ 
+ 
+29.22 
+ 
+Oxygen-function amino-compounds. 
+ 
+ 
+- Amino-alcohols, other than those containing more than one kind of 
+oxygen function, their ethers and esters; salts thereof : 
+ 
+2922.11 
+-- Monoethanolamine and its salts 
+ 
+2922.12 
+-- Diethanolamine and its salts 
+ 
+2922.14 
+-- Dextropropoxyphene (INN) and its salts 
+ 
+2922.15 
+-- Triethanolamine 
+ 
+2922.16 
+-- Diethanolammonium perfluorooctane sulphonate 
+ 
+2922.17 
+-- Methyldiethanolamine and ethyldiethanolamine 
+ 
+2922.18 
+-- 2-(N,N-Diisopropylamino)ethanol 
+ 
+2922.19 
+-- Other 
+ 
+ 
+- Amino-naphthols and other amino-phenols, other than those 
+containing more than one kind of oxygen function, their ethers 
+and esters; salts thereof : 
+ 
+2922.21 
+-- Aminohydroxynaphthalenesulphonic acids and their salts 
+ 
+2922.29 
+-- Other 
+ 
+ 
+- Amino-aldehydes, amino-ketones and amino-quinones, other than 
+those containing more than one kind of oxygen function; salts 
+thereof : 
+ 
+2922.31 
+-- Amfepramone (INN), methadone (INN) and normethadone 
+(INN); salts thereof 
+ 
+2922.39 
+-- Other 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+ 
+ 
+- Amino-acids, other than those containing more than one kind of 
+oxygen function, and their esters; salts thereof : 
+ 
+2922.41 
+-- Lysine and its esters; salts thereof 
+ 
+2922.42 
+-- Glutamic acid and its salts 
+ 
+2922.43 
+-- Anthranilic acid and its salts 
+ 
+2922.44 
+-- Tilidine (INN) and its salts 
+ 
+2922.49 
+-- Other 
+ 
+2922.50 
+- Amino-alcohol-phenols, amino-acid-phenols and other amino-
+compounds with oxygen function 
+ 
+ 
+ 
+29.23 
+ 
+Quaternary ammonium salts and hydroxides; lecithins and 
+other phosphoaminolipids, whether or not chemically defined. 
+ 
+2923.10 
+- Choline and its salts 
+ 
+2923.20 
+- Lecithins and other phosphoaminolipids 
+ 
+2923.30 
+- Tetraethylammonium perfluorooctane sulphonate 
+ 
+2923.40 
+- Didecyldimethylammonium perfluorooctane sulphonate 
+ 
+2923.90 
+- Other 
+ 
+ 
+ 
+29.24 
+ 
+Carboxyamide-function compounds; amide-function compounds 
+of carbonic acid. 
+ 
+ 
+- Acyclic amides (including acyclic carbamates) and their 
+derivatives; salts thereof : 
+ 
+2924.11 
+-- Meprobamate (INN) 
+ 
+2924.12 
+-- Fluoroacetamide (ISO), monocrotophos (ISO) and 
+phosphamidon (ISO) 
+ 
+2924.19 
+-- Other 
+ 
+ 
+- Cyclic amides (including cyclic carbamates) and their derivatives; 
+salts thereof : 
+ 
+2924.21 
+-- Ureines and their derivatives; salts thereof 
+ 
+2924.23 
+-- 2-Acetamidobenzoic acid (N-acetylanthranilic acid) and its salts 
+ 
+2924.24 
+-- Ethinamate (INN) 
+ 
+2924.25 
+-- Alachlor (ISO) 
+ 
+2924.29 
+-- Other 
+ 
+ 
+ 
+29.25 
+ 
+Carboxyimide-function compounds (including saccharin and its 
+salts) and imine-function compounds. 
+ 
+ 
+- Imides and their derivatives; salts thereof : 
+ 
+2925.11 
+-- Saccharin and its salts 
+ 
+2925.12 
+-- Glutethimide (INN) 
+ 
+2925.19 
+-- Other 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+ 
+ 
+- Imines and their derivatives; salts thereof : 
+ 
+2925.21 
+-- Chlordimeform (ISO) 
+ 
+2925.29 
+-- Other 
+ 
+ 
+ 
+29.26 
+ 
+Nitrile-function compounds. 
+ 
+2926.10 
+- Acrylonitrile 
+ 
+2926.20 
+- 1-Cyanoguanidine (dicyandiamide) 
+ 
+2926.30 
+- Fenproporex (INN) and its salts; methadone (INN) intermediate 
+(4-cyano-2-dimethylamino-4,4-diphenylbutane) 
+ 
+2926.40 
+- alpha-Phenylacetoacetonitrile 
+ 
+2926.90 
+- Other 
+ 
+ 
+ 
+29.27 
+2927.00 
+Diazo-, azo- or azoxy-compounds. 
+ 
+ 
+ 
+29.28 
+2928.00 
+Organic derivatives of hydrazine or of hydroxylamine. 
+ 
+ 
+ 
+29.29 
+ 
+Compounds with other nitrogen function. 
+ 
+2929.10 
+- Isocyanates 
+ 
+2929.90 
+- Other 
+ 
+ 
+ 
+ 
+ 
+X.- ORGANO-INORGANIC COMPOUNDS, HETEROCYCLIC 
+COMPOUNDS, NUCLEIC ACIDS AND THEIR SALTS, AND 
+SULPHONAMIDES 
+ 
+ 
+ 
+29.30 
+ 
+Organo-sulphur compounds. 
+ 
+2930.10 
+- 2-(N,N-Dimethylamino) ethanethiol 
+ 
+2930.20 
+- Thiocarbamates and dithiocarbamates 
+ 
+2930.30 
+- Thiuram mono-, di- or tetrasulphides 
+ 
+2930.40 
+- Methionine 
+ 
+2930.60 
+- 2-(N,N-Diethylamino)ethanethiol 
+ 
+2930.70 
+- Bis(2-hydroxyethyl)sulfide (thiodiglycol (INN)) 
+ 
+2930.80 
+- Aldicarb (ISO), captafol (ISO) and methamidophos (ISO) 
+ 
+2930.90 
+- Other 
+ 
+ 
+ 
+29.31 
+ 
+Other organo-inorganic compounds. 
+ 
+2931.10 
+- Tetramethyl lead and tetraethyl lead 
+ 
+2931.20 
+- Tributyltin compounds 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+ 
+ 
+- Non-halogenated organo-phosphorous derivatives : 
+ 
+2931.41 
+-- Dimethyl methylphosphonate 
+ 
+2931.42 
+-- Dimethyl propylphosphonate 
+ 
+2931.43 
+-- Diethyl ethylphosphonate 
+ 
+2931.44 
+-- Methylphosphonic acid 
+ 
+2931.45 
+-- Salt of methylphosphonic acid and (aminoiminomethyl)urea 
+(1 : 1) 
+ 
+2931.46 
+-- 2,4,6-Tripropyl-1,3,5,2,4,6-trioxatriphosphinane 2,4,6-trioxide 
+ 
+2931.47 
+-- (5-Ethyl-2-methyl-2-oxido-1,3,2-dioxaphosphinan-5-yl) methyl 
+methyl methylphosphonate 
+ 
+2931.48 
+-- 3,9-Dimethyl-2,4,8,10-tetraoxa-3,9-diphosphaspiro[5.5] 
+undecane 3,9-dioxide 
+ 
+2931.49 
+-- Other 
+ 
+ 
+- Halogenated organo-phosphorous derivatives : 
+ 
+2931.51 
+-- Methylphosphonic dichloride 
+ 
+2931.52 
+-- Propylphosphonic dichloride 
+ 
+2931.53 
+-- O-(3-chloropropyl) O-[4-nitro-3-(trifluoromethyl)phenyl] 
+methylphosphonothionate 
+ 
+2931.54 
+-- Trichlorfon (ISO) 
+ 
+2931.59 
+-- Other 
+ 
+2931.90 
+- Other 
+ 
+ 
+ 
+29.32 
+ 
+Heterocyclic compounds with oxygen hetero-atom(s) only. 
+ 
+ 
+- Compounds containing an unfused furan ring (whether or not 
+hydrogenated) in the structure : 
+ 
+2932.11 
+-- Tetrahydrofuran 
+ 
+2932.12 
+-- 2-Furaldehyde (furfuraldehyde) 
+ 
+2932.13 
+-- Furfuryl alcohol and tetrahydrofurfuryl alcohol 
+ 
+2932.14 
+-- Sucralose 
+ 
+2932.19 
+-- Other 
+ 
+2932.20 
+- Lactones 
+ 
+ 
+- Other : 
+ 
+2932.91 
+-- Isosafrole 
+ 
+2932.92 
+-- 1-(1,3-Benzodioxol-5-yl)propan-2-one 
+ 
+2932.93 
+-- Piperonal 
+ 
+2932.94 
+-- Safrole 
+ 
+2932.95 
+-- Tetrahydrocannabinols (all isomers) 
+ 
+2932.96 
+-- Carbofuran (ISO) 
+ 
+2932.99 
+-- Other 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+29.33 
+ 
+Heterocyclic compounds with nitrogen hetero-atom(s) only. 
+ 
+ 
+- Compounds containing an unfused pyrazole ring (whether or not 
+hydrogenated) in the structure : 
+ 
+2933.11 
+-- Phenazone (antipyrin) and its derivatives 
+ 
+2933.19 
+-- Other 
+ 
+ 
+- Compounds containing an unfused imidazole ring (whether or not 
+hydrogenated) in the structure : 
+ 
+2933.21 
+-- Hydantoin and its derivatives 
+ 
+2933.29 
+-- Other 
+ 
+ 
+- Compounds containing an unfused pyridine ring (whether or not 
+hydrogenated) in the structure : 
+ 
+2933.31 
+-- Pyridine and its salts 
+ 
+2933.32 
+-- Piperidine and its salts 
+ 
+2933.33 
+-- Alfentanil (INN), anileridine (INN), bezitramide (INN), 
+bromazepam (INN), carfentanil (INN), difenoxin (INN), 
+diphenoxylate (INN), dipipanone (INN), fentanyl (INN), 
+ketobemidone (INN), methylphenidate (INN), pentazocine 
+(INN), pethidine (INN), pethidine (INN) intermediate A, 
+phencyclidine (INN) (PCP), phenoperidine (INN), pipradrol 
+(INN), piritramide (INN), propiram (INN), remifentanil (INN) 
+and trimeperidine (INN); salts thereof 
+ 
+2933.34 
+-- Other fentanyls and their derivatives 
+ 
+2933.35 
+-- 3-Quinuclidinol 
+ 
+2933.36 
+-- 4-Anilino-N-phenethylpiperidine (ANPP) 
+ 
+2933.37 
+-- N-Phenethyl-4-piperidone (NPP) 
+ 
+2933.39 
+-- Other 
+ 
+ 
+- Compounds containing in the structure a quinoline or isoquinoline 
+ring-system (whether or not hydrogenated), not further fused : 
+ 
+2933.41 
+-- Levorphanol (INN) and its salts 
+ 
+2933.49 
+-- Other 
+ 
+ 
+- Compounds containing a pyrimidine ring (whether or not 
+hydrogenated) or piperazine ring in the structure : 
+ 
+2933.52 
+-- Malonylurea (barbituric acid) and its salts  
+ 
+2933.53 
+-- Allobarbital (INN), amobarbital (INN), barbital (INN), butalbital 
+(INN), butobarbital, cyclobarbital (INN), methylphenobarbital 
+(INN), 
+pentobarbital 
+(INN), 
+phenobarbital 
+(INN), 
+secbutabarbital (INN), secobarbital (INN) and vinylbital (INN); 
+salts thereof 
+ 
+2933.54 
+-- Other derivatives of malonylurea (barbituric acid); salts thereof 
+ 
+2933.55 
+-- Loprazolam (INN), mecloqualone (INN), methaqualone (INN) 
+and zipeprol (INN); salts thereof 
+ 
+2933.59 
+-- Other 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+ 
+ 
+- Compounds containing an unfused triazine ring (whether or not 
+hydrogenated) in the structure : 
+ 
+2933.61 
+-- Melamine 
+ 
+2933.69 
+-- Other 
+ 
+ 
+- Lactams : 
+ 
+2933.71 
+-- 6-Hexanelactam (epsilon-caprolactam) 
+ 
+2933.72 
+-- Clobazam (INN) and methyprylon (INN) 
+ 
+2933.79 
+-- Other lactams 
+ 
+ 
+- Other : 
+ 
+2933.91 
+-- Alprazolam (INN), camazepam (INN), chlordiazepoxide (INN), 
+clonazepam (INN), clorazepate, delorazepam (INN), diazepam 
+(INN), estazolam (INN), ethyl loflazepate (INN), fludiazepam 
+(INN), flunitrazepam (INN), flurazepam (INN), halazepam 
+(INN), lorazepam (INN), lormetazepam (INN), mazindol (INN), 
+medazepam (INN), midazolam (INN), nimetazepam (INN), 
+nitrazepam (INN), nordazepam (INN), oxazepam (INN), 
+pinazepam (INN), prazepam (INN), pyrovalerone (INN), 
+temazepam (INN), tetrazepam (INN) and triazolam (INN); salts 
+thereof 
+ 
+2933.92 
+-- Azinphos-methyl (ISO) 
+ 
+2933.99 
+-- Other 
+ 
+ 
+ 
+29.34 
+ 
+Nucleic acids and their salts, whether or not chemically defined; 
+other heterocyclic compounds. 
+ 
+2934.10 
+- Compounds containing an unfused thiazole ring (whether or not 
+hydrogenated) in the structure 
+ 
+2934.20 
+- Compounds containing in the structure a benzothiazole ring-
+system (whether or not hydrogenated), not further fused 
+ 
+2934.30 
+- Compounds containing in the structure a phenothiazine ring-
+system (whether or not hydrogenated), not further fused 
+ 
+ 
+- Other : 
+ 
+2934.91 
+-- Aminorex (INN), brotizolam (INN), clotiazepam (INN), 
+cloxazolam (INN), dextromoramide (INN), haloxazolam (INN), 
+ketazolam (INN), mesocarb (INN), oxazolam (INN), pemoline 
+(INN), phendimetrazine (INN), phenmetrazine (INN) and 
+sufentanil (INN); salts thereof 
+ 
+2934.92 
+-- Other fentanyls and their derivatives 
+ 
+2934.99 
+-- Other  
+ 
+ 
+ 
+29.35 
+ 
+Sulphonamides. 
+ 
+2935.10 
+- N-Methylperfluorooctane sulphonamide 
+ 
+2935.20 
+- N-Ethylperfluorooctane sulphonamide 
+ 
+2935.30 
+- N-Ethyl-N-(2-hydroxyethyl) perfluorooctane sulphonamide 
+ 
+2935.40 
+- N-(2-Hydroxyethyl)-N-methylperfluorooctane sulphonamide 
+ 
+2935.50 
+- Other perfluorooctane sulphonamides 
+ 
+2935.90 
+- Other 
+
+ 
+ 
+Heading 
+H.S.   
+Code 
+ 
+ 
+ 
+XI.- PROVITAMINS, VITAMINS AND HORMONES 
+ 
+ 
+ 
+29.36 
+ 
+Provitamins and vitamins, natural or reproduced by synthesis 
+(including natural concentrates), derivatives thereof used 
+primarily as vitamins, and intermixtures of the foregoing, 
+whether or not in any solvent. 
+ 
+ 
+- Vitamins and their derivatives, unmixed : 
+ 
+2936.21 
+-- Vitamins A and their derivatives 
+ 
+2936.22 
+-- Vitamin B1 and its derivatives 
+ 
+2936.23 
+-- Vitamin B2 and its derivatives 
+ 
+2936.24 
+-- D- or DL-Pantothenic acid (Vitamin B5) and its derivatives 
+ 
+2936.25 
+-- Vitamin B6 and its derivatives 
+ 
+2936.26 
+-- Vitamin B12 and its derivatives 
+ 
+2936.27 
+-- Vitamin C and its derivatives 
+ 
+2936.28 
+-- Vitamin E and its derivatives 
+ 
+2936.29 
+-- Other vitamins and their derivatives 
+ 
+2936.90 
+- Other, including natural concentrates 
+ 
+ 
+ 
+29.37 
+ 
+Hormones, prostaglandins, thromboxanes and leukotrienes, 
+natural or reproduced by synthesis; derivatives and structural 
+analogues thereof, including chain modified polypeptides, used 
+primarily as hormones. 
+ 
+ 
+- Polypeptide hormones, protein hormones and glycoprotein 
+hormones, their derivatives and structural analogues : 
+ 
+2937.11 
+-- Somatotropin, its derivatives and structural analogues 
+ 
+2937.12 
+-- Insulin and its salts 
+ 
+2937.19 
+-- Other 
+ 
+ 
+- Steroidal hormones, their derivatives and structural analogues : 
+ 
+2937.21 
+-- Cortisone, hydrocortisone, prednisone (dehydrocortisone) and 
+prednisolone (dehydrohydrocortisone) 
+ 
+2937.22 
+-- Halogenated derivatives of corticosteroidal hormones 
+ 
+2937.23 
+-- Oestrogens and progestogens 
+ 
+2937.29 
+-- Other 
+ 
+2937.50 
+- Prostaglandins, thromboxanes and leukotrienes, their derivatives 
+and structural analogues 
+ 
+2937.90 
+- Other 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+ 
+ 
+XII.- GLYCOSIDES AND ALKALOIDS, NATURAL OR 
+REPRODUCED BY SYNTHESIS, AND THEIR SALTS, ETHERS, 
+ESTERS AND OTHER DERIVATIVES 
+ 
+ 
+ 
+29.38 
+ 
+Glycosides, natural or reproduced by synthesis, and their salts, 
+ethers, esters and other derivatives. 
+ 
+2938.10 
+- Rutoside (rutin) and its derivatives 
+ 
+2938.90 
+- Other 
+ 
+ 
+ 
+29.39 
+ 
+Alkaloids, natural or reproduced by synthesis, and their salts, 
+ethers, esters and other derivatives. 
+ 
+ 
+- Alkaloids of opium and their derivatives; salts thereof : 
+ 
+2939.11 
+-- Concentrates of poppy straw; buprenorphine (INN), codeine, 
+dihydrocodeine (INN), ethylmorphine, etorphine (INN), heroin, 
+hydrocodone 
+(INN), 
+hydromorphone 
+(INN), 
+morphine, 
+nicomorphine (INN), oxycodone (INN), oxymorphone (INN), 
+pholcodine (INN), thebacon (INN) and thebaine; salts thereof 
+ 
+2939.19 
+-- Other 
+ 
+2939.20 
+- Alkaloids of cinchona and their derivatives; salts thereof 
+ 
+2939.30 
+- Caffeine and its salts 
+ 
+ 
+- Alkaloids of ephedra and their derivatives; salts thereof : 
+ 
+2939.41 
+-- Ephedrine and its salts 
+ 
+2939.42 
+-- Pseudoephedrine (INN) and its salts 
+ 
+2939.43 
+-- Cathine (INN) and its salts 
+ 
+2939.44 
+-- Norephedrine and its salts 
+ 
+2939.45 
+-- Levometamfetamine, metamfetamine (INN), metamfetamine 
+racemate and their salts 
+ 
+2939.49 
+-- Other 
+ 
+ 
+- Theophylline and aminophylline (theophylline-ethylenediamine) 
+and their derivatives; salts thereof : 
+ 
+2939.51 
+-- Fenetylline (INN) and its salts 
+ 
+2939.59 
+-- Other 
+ 
+ 
+- Alkaloids of rye ergot and their derivatives; salts thereof : 
+ 
+2939.61 
+-- Ergometrine (INN) and its salts 
+ 
+2939.62 
+-- Ergotamine (INN) and its salts 
+ 
+2939.63 
+-- Lysergic acid and its salts 
+ 
+2939.69 
+-- Other 
+ 
+ 
+- Other, of vegetal origin : 
+ 
+2939.72 
+-- Cocaine, ecgonine; salts, esters and other derivatives thereof 
+ 
+2939.79 
+-- Other 
+ 
+2939.80 
+- Other 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+ 
+ 
+XIII.- OTHER ORGANIC COMPOUNDS 
+ 
+ 
+ 
+29.40 
+2940.00 
+Sugars, chemically pure, other than sucrose, lactose, maltose, 
+glucose and fructose; sugar ethers, sugar acetals and sugar 
+esters, and their salts, other than products of heading 29.37, 
+29.38 or 29.39. 
+ 
+ 
+ 
+29.41 
+ 
+Antibiotics. 
+ 
+2941.10 
+- Penicillins and their derivatives with a penicillanic acid structure; 
+salts thereof 
+ 
+2941.20 
+- Streptomycins and their derivatives; salts thereof 
+ 
+2941.30 
+- Tetracyclines and their derivatives; salts thereof 
+ 
+2941.40 
+- Chloramphenicol and its derivatives; salts thereof 
+ 
+2941.50 
+- Erythromycin and its derivatives; salts thereof 
+ 
+2941.90 
+- Other 
+ 
+ 
+ 
+29.42 
+2942.00 
+Other organic compounds. 
+_________________ 

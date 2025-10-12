@@ -1,0 +1,663 @@
+ 
+ 
+Chapter 52 
+ 
+Cotton 
+ 
+Subheading Note. 
+1.- For the purposes of subheadings 5209.42 and 5211.42, the expression “denim” means fabrics of yarns 
+of different colours, of 3-thread or 4-thread twill, including broken twill, warp faced, the warp yarns 
+of which are of one and the same colour and the weft yarns of which are unbleached, bleached, dyed 
+grey or coloured a lighter shade of the colour of the warp yarns. 
+_________________ 
+Heading 
+H.S.  
+Code 
+ 
+52.01 
+5201.00 
+Cotton, not carded or combed. 
+ 
+ 
+ 
+52.02 
+ 
+Cotton waste (including yarn waste and garnetted stock).  
+ 
+5202.10 
+- Yarn waste (including thread waste) 
+ 
+ 
+- Other : 
+ 
+5202.91 
+-- Garnetted stock 
+ 
+5202.99 
+-- Other 
+ 
+ 
+ 
+52.03 
+5203.00 
+Cotton, carded or combed. 
+ 
+ 
+ 
+52.04 
+ 
+Cotton sewing thread, whether or not put up for retail sale. 
+ 
+ 
+- Not put up for retail sale : 
+ 
+5204.11 
+-- Containing 85 % or more by weight of cotton 
+ 
+5204.19 
+-- Other 
+ 
+5204.20 
+- Put up for retail sale 
+ 
+ 
+ 
+52.05 
+ 
+Cotton yarn (other than sewing thread), containing 85 % or 
+more by weight of cotton, not put up for retail sale. 
+ 
+ 
+- Single yarn, of uncombed fibres : 
+ 
+5205.11 
+-- Measuring 714.29 decitex or more (not exceeding 14 metric 
+number) 
+ 
+5205.12 
+-- Measuring less than 714.29 decitex but not less than 
+232.56 decitex (exceeding 14 metric number but not exceeding 
+43 metric number) 
+ 
+5205.13 
+-- Measuring less than 232.56 decitex but not less than 
+192.31 decitex (exceeding 43 metric number but not exceeding 
+52 metric number) 
+ 
+5205.14 
+-- Measuring less than 192.31 decitex but not less than 125 decitex 
+(exceeding 52 metric number but not exceeding 80 metric 
+number) 
+ 
+5205.15 
+-- Measuring less than 125 decitex (exceeding 80 metric number) 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+ 
+ 
+- Single yarn, of combed fibres : 
+ 
+5205.21 
+-- Measuring 714.29 decitex or more (not exceeding 14 metric 
+number) 
+ 
+5205.22 
+-- Measuring less than 714.29 decitex but not less than 
+232.56 decitex (exceeding 14 metric number but not exceeding 
+43 metric number) 
+ 
+5205.23 
+-- Measuring less than 232.56 decitex but not less than 
+192.31 decitex (exceeding 43 metric number but not exceeding 
+52 metric number) 
+ 
+5205.24 
+-- Measuring less than 192.31 decitex but not less than 125 decitex 
+(exceeding 52 metric number but not exceeding 80 metric 
+number) 
+ 
+5205.26 
+-- Measuring less than 125 decitex but not less than 106.38 decitex 
+(exceeding 80 metric number but not exceeding 94 metric 
+number) 
+ 
+5205.27 
+-- Measuring less than 106.38 decitex but not less than 
+83.33 decitex (exceeding 94 metric number but not exceeding 
+120 metric number) 
+ 
+5205.28 
+-- Measuring less than 83.33 decitex (exceeding 120 metric 
+number) 
+ 
+ 
+- Multiple (folded) or cabled yarn, of uncombed fibres : 
+ 
+5205.31 
+-- Measuring per single yarn 714.29 decitex or more (not exceeding 
+14 metric number per single yarn) 
+ 
+5205.32 
+-- Measuring per single yarn less than 714.29 decitex but not less 
+than 232.56 decitex (exceeding 14 metric number but not 
+exceeding 43 metric number per single yarn) 
+ 
+5205.33 
+-- Measuring per single yarn less than 232.56 decitex but not less 
+than 192.31 decitex (exceeding 43 metric number but not 
+exceeding 52 metric number per single yarn) 
+ 
+5205.34 
+-- Measuring per single yarn less than 192.31 decitex but not less 
+than  125 decitex (exceeding 52 metric number but not exceeding 
+80 metric number per single yarn) 
+ 
+5205.35 
+-- Measuring per single yarn less than 125 decitex (exceeding 
+80 metric number per single yarn) 
+ 
+ 
+- Multiple (folded) or cabled yarn, of combed fibres : 
+ 
+5205.41 
+-- Measuring per single yarn 714.29 decitex or more (not exceeding 
+14 metric number per single yarn) 
+ 
+5205.42 
+-- Measuring per single yarn less than 714.29 decitex but not less 
+than 232.56 decitex (exceeding 14 metric number but not 
+exceeding 43 metric number per single yarn) 
+ 
+5205.43 
+-- Measuring per single yarn less than 232.56 decitex but not less 
+than 192.31 decitex (exceeding 43 metric number but not 
+exceeding 52 metric number per single yarn) 
+ 
+5205.44 
+-- Measuring per single yarn less than 192.31 decitex but not less 
+than 125 decitex (exceeding 52 metric number but not exceeding 
+80 metric number per single yarn) 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+ 
+5205.46 
+-- Measuring per single yarn less than 125 decitex but not less than 
+106.38 decitex (exceeding 80 metric number but not exceeding 
+94 metric number per single yarn) 
+ 
+5205.47 
+-- Measuring per single yarn less than 106.38 decitex but not less 
+than 83.33 decitex (exceeding 94 metric number but not 
+exceeding 120 metric number per single yarn) 
+ 
+5205.48 
+-- Measuring per single yarn less than 83.33 decitex (exceeding 
+120 metric number per single yarn) 
+ 
+ 
+ 
+52.06 
+ 
+Cotton yarn (other than sewing thread), containing less than 
+85 % by weight of cotton, not put up for retail sale. 
+ 
+ 
+- Single yarn, of uncombed fibres : 
+ 
+5206.11 
+-- Measuring 714.29 decitex or more (not exceeding 14 metric 
+number) 
+ 
+5206.12 
+-- Measuring less than 714.29 decitex but not less than 
+232.56 decitex (exceeding 14 metric number but not exceeding 
+43 metric number) 
+ 
+5206.13 
+-- Measuring less than 232.56 decitex but not less than 
+192.31 decitex (exceeding 43 metric number but not exceeding 
+52 metric number) 
+ 
+5206.14 
+-- Measuring less than 192.31 decitex but not less than 125 decitex 
+(exceeding 52 metric number but not exceeding 80 metric 
+number) 
+ 
+5206.15 
+-- Measuring less than 125 decitex (exceeding 80 metric number) 
+ 
+ 
+- Single yarn, of combed fibres : 
+ 
+5206.21 
+-- Measuring 714.29 decitex or more (not exceeding 14 metric 
+number) 
+ 
+5206.22 
+-- Measuring less than 714.29 decitex but not less than 
+232.56 decitex (exceeding 14 metric number but not exceeding 
+43 metric number) 
+ 
+5206.23 
+-- Measuring less than 232.56 decitex but not less than 
+192.31 decitex (exceeding 43 metric number but not exceeding 
+52 metric number) 
+ 
+5206.24 
+-- Measuring less than 192.31 decitex but not less than 125 decitex 
+(exceeding 52 metric number but not exceeding 80 metric 
+number) 
+ 
+5206.25 
+-- Measuring less than 125 decitex (exceeding 80 metric number) 
+ 
+ 
+- Multiple (folded) or cabled yarn, of uncombed fibres : 
+ 
+5206.31 
+-- Measuring per single yarn 714.29 decitex or more (not exceeding 
+14 metric number per single yarn)  
+ 
+5206.32 
+-- Measuring per single yarn less than 714.29 decitex but not less 
+than 232.56 decitex (exceeding 14 metric number but not 
+exceeding 43 metric number per single yarn) 
+ 
+5206.33 
+-- Measuring per single yarn less than 232.56 decitex but not less 
+than 192.31 decitex (exceeding 43 metric number but not 
+exceeding 52 metric number per single yarn) 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+ 
+5206.34 
+-- Measuring per single yarn less than 192.31 decitex but not less 
+than 125 decitex (exceeding 52 metric number but not exceeding 
+80 metric number per single yarn) 
+ 
+5206.35 
+-- Measuring per single yarn less than 125 decitex (exceeding 
+80 metric number per single yarn) 
+ 
+ 
+- Multiple (folded) or cabled yarn, of combed fibres : 
+ 
+5206.41 
+-- Measuring per single yarn 714.29 decitex or more (not exceeding 
+14 metric number per single yarn) 
+ 
+5206.42 
+-- Measuring per single yarn less than 714.29 decitex but not less 
+than 232.56 decitex (exceeding 14 metric number but not 
+exceeding 43 metric number per single yarn) 
+ 
+5206.43 
+-- Measuring per single yarn less than 232.56 decitex but not less 
+than 192.31 decitex (exceeding 43 metric number but not 
+exceeding 52 metric number per single yarn) 
+ 
+5206.44 
+-- Measuring per single yarn less than 192.31 decitex but not less 
+than 125 decitex (exceeding 52 metric number but not exceeding 
+80 metric number per single yarn) 
+ 
+5206.45 
+-- Measuring per single yarn less than 125 decitex (exceeding 
+80 metric number per single yarn) 
+ 
+ 
+ 
+52.07 
+ 
+Cotton yarn (other than sewing thread) put up for retail sale. 
+ 
+5207.10 
+- Containing 85 % or more by weight of cotton 
+ 
+5207.90 
+- Other 
+ 
+ 
+ 
+52.08 
+ 
+Woven fabrics of cotton, containing 85 % or more by weight of 
+cotton, weighing not more than 200 g/m2. 
+ 
+ 
+- Unbleached : 
+ 
+5208.11 
+-- Plain weave, weighing not more than 100 g/m2  
+ 
+5208.12 
+-- Plain weave, weighing more than 100 g/m2  
+ 
+5208.13 
+-- 3-thread or 4-thread twill, including cross twill 
+ 
+5208.19 
+-- Other fabrics 
+ 
+ 
+- Bleached : 
+ 
+5208.21 
+-- Plain weave, weighing not more than 100 g/m2  
+ 
+5208.22 
+-- Plain weave, weighing more than 100 g/m2  
+ 
+5208.23 
+-- 3-thread or 4-thread twill, including cross twill 
+ 
+5208.29 
+-- Other fabrics 
+ 
+ 
+- Dyed : 
+ 
+5208.31 
+-- Plain weave, weighing not more than 100 g/m2  
+ 
+5208.32 
+-- Plain weave, weighing more than 100 g/m2  
+ 
+5208.33 
+-- 3-thread or 4-thread twill, including cross twill 
+ 
+5208.39 
+-- Other fabrics 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+ 
+ 
+- Of yarns of different colours : 
+ 
+5208.41 
+-- Plain weave, weighing not more than 100 g/m2  
+ 
+5208.42 
+-- Plain weave, weighing more than 100 g/m2  
+ 
+5208.43 
+-- 3-thread or 4-thread twill, including cross twill 
+ 
+5208.49 
+-- Other fabrics 
+ 
+ 
+- Printed : 
+ 
+5208.51 
+-- Plain weave, weighing not more than 100 g/m2  
+ 
+5208.52 
+-- Plain weave, weighing more than 100 g/m2  
+ 
+5208.59 
+-- Other fabrics 
+ 
+ 
+ 
+52.09 
+ 
+Woven fabrics of cotton, containing 85 % or more by weight of 
+cotton, weighing more than 200 g/m2. 
+ 
+ 
+- Unbleached : 
+ 
+5209.11 
+-- Plain weave 
+ 
+5209.12 
+-- 3-thread or 4-thread twill, including cross twill 
+ 
+5209.19 
+-- Other fabrics 
+ 
+ 
+- Bleached : 
+ 
+5209.21 
+-- Plain weave 
+ 
+5209.22 
+-- 3-thread or 4-thread twill, including cross twill 
+ 
+5209.29 
+-- Other fabrics 
+ 
+ 
+- Dyed : 
+ 
+5209.31 
+-- Plain weave 
+ 
+5209.32 
+-- 3-thread or 4-thread twill, including cross twill 
+ 
+5209.39 
+-- Other fabrics 
+ 
+ 
+- Of yarns of different colours : 
+ 
+5209.41 
+-- Plain weave 
+ 
+5209.42 
+-- Denim 
+ 
+5209.43 
+-- Other fabrics of 3-thread or 4-thread twill, including cross twill 
+ 
+5209.49 
+-- Other fabrics 
+ 
+ 
+- Printed : 
+ 
+5209.51 
+-- Plain weave 
+ 
+5209.52 
+-- 3-thread or 4-thread twill, including cross twill 
+ 
+5209.59 
+-- Other fabrics 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+52.10 
+ 
+Woven fabrics of cotton, containing less than 85 % by weight of 
+cotton, mixed mainly or solely with man-made fibres, weighing 
+not more than 200 g/m2. 
+ 
+ 
+- Unbleached : 
+ 
+5210.11 
+-- Plain weave 
+ 
+5210.19 
+-- Other fabrics 
+ 
+ 
+- Bleached : 
+ 
+5210.21 
+-- Plain weave 
+ 
+5210.29 
+-- Other fabrics 
+ 
+ 
+- Dyed : 
+ 
+5210.31 
+-- Plain weave 
+ 
+5210.32 
+-- 3-thread or 4-thread twill, including cross twill 
+ 
+5210.39 
+-- Other fabrics 
+ 
+ 
+- Of yarns of different colours : 
+ 
+5210.41 
+-- Plain weave 
+ 
+5210.49 
+-- Other fabrics 
+ 
+ 
+- Printed : 
+ 
+5210.51 
+-- Plain weave 
+ 
+5210.59 
+-- Other fabrics 
+ 
+ 
+ 
+52.11 
+ 
+Woven fabrics of cotton, containing less than 85 % by weight of 
+cotton, mixed mainly or solely with man-made fibres, weighing 
+more than 200 g/m2. 
+ 
+ 
+- Unbleached : 
+ 
+5211.11 
+-- Plain weave 
+ 
+5211.12 
+-- 3-thread or 4-thread twill, including cross twill 
+ 
+5211.19 
+-- Other fabrics 
+ 
+5211.20 
+- Bleached 
+ 
+ 
+- Dyed : 
+ 
+5211.31 
+-- Plain weave 
+ 
+5211.32 
+-- 3-thread or 4-thread twill, including cross twill 
+ 
+5211.39 
+-- Other fabrics 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+ 
+ 
+- Of yarns of different colours : 
+ 
+5211.41 
+-- Plain weave 
+ 
+5211.42 
+-- Denim 
+ 
+5211.43 
+-- Other fabrics of 3-thread or 4-thread twill, including cross twill 
+ 
+5211.49 
+-- Other fabrics 
+ 
+ 
+- Printed : 
+ 
+5211.51 
+-- Plain weave 
+ 
+5211.52 
+-- 3-thread or 4-thread twill, including cross twill 
+ 
+5211.59 
+-- Other fabrics 
+ 
+ 
+ 
+52.12 
+ 
+Other woven fabrics of cotton. 
+ 
+ 
+- Weighing not more than 200 g/m2 : 
+ 
+5212.11 
+-- Unbleached 
+ 
+5212.12 
+-- Bleached 
+ 
+5212.13 
+-- Dyed 
+ 
+5212.14 
+-- Of yarns of different colours 
+ 
+5212.15 
+-- Printed 
+ 
+ 
+- Weighing more than 200 g/m2 : 
+ 
+5212.21 
+-- Unbleached 
+ 
+5212.22 
+-- Bleached 
+ 
+5212.23 
+-- Dyed 
+ 
+5212.24 
+-- Of yarns of different colours 
+ 
+5212.25 
+-- Printed 
+_________________ 
+ 
+ 

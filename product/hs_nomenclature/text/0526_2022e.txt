@@ -1,0 +1,279 @@
+ 
+ 
+Chapter 26 
+ 
+Ores, slag and ash 
+ 
+Notes. 
+1.- This Chapter does not cover : 
+ 
+(a) Slag or similar industrial waste prepared as macadam (heading 25.17); 
+ 
+(b) Natural magnesium carbonate (magnesite), whether or not calcined (heading 25.19); 
+ 
+(c) Sludges from the storage tanks of petroleum oils, consisting mainly of such oils (heading 27.10); 
+ 
+(d) Basic slag of Chapter 31; 
+ 
+(e) Slag wool, rock wool or similar mineral wools (heading 68.06);  
+ 
+(f) Waste or scrap of precious metal or of metal clad with precious metal; other waste or scrap 
+containing precious metal or precious metal compounds, of a kind used principally for the recovery 
+of precious metal (heading 71.12 or 85.49); or 
+ 
+(g) Copper, nickel or cobalt mattes produced by any process of smelting (Section XV). 
+2.- For the purposes of headings 26.01 to 26.17, the term “ores” means minerals of mineralogical species 
+actually used in the metallurgical industry for the extraction of mercury, of the metals of heading 28.44 
+or of the metals of Section XIV or XV, even if they are intended for non-metallurgical purposes.  
+Headings 26.01 to 26.17 do not, however, include minerals which have been submitted to processes not 
+normal to the metallurgical industry. 
+3.- Heading 26.20 applies only to : 
+ 
+(a) Slag, ash and residues of a kind used in industry either for the extraction of metals or as a basis for 
+the manufacture of chemical compounds of metals, excluding ash and residues from the 
+incineration of municipal waste (heading 26.21); and 
+ 
+(b) Slag, ash and residues containing arsenic, whether or not containing metals, of a kind used either 
+for the extraction of arsenic or metals or for the manufacture of their chemical compounds. 
+Subheading Notes. 
+1.- For the purposes of subheading 2620.21, “leaded gasoline sludges and leaded anti-knock compound 
+sludges” mean sludges obtained from storage tanks of leaded gasoline and leaded anti-knock 
+compounds (for example, tetraethyl lead), and consisting essentially of lead, lead compounds and iron 
+oxide. 
+2.- Slag, ash and residues containing arsenic, mercury, thallium or their mixtures, of a kind used for the 
+extraction of arsenic or those metals or for the manufacture of their chemical compounds, are to be 
+classified in subheading 2620.60. 
+_________________ 
+Heading 
+H.S.  
+Code 
+ 
+26.01 
+ 
+Iron ores and concentrates, including roasted iron pyrites. 
+ 
+ 
+- Iron ores and concentrates, other than roasted iron pyrites : 
+ 
+2601.11 
+-- Non-agglomerated 
+ 
+2601.12 
+-- Agglomerated 
+ 
+2601.20 
+- Roasted iron pyrites 
+ 
+ 
+ 
+26.02 
+2602.00 
+Manganese ores and concentrates, including ferruginous 
+manganese ores and concentrates with a manganese content of 
+20 % or more, calculated on the dry weight. 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+26.03 
+2603.00 
+Copper ores and concentrates. 
+ 
+ 
+ 
+26.04 
+2604.00 
+Nickel ores and concentrates. 
+ 
+ 
+ 
+26.05 
+2605.00 
+Cobalt ores and concentrates. 
+ 
+ 
+ 
+26.06 
+2606.00 
+Aluminium ores and concentrates. 
+ 
+ 
+ 
+26.07 
+2607.00 
+Lead ores and concentrates. 
+ 
+ 
+ 
+26.08 
+2608.00 
+Zinc ores and concentrates. 
+ 
+ 
+ 
+26.09 
+2609.00 
+Tin ores and concentrates. 
+ 
+ 
+ 
+26.10 
+2610.00 
+Chromium ores and concentrates. 
+ 
+ 
+ 
+26.11 
+2611.00 
+Tungsten ores and concentrates. 
+ 
+ 
+ 
+26.12 
+ 
+Uranium or thorium ores and concentrates. 
+ 
+2612.10 
+- Uranium ores and concentrates 
+ 
+2612.20 
+- Thorium ores and concentrates 
+ 
+ 
+ 
+26.13 
+ 
+Molybdenum ores and concentrates. 
+ 
+2613.10 
+- Roasted 
+ 
+2613.90 
+- Other 
+ 
+ 
+ 
+26.14 
+2614.00 
+Titanium ores and concentrates. 
+ 
+ 
+ 
+26.15 
+ 
+Niobium, tantalum, vanadium or zirconium ores and 
+concentrates. 
+ 
+2615.10 
+- Zirconium ores and concentrates 
+ 
+2615.90 
+- Other 
+ 
+ 
+ 
+26.16 
+ 
+Precious metal ores and concentrates. 
+ 
+2616.10 
+- Silver ores and concentrates 
+ 
+2616.90 
+- Other 
+ 
+ 
+ 
+26.17 
+ 
+Other ores and concentrates. 
+ 
+2617.10 
+- Antimony ores and concentrates 
+ 
+2617.90 
+- Other 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+26.18 
+2618.00 
+Granulated slag (slag sand) from the manufacture of iron or 
+steel. 
+ 
+ 
+ 
+26.19 
+2619.00 
+Slag, dross (other than granulated slag), scalings and other waste 
+from the manufacture of iron or steel. 
+ 
+ 
+ 
+26.20 
+ 
+Slag, ash and residues (other than from the manufacture of iron 
+or steel) containing metals, arsenic or their compounds. 
+ 
+ 
+- Containing mainly zinc : 
+ 
+2620.11 
+-- Hard zinc spelter 
+ 
+2620.19 
+-- Other 
+ 
+ 
+- Containing mainly lead : 
+ 
+2620.21 
+-- Leaded gasoline sludges and leaded anti-knock compound 
+sludges 
+ 
+2620.29 
+-- Other 
+ 
+2620.30 
+- Containing mainly copper 
+ 
+2620.40 
+- Containing mainly aluminium 
+ 
+2620.60 
+- Containing arsenic, mercury, thallium or their mixtures, of a kind 
+used for the extraction of arsenic or those metals or for the 
+manufacture of their chemical compounds 
+ 
+ 
+- Other : 
+ 
+2620.91 
+-- Containing antimony, beryllium, cadmium, chromium or their 
+mixtures 
+ 
+2620.99 
+-- Other 
+ 
+ 
+ 
+26.21 
+ 
+Other slag and ash, including seaweed ash (kelp); ash and 
+residues from the incineration of municipal waste. 
+ 
+2621.10 
+- Ash and residues from the incineration of municipal waste 
+ 
+2621.90 
+- Other 
+_________________ 
+ 
+ 

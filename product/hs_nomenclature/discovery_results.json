@@ -1,0 +1,909 @@
+{
+  "total_chapters_found": 97,
+  "total_urls_checked": 122,
+  "found_chapters": [
+    "0101",
+    "0102",
+    "0103",
+    "0104",
+    "0105",
+    "0206",
+    "0207",
+    "0208",
+    "0209",
+    "0210",
+    "0211",
+    "0212",
+    "0213",
+    "0214",
+    "0315",
+    "0416",
+    "0417",
+    "0418",
+    "0419",
+    "0420",
+    "0421",
+    "0422",
+    "0423",
+    "0424",
+    "0525",
+    "0526",
+    "0527",
+    "0628",
+    "0629",
+    "0630",
+    "0631",
+    "0632",
+    "0633",
+    "0634",
+    "0635",
+    "0636",
+    "0637",
+    "0638",
+    "0739",
+    "0740",
+    "0841",
+    "0842",
+    "0843",
+    "0944",
+    "0945",
+    "0946",
+    "1047",
+    "1048",
+    "1049",
+    "1150",
+    "1151",
+    "1152",
+    "1153",
+    "1154",
+    "1155",
+    "1156",
+    "1157",
+    "1158",
+    "1159",
+    "1160",
+    "1161",
+    "1162",
+    "1163",
+    "1264",
+    "1265",
+    "1266",
+    "1267",
+    "1368",
+    "1369",
+    "1370",
+    "1471",
+    "1572",
+    "1573",
+    "1574",
+    "1575",
+    "1576",
+    "1577",
+    "1578",
+    "1579",
+    "1580",
+    "1581",
+    "1582",
+    "1583",
+    "1684",
+    "1685",
+    "1786",
+    "1787",
+    "1788",
+    "1789",
+    "1890",
+    "1891",
+    "1892",
+    "1993",
+    "2094",
+    "2095",
+    "2096",
+    "2197"
+  ],
+  "missing_chapters": [
+    "0106",
+    "0215",
+    "0316",
+    "0425",
+    "0528",
+    "0639",
+    "0741",
+    "0844",
+    "0947",
+    "1050",
+    "1164",
+    "1268",
+    "1371",
+    "1472",
+    "1584",
+    "1686",
+    "1790",
+    "1893",
+    "1994",
+    "2097",
+    "2198",
+    "2298",
+    "2398",
+    "2498",
+    "2598"
+  ],
+  "chapters_detail": [
+    {
+      "chapter_code": "0101",
+      "chapter_num": 1,
+      "suffix_num": 1,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0101_2022e.pdf?la=en",
+      "file_size": 29646,
+      "filename": "0101_2022e.pdf"
+    },
+    {
+      "chapter_code": "0102",
+      "chapter_num": 1,
+      "suffix_num": 2,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0102_2022e.pdf?la=en",
+      "file_size": 49295,
+      "filename": "0102_2022e.pdf"
+    },
+    {
+      "chapter_code": "0103",
+      "chapter_num": 1,
+      "suffix_num": 3,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0103_2022e.pdf?la=en",
+      "file_size": 275838,
+      "filename": "0103_2022e.pdf"
+    },
+    {
+      "chapter_code": "0104",
+      "chapter_num": 1,
+      "suffix_num": 4,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0104_2022e.pdf?la=en",
+      "file_size": 147655,
+      "filename": "0104_2022e.pdf"
+    },
+    {
+      "chapter_code": "0105",
+      "chapter_num": 1,
+      "suffix_num": 5,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0105_2022e.pdf?la=en",
+      "file_size": 130875,
+      "filename": "0105_2022e.pdf"
+    },
+    {
+      "chapter_code": "0206",
+      "chapter_num": 2,
+      "suffix_num": 6,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0206_2022e.pdf?la=en",
+      "file_size": 19088,
+      "filename": "0206_2022e.pdf"
+    },
+    {
+      "chapter_code": "0207",
+      "chapter_num": 2,
+      "suffix_num": 7,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0207_2022e.pdf?la=en",
+      "file_size": 168396,
+      "filename": "0207_2022e.pdf"
+    },
+    {
+      "chapter_code": "0208",
+      "chapter_num": 2,
+      "suffix_num": 8,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0208_2022e.pdf?la=en",
+      "file_size": 56331,
+      "filename": "0208_2022e.pdf"
+    },
+    {
+      "chapter_code": "0209",
+      "chapter_num": 2,
+      "suffix_num": 9,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0209_2022e.pdf?la=en",
+      "file_size": 38608,
+      "filename": "0209_2022e.pdf"
+    },
+    {
+      "chapter_code": "0210",
+      "chapter_num": 2,
+      "suffix_num": 10,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0210_2022e.pdf?la=en",
+      "file_size": 129800,
+      "filename": "0210_2022e.pdf"
+    },
+    {
+      "chapter_code": "0211",
+      "chapter_num": 2,
+      "suffix_num": 11,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0211_2022e.pdf?la=en",
+      "file_size": 142052,
+      "filename": "0211_2022e.pdf"
+    },
+    {
+      "chapter_code": "0212",
+      "chapter_num": 2,
+      "suffix_num": 12,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0212_2022e.pdf?la=en",
+      "file_size": 154996,
+      "filename": "0212_2022e.pdf"
+    },
+    {
+      "chapter_code": "0213",
+      "chapter_num": 2,
+      "suffix_num": 13,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0213_2022e.pdf?la=en",
+      "file_size": 15308,
+      "filename": "0213_2022e.pdf"
+    },
+    {
+      "chapter_code": "0214",
+      "chapter_num": 2,
+      "suffix_num": 14,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0214_2022e.pdf?la=en",
+      "file_size": 12132,
+      "filename": "0214_2022e.pdf"
+    },
+    {
+      "chapter_code": "0315",
+      "chapter_num": 3,
+      "suffix_num": 15,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0315_2022e.pdf?la=en",
+      "file_size": 161904,
+      "filename": "0315_2022e.pdf"
+    },
+    {
+      "chapter_code": "0416",
+      "chapter_num": 4,
+      "suffix_num": 16,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0416_2022e.pdf?la=en",
+      "file_size": 141007,
+      "filename": "0416_2022e.pdf"
+    },
+    {
+      "chapter_code": "0417",
+      "chapter_num": 4,
+      "suffix_num": 17,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0417_2022e.pdf?la=en",
+      "file_size": 138945,
+      "filename": "0417_2022e.pdf"
+    },
+    {
+      "chapter_code": "0418",
+      "chapter_num": 4,
+      "suffix_num": 18,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0418_2022e.pdf?la=en",
+      "file_size": 13952,
+      "filename": "0418_2022e.pdf"
+    },
+    {
+      "chapter_code": "0419",
+      "chapter_num": 4,
+      "suffix_num": 19,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0419_2022e.pdf?la=en",
+      "file_size": 130873,
+      "filename": "0419_2022e.pdf"
+    },
+    {
+      "chapter_code": "0420",
+      "chapter_num": 4,
+      "suffix_num": 20,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0420_2022e.pdf?la=en",
+      "file_size": 172010,
+      "filename": "0420_2022e.pdf"
+    },
+    {
+      "chapter_code": "0421",
+      "chapter_num": 4,
+      "suffix_num": 21,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0421_2022e.pdf?la=en",
+      "file_size": 128487,
+      "filename": "0421_2022e.pdf"
+    },
+    {
+      "chapter_code": "0422",
+      "chapter_num": 4,
+      "suffix_num": 22,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0422_2022e.pdf?la=en",
+      "file_size": 149248,
+      "filename": "0422_2022e.pdf"
+    },
+    {
+      "chapter_code": "0423",
+      "chapter_num": 4,
+      "suffix_num": 23,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0423_2022e.pdf?la=en",
+      "file_size": 128325,
+      "filename": "0423_2022e.pdf"
+    },
+    {
+      "chapter_code": "0424",
+      "chapter_num": 4,
+      "suffix_num": 24,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0424_2022e.pdf?la=en",
+      "file_size": 213403,
+      "filename": "0424_2022e.pdf"
+    },
+    {
+      "chapter_code": "0525",
+      "chapter_num": 5,
+      "suffix_num": 25,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0525_2022e.pdf?la=en",
+      "file_size": 69189,
+      "filename": "0525_2022e.pdf"
+    },
+    {
+      "chapter_code": "0526",
+      "chapter_num": 5,
+      "suffix_num": 26,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0526_2022e.pdf?la=en",
+      "file_size": 147417,
+      "filename": "0526_2022e.pdf"
+    },
+    {
+      "chapter_code": "0527",
+      "chapter_num": 5,
+      "suffix_num": 27,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0527_2022e.pdf?la=en",
+      "file_size": 170856,
+      "filename": "0527_2022e.pdf"
+    },
+    {
+      "chapter_code": "0628",
+      "chapter_num": 6,
+      "suffix_num": 28,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0628_2022e.pdf?la=en",
+      "file_size": 277295,
+      "filename": "0628_2022e.pdf"
+    },
+    {
+      "chapter_code": "0629",
+      "chapter_num": 6,
+      "suffix_num": 29,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0629_2022e.pdf?la=en",
+      "file_size": 408932,
+      "filename": "0629_2022e.pdf"
+    },
+    {
+      "chapter_code": "0630",
+      "chapter_num": 6,
+      "suffix_num": 30,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0630_2022e.pdf?la=en",
+      "file_size": 161048,
+      "filename": "0630_2022e.pdf"
+    },
+    {
+      "chapter_code": "0631",
+      "chapter_num": 6,
+      "suffix_num": 31,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0631_2022e.pdf?la=en",
+      "file_size": 136798,
+      "filename": "0631_2022e.pdf"
+    },
+    {
+      "chapter_code": "0632",
+      "chapter_num": 6,
+      "suffix_num": 32,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0632_2022e.pdf?la=en",
+      "file_size": 156160,
+      "filename": "0632_2022e.pdf"
+    },
+    {
+      "chapter_code": "0633",
+      "chapter_num": 6,
+      "suffix_num": 33,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0633_2022e.pdf?la=en",
+      "file_size": 135992,
+      "filename": "0633_2022e.pdf"
+    },
+    {
+      "chapter_code": "0634",
+      "chapter_num": 6,
+      "suffix_num": 34,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0634_2022e.pdf?la=en",
+      "file_size": 248229,
+      "filename": "0634_2022e.pdf"
+    },
+    {
+      "chapter_code": "0635",
+      "chapter_num": 6,
+      "suffix_num": 35,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0635_2022e.pdf?la=en",
+      "file_size": 126663,
+      "filename": "0635_2022e.pdf"
+    },
+    {
+      "chapter_code": "0636",
+      "chapter_num": 6,
+      "suffix_num": 36,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0636_2022e.pdf?la=en",
+      "file_size": 119368,
+      "filename": "0636_2022e.pdf"
+    },
+    {
+      "chapter_code": "0637",
+      "chapter_num": 6,
+      "suffix_num": 37,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0637_2022e.pdf?la=en",
+      "file_size": 129231,
+      "filename": "0637_2022e.pdf"
+    },
+    {
+      "chapter_code": "0638",
+      "chapter_num": 6,
+      "suffix_num": 38,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0638_2022e.pdf?la=en",
+      "file_size": 218779,
+      "filename": "0638_2022e.pdf"
+    },
+    {
+      "chapter_code": "0739",
+      "chapter_num": 7,
+      "suffix_num": 39,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0739_2022e.pdf?la=en",
+      "file_size": 243546,
+      "filename": "0739_2022e.pdf"
+    },
+    {
+      "chapter_code": "0740",
+      "chapter_num": 7,
+      "suffix_num": 40,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0740_2022e.pdf?la=en",
+      "file_size": 198744,
+      "filename": "0740_2022e.pdf"
+    },
+    {
+      "chapter_code": "0841",
+      "chapter_num": 8,
+      "suffix_num": 41,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0841_2022e.pdf?la=en",
+      "file_size": 148747,
+      "filename": "0841_2022e.pdf"
+    },
+    {
+      "chapter_code": "0842",
+      "chapter_num": 8,
+      "suffix_num": 42,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0842_2022e.pdf?la=en",
+      "file_size": 136239,
+      "filename": "0842_2022e.pdf"
+    },
+    {
+      "chapter_code": "0843",
+      "chapter_num": 8,
+      "suffix_num": 43,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0843_2022e.pdf?la=en",
+      "file_size": 124225,
+      "filename": "0843_2022e.pdf"
+    },
+    {
+      "chapter_code": "0944",
+      "chapter_num": 9,
+      "suffix_num": 44,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0944_2022e.pdf?la=en",
+      "file_size": 221817,
+      "filename": "0944_2022e.pdf"
+    },
+    {
+      "chapter_code": "0945",
+      "chapter_num": 9,
+      "suffix_num": 45,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0945_2022e.pdf?la=en",
+      "file_size": 11487,
+      "filename": "0945_2022e.pdf"
+    },
+    {
+      "chapter_code": "0946",
+      "chapter_num": 9,
+      "suffix_num": 46,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/0946_2022e.pdf?la=en",
+      "file_size": 118862,
+      "filename": "0946_2022e.pdf"
+    },
+    {
+      "chapter_code": "1047",
+      "chapter_num": 10,
+      "suffix_num": 47,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1047_2022e.pdf?la=en",
+      "file_size": 139457,
+      "filename": "1047_2022e.pdf"
+    },
+    {
+      "chapter_code": "1048",
+      "chapter_num": 10,
+      "suffix_num": 48,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1048_2022e.pdf?la=en",
+      "file_size": 224649,
+      "filename": "1048_2022e.pdf"
+    },
+    {
+      "chapter_code": "1049",
+      "chapter_num": 10,
+      "suffix_num": 49,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1049_2022e.pdf?la=en",
+      "file_size": 131749,
+      "filename": "1049_2022e.pdf"
+    },
+    {
+      "chapter_code": "1150",
+      "chapter_num": 11,
+      "suffix_num": 50,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1150_2022e.pdf?la=en",
+      "file_size": 11478,
+      "filename": "1150_2022e.pdf"
+    },
+    {
+      "chapter_code": "1151",
+      "chapter_num": 11,
+      "suffix_num": 51,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1151_2022e.pdf?la=en",
+      "file_size": 142364,
+      "filename": "1151_2022e.pdf"
+    },
+    {
+      "chapter_code": "1152",
+      "chapter_num": 11,
+      "suffix_num": 52,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1152_2022e.pdf?la=en",
+      "file_size": 197922,
+      "filename": "1152_2022e.pdf"
+    },
+    {
+      "chapter_code": "1153",
+      "chapter_num": 11,
+      "suffix_num": 53,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1153_2022e.pdf?la=en",
+      "file_size": 25886,
+      "filename": "1153_2022e.pdf"
+    },
+    {
+      "chapter_code": "1154",
+      "chapter_num": 11,
+      "suffix_num": 54,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1154_2022e.pdf?la=en",
+      "file_size": 161281,
+      "filename": "1154_2022e.pdf"
+    },
+    {
+      "chapter_code": "1155",
+      "chapter_num": 11,
+      "suffix_num": 55,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1155_2022e.pdf?la=en",
+      "file_size": 81812,
+      "filename": "1155_2022e.pdf"
+    },
+    {
+      "chapter_code": "1156",
+      "chapter_num": 11,
+      "suffix_num": 56,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1156_2022e.pdf?la=en",
+      "file_size": 142410,
+      "filename": "1156_2022e.pdf"
+    },
+    {
+      "chapter_code": "1157",
+      "chapter_num": 11,
+      "suffix_num": 57,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1157_2022e.pdf?la=en",
+      "file_size": 215899,
+      "filename": "1157_2022e.pdf"
+    },
+    {
+      "chapter_code": "1158",
+      "chapter_num": 11,
+      "suffix_num": 58,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1158_2022e.pdf?la=en",
+      "file_size": 145232,
+      "filename": "1158_2022e.pdf"
+    },
+    {
+      "chapter_code": "1159",
+      "chapter_num": 11,
+      "suffix_num": 59,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1159_2022e.pdf?la=en",
+      "file_size": 162440,
+      "filename": "1159_2022e.pdf"
+    },
+    {
+      "chapter_code": "1160",
+      "chapter_num": 11,
+      "suffix_num": 60,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1160_2022e.pdf?la=en",
+      "file_size": 235305,
+      "filename": "1160_2022e.pdf"
+    },
+    {
+      "chapter_code": "1161",
+      "chapter_num": 11,
+      "suffix_num": 61,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1161_2022e.pdf?la=en",
+      "file_size": 200785,
+      "filename": "1161_2022e.pdf"
+    },
+    {
+      "chapter_code": "1162",
+      "chapter_num": 11,
+      "suffix_num": 62,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1162_2022e.pdf?la=en",
+      "file_size": 293375,
+      "filename": "1162_2022e.pdf"
+    },
+    {
+      "chapter_code": "1163",
+      "chapter_num": 11,
+      "suffix_num": 63,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1163_2022e.pdf?la=en",
+      "file_size": 47345,
+      "filename": "1163_2022e.pdf"
+    },
+    {
+      "chapter_code": "1264",
+      "chapter_num": 12,
+      "suffix_num": 64,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1264_2022e.pdf?la=en",
+      "file_size": 136260,
+      "filename": "1264_2022e.pdf"
+    },
+    {
+      "chapter_code": "1265",
+      "chapter_num": 12,
+      "suffix_num": 65,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1265_2022e.pdf?la=en",
+      "file_size": 14003,
+      "filename": "1265_2022e.pdf"
+    },
+    {
+      "chapter_code": "1266",
+      "chapter_num": 12,
+      "suffix_num": 66,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1266_2022e.pdf?la=en",
+      "file_size": 11009,
+      "filename": "1266_2022e.pdf"
+    },
+    {
+      "chapter_code": "1267",
+      "chapter_num": 12,
+      "suffix_num": 67,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1267_2022e.pdf?la=en",
+      "file_size": 14840,
+      "filename": "1267_2022e.pdf"
+    },
+    {
+      "chapter_code": "1368",
+      "chapter_num": 13,
+      "suffix_num": 68,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1368_2022e.pdf?la=en",
+      "file_size": 159187,
+      "filename": "1368_2022e.pdf"
+    },
+    {
+      "chapter_code": "1369",
+      "chapter_num": 13,
+      "suffix_num": 69,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1369_2022e.pdf?la=en",
+      "file_size": 38459,
+      "filename": "1369_2022e.pdf"
+    },
+    {
+      "chapter_code": "1370",
+      "chapter_num": 13,
+      "suffix_num": 70,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1370_2022e.pdf?la=en",
+      "file_size": 194787,
+      "filename": "1370_2022e.pdf"
+    },
+    {
+      "chapter_code": "1471",
+      "chapter_num": 14,
+      "suffix_num": 71,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1471_2022e.pdf?la=en",
+      "file_size": 194632,
+      "filename": "1471_2022e.pdf"
+    },
+    {
+      "chapter_code": "1572",
+      "chapter_num": 15,
+      "suffix_num": 72,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1572_2022e.pdf?la=en",
+      "file_size": 258770,
+      "filename": "1572_2022e.pdf"
+    },
+    {
+      "chapter_code": "1573",
+      "chapter_num": 15,
+      "suffix_num": 73,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1573_2022e.pdf?la=en",
+      "file_size": 207339,
+      "filename": "1573_2022e.pdf"
+    },
+    {
+      "chapter_code": "1574",
+      "chapter_num": 15,
+      "suffix_num": 74,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1574_2022e.pdf?la=en",
+      "file_size": 54989,
+      "filename": "1574_2022e.pdf"
+    },
+    {
+      "chapter_code": "1575",
+      "chapter_num": 15,
+      "suffix_num": 75,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1575_2022e.pdf?la=en",
+      "file_size": 130118,
+      "filename": "1575_2022e.pdf"
+    },
+    {
+      "chapter_code": "1576",
+      "chapter_num": 15,
+      "suffix_num": 76,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1576_2022e.pdf?la=en",
+      "file_size": 150859,
+      "filename": "1576_2022e.pdf"
+    },
+    {
+      "chapter_code": "1577",
+      "chapter_num": 15,
+      "suffix_num": 77,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1577_2022e.pdf?la=en",
+      "file_size": 4823,
+      "filename": "1577_2022e.pdf"
+    },
+    {
+      "chapter_code": "1578",
+      "chapter_num": 15,
+      "suffix_num": 78,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1578_2022e.pdf?la=en",
+      "file_size": 122131,
+      "filename": "1578_2022e.pdf"
+    },
+    {
+      "chapter_code": "1579",
+      "chapter_num": 15,
+      "suffix_num": 79,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1579_2022e.pdf?la=en",
+      "file_size": 13972,
+      "filename": "1579_2022e.pdf"
+    },
+    {
+      "chapter_code": "1580",
+      "chapter_num": 15,
+      "suffix_num": 80,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1580_2022e.pdf?la=en",
+      "file_size": 13609,
+      "filename": "1580_2022e.pdf"
+    },
+    {
+      "chapter_code": "1581",
+      "chapter_num": 15,
+      "suffix_num": 81,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1581_2022e.pdf?la=en",
+      "file_size": 44863,
+      "filename": "1581_2022e.pdf"
+    },
+    {
+      "chapter_code": "1582",
+      "chapter_num": 15,
+      "suffix_num": 82,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1582_2022e.pdf?la=en",
+      "file_size": 53566,
+      "filename": "1582_2022e.pdf"
+    },
+    {
+      "chapter_code": "1583",
+      "chapter_num": 15,
+      "suffix_num": 83,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1583_2022e.pdf?la=en",
+      "file_size": 138981,
+      "filename": "1583_2022e.pdf"
+    },
+    {
+      "chapter_code": "1684",
+      "chapter_num": 16,
+      "suffix_num": 84,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1684_2022e.pdf?la=en",
+      "file_size": 541574,
+      "filename": "1684_2022e.pdf"
+    },
+    {
+      "chapter_code": "1685",
+      "chapter_num": 16,
+      "suffix_num": 85,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1685_2022e.pdf?la=en",
+      "file_size": 463121,
+      "filename": "1685_2022e.pdf"
+    },
+    {
+      "chapter_code": "1786",
+      "chapter_num": 17,
+      "suffix_num": 86,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1786_2022e.pdf?la=en",
+      "file_size": 26766,
+      "filename": "1786_2022e.pdf"
+    },
+    {
+      "chapter_code": "1787",
+      "chapter_num": 17,
+      "suffix_num": 87,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1787_2022e.pdf?la=en",
+      "file_size": 180487,
+      "filename": "1787_2022e.pdf"
+    },
+    {
+      "chapter_code": "1788",
+      "chapter_num": 17,
+      "suffix_num": 88,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1788_2022e.pdf?la=en",
+      "file_size": 207021,
+      "filename": "1788_2022e.pdf"
+    },
+    {
+      "chapter_code": "1789",
+      "chapter_num": 17,
+      "suffix_num": 89,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1789_2022e.pdf?la=en",
+      "file_size": 23999,
+      "filename": "1789_2022e.pdf"
+    },
+    {
+      "chapter_code": "1890",
+      "chapter_num": 18,
+      "suffix_num": 90,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1890_2022e.pdf?la=en",
+      "file_size": 237413,
+      "filename": "1890_2022e.pdf"
+    },
+    {
+      "chapter_code": "1891",
+      "chapter_num": 18,
+      "suffix_num": 91,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1891_2022e.pdf?la=en",
+      "file_size": 155829,
+      "filename": "1891_2022e.pdf"
+    },
+    {
+      "chapter_code": "1892",
+      "chapter_num": 18,
+      "suffix_num": 92,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1892_2022e.pdf?la=en",
+      "file_size": 23030,
+      "filename": "1892_2022e.pdf"
+    },
+    {
+      "chapter_code": "1993",
+      "chapter_num": 19,
+      "suffix_num": 93,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/1993_2022e.pdf?la=en",
+      "file_size": 130388,
+      "filename": "1993_2022e.pdf"
+    },
+    {
+      "chapter_code": "2094",
+      "chapter_num": 20,
+      "suffix_num": 94,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/2094_2022e.pdf?la=en",
+      "file_size": 249256,
+      "filename": "2094_2022e.pdf"
+    },
+    {
+      "chapter_code": "2095",
+      "chapter_num": 20,
+      "suffix_num": 95,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/2095_2022e.pdf?la=en",
+      "file_size": 253629,
+      "filename": "2095_2022e.pdf"
+    },
+    {
+      "chapter_code": "2096",
+      "chapter_num": 20,
+      "suffix_num": 96,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/2096_2022e.pdf?la=en",
+      "file_size": 161576,
+      "filename": "2096_2022e.pdf"
+    },
+    {
+      "chapter_code": "2197",
+      "chapter_num": 21,
+      "suffix_num": 97,
+      "url": "https://www.wcoomd.org/-/media/wco/public/global/pdf/topics/nomenclature/instruments-and-tools/hs-nomenclature-2022/2022/2197_2022e.pdf?la=en",
+      "file_size": 224860,
+      "filename": "2197_2022e.pdf"
+    }
+  ],
+  "discovery_timestamp": "2025-09-28 22:12:35"
+}

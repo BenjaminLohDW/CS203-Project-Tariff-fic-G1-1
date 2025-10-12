@@ -1,0 +1,294 @@
+ 
+ 
+Chapter 76 
+ 
+Aluminium and articles thereof 
+ 
+Subheading Notes. 
+1.- In this Chapter the following expressions have the meanings hereby assigned to them : 
+ 
+(a) Aluminium, not alloyed 
+ 
+ 
+Metal containing by weight at least 99 % of aluminium, provided that the content by weight of any 
+other element does not exceed the limit specified in the following table : 
+ 
+TABLE - Other elements 
+Element 
+Limiting content % by weight 
+  
+ 
+ 
+Fe + Si (iron plus silicon) 
+ 
+   Other elements (1), each 
+1 
+         0.1 (2) 
+ 
+ 
+(1) Other elements are, for example Cr, Cu, Mg, Mn, Ni, Zn. 
+ 
+(2) Copper is permitted in a proportion greater than 0.1 % but not more than 0.2 %, provided 
+ that neither the chromium nor manganese content exceeds 0.05 %. 
+ 
+ 
+(b) Aluminium alloys 
+  
+Metallic substances in which aluminium predominates by weight over each of the other elements, 
+provided that :  
+ 
+ 
+(i)  the content by weight of at least one of the other elements or of iron plus silicon taken together 
+is greater than the limit specified in the foregoing table; or 
+ 
+ 
+(ii)  the total content by weight of such other elements exceeds 1 %.  
+2.- Notwithstanding the provisions of Note 9 (c) to Section XV, for the purposes of subheading 7616.91  
+the term “wire” applies only to products, whether or not in coils, of any cross-sectional shape, of which 
+no cross-sectional dimension exceeds 6 mm. 
+_________________ 
+Heading 
+H.S.  
+Code 
+ 
+76.01 
+ 
+Unwrought aluminium. 
+ 
+7601.10 
+- Aluminium, not alloyed 
+ 
+7601.20 
+- Aluminium alloys 
+ 
+ 
+ 
+76.02 
+7602.00 
+Aluminium waste and scrap. 
+ 
+ 
+ 
+76.03 
+ 
+Aluminium powders and flakes. 
+ 
+7603.10 
+- Powders of non-lamellar structure 
+ 
+7603.20 
+- Powders of lamellar structure; flakes 
+ 
+ 
+ 
+76.04 
+ 
+Aluminium bars, rods and profiles. 
+ 
+7604.10 
+- Of aluminium, not alloyed 
+ 
+ 
+- Of aluminium alloys : 
+ 
+7604.21 
+-- Hollow profiles 
+ 
+7604.29 
+-- Other 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+76.05 
+ 
+Aluminium wire. 
+ 
+ 
+- Of aluminium, not alloyed : 
+ 
+7605.11 
+-- Of which the maximum cross-sectional dimension exceeds 7 mm 
+ 
+7605.19 
+-- Other 
+ 
+ 
+- Of aluminium alloys : 
+ 
+7605.21 
+-- Of which the maximum cross-sectional dimension exceeds 7 mm 
+ 
+7605.29 
+-- Other 
+ 
+ 
+ 
+76.06 
+ 
+Aluminium plates, sheets and strip, of a thickness exceeding 
+0.2 mm.  
+ 
+ 
+- Rectangular (including square) : 
+ 
+7606.11 
+-- Of aluminium, not alloyed 
+ 
+7606.12 
+-- Of aluminium alloys 
+ 
+ 
+- Other : 
+ 
+7606.91 
+-- Of aluminium, not alloyed 
+ 
+7606.92 
+-- Of aluminium alloys 
+ 
+ 
+ 
+76.07 
+ 
+Aluminium foil (whether or not printed or backed with paper, 
+paperboard, plastics or similar backing materials) of a thickness 
+(excluding any backing) not exceeding 0.2 mm. 
+ 
+ 
+- Not backed : 
+ 
+7607.11 
+-- Rolled but not further worked 
+ 
+7607.19 
+-- Other 
+ 
+7607.20 
+- Backed 
+ 
+ 
+ 
+76.08 
+ 
+Aluminium tubes and pipes. 
+ 
+7608.10 
+- Of aluminium, not alloyed 
+ 
+7608.20 
+- Of aluminium alloys 
+ 
+ 
+ 
+76.09 
+7609.00 
+Aluminium tube or pipe fittings (for example, couplings, elbows, 
+sleeves). 
+ 
+ 
+ 
+76.10 
+ 
+Aluminium structures (excluding prefabricated buildings of 
+heading 94.06) and parts of structures (for example, bridges and 
+bridge-sections, towers, lattice masts, roofs, roofing frameworks, 
+doors and windows and their frames and thresholds for doors, 
+balustrades, pillars and columns); aluminium plates, rods, 
+profiles, tubes and the like, prepared for use in structures. 
+ 
+7610.10 
+- Doors, windows and their frames and thresholds for doors 
+ 
+7610.90 
+- Other 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+76.11 
+7611.00 
+Aluminium reservoirs, tanks, vats and similar containers, for any 
+material (other than compressed or liquefied gas), of a capacity 
+exceeding 300 l, whether or not lined or heat-insulated, but not 
+fitted with mechanical or thermal equipment. 
+ 
+ 
+ 
+76.12 
+ 
+Aluminium casks, drums, cans, boxes and similar containers 
+(including rigid or collapsible tubular containers), for any 
+material (other than compressed or liquefied gas), of a capacity 
+not exceeding 300 l, whether or not lined or heat-insulated, but 
+not fitted with mechanical or thermal equipment. 
+ 
+7612.10 
+- Collapsible tubular containers 
+ 
+7612.90 
+- Other 
+ 
+ 
+ 
+76.13 
+7613.00 
+Aluminium containers for compressed or liquefied gas. 
+ 
+ 
+ 
+76.14 
+ 
+Stranded wire, cables, plaited bands and the like, of aluminium, 
+not electrically insulated. 
+ 
+7614.10 
+- With steel core 
+ 
+7614.90 
+- Other 
+ 
+ 
+ 
+76.15 
+ 
+Table, kitchen or other household articles and parts thereof, of 
+aluminium; pot scourers and scouring or polishing pads, gloves 
+and the like, of aluminium; sanitary ware and parts thereof, of 
+aluminium. 
+ 
+7615.10 
+- Table, kitchen or other household articles and parts thereof; pot 
+scourers and scouring or polishing pads, gloves and the like  
+ 
+7615.20 
+- Sanitary ware and parts thereof 
+ 
+ 
+ 
+76.16 
+ 
+Other articles of aluminium. 
+ 
+7616.10 
+- Nails, tacks, staples (other than those of heading 83.05), screws, 
+bolts, nuts, screw hooks, rivets, cotters, cotter-pins, washers and 
+similar articles 
+ 
+ 
+- Other : 
+ 
+7616.91 
+-- Cloth, grill, netting and fencing, of aluminium wire 
+ 
+7616.99 
+-- Other 
+_________________ 
+ 
+ 

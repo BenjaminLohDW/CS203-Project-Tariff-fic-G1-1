@@ -1,0 +1,324 @@
+ 
+ 
+Chapter 27 
+ 
+Mineral fuels, mineral oils and products of their distillation; 
+bituminous substances; mineral waxes 
+ 
+Notes. 
+1.- This Chapter does not cover : 
+ 
+(a) Separate chemically defined organic compounds, other than pure methane and propane which are to 
+be classified in heading 27.11; 
+ 
+(b) Medicaments of heading 30.03 or 30.04; or 
+ 
+(c) Mixed unsaturated hydrocarbons of heading 33.01, 33.02 or 38.05. 
+2.- References in heading 27.10 to “petroleum oils and oils obtained from bituminous minerals” include not 
+only petroleum oils and oils obtained from bituminous minerals but also similar oils, as well as those 
+consisting mainly of mixed unsaturated hydrocarbons, obtained by any process, provided that the weight 
+of the non-aromatic constituents exceeds that of the aromatic constituents. 
+  However, the references do not include liquid synthetic polyolefins of which less than 60 % by volume 
+distils at 300 C, after conversion to 1,013 millibars when a reduced-pressure distillation method is used 
+(Chapter 39). 
+3.- For the purposes of heading 27.10, “waste oils” means waste containing mainly petroleum oils and 
+oils obtained from bituminous minerals (as described in Note 2 to this Chapter), whether or not mixed 
+with water.  These include : 
+ 
+(a) Such oils no longer fit for use as primary products (for example, used lubricating oils, used 
+hydraulic oils and used transformer oils); 
+ 
+(b) Sludge oils from the storage tanks of petroleum oils, mainly containing such oils and a high 
+concentration of additives (for example, chemicals) used in the manufacture of the primary 
+products; and 
+ 
+(c) Such oils in the form of emulsions in water or mixtures with water, such as those resulting from 
+oil spills, storage tank washings, or from the use of cutting oils for machining operations. 
+Subheading Notes. 
+1.- For the purposes of subheading 2701.11, “anthracite” means coal having a volatile matter limit (on a dry, 
+mineral-matter-free basis) not exceeding 14 %.  
+2.- For the purposes of subheading 2701.12, “bituminous coal” means coal having a volatile matter limit (on 
+a dry, mineral-matter-free basis) exceeding 14 % and a calorific value limit (on a moist, mineral-matter-
+free basis) equal to or greater than 5,833 kcal/kg. 
+3.- For the purposes of subheadings 2707.10, 2707.20, 2707.30 and 2707.40 the terms “benzol (benzene)”, 
+“toluol (toluene)”, “xylol (xylenes)” and “naphthalene” apply to products which contain more than 
+50 % by weight of benzene, toluene, xylenes or naphthalene, respectively. 
+4.- For the purposes of subheading 2710.12, “light oils and preparations” are those of which 90 % or 
+more by volume (including losses) distil at 210 °C according to the ISO 3405 method (equivalent to 
+the ASTM D 86 method). 
+5.- For the purposes of the subheadings of heading 27.10, the term “biodiesel” means mono-alkyl esters 
+of fatty acids of a kind used as a fuel, derived from animal, vegetable or microbial fats and oils 
+whether or not used. 
+_________________
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+27.01 
+ 
+Coal; briquettes, ovoids and similar solid fuels manufactured 
+from coal. 
+ 
+ 
+- Coal, whether or not pulverised, but not agglomerated : 
+ 
+2701.11 
+-- Anthracite 
+ 
+2701.12 
+-- Bituminous coal 
+ 
+2701.19 
+-- Other coal 
+ 
+2701.20 
+- Briquettes, ovoids and similar solid fuels manufactured from coal 
+ 
+ 
+ 
+27.02 
+ 
+Lignite, whether or not agglomerated, excluding jet. 
+ 
+2702.10 
+- Lignite, whether or not pulverised, but not agglomerated 
+ 
+2702.20 
+- Agglomerated lignite 
+ 
+ 
+ 
+27.03 
+2703.00 
+Peat (including peat litter), whether or not agglomerated. 
+ 
+ 
+ 
+27.04 
+2704.00 
+Coke and semi-coke of coal, of lignite or of peat, whether or not 
+agglomerated; retort carbon. 
+ 
+ 
+ 
+27.05 
+2705.00 
+Coal gas, water gas, producer gas and similar gases, other than 
+petroleum gases and other gaseous hydrocarbons. 
+ 
+ 
+ 
+27.06 
+2706.00 
+Tar distilled from coal, from lignite or from peat, and other 
+mineral tars, whether or not dehydrated or partially distilled, 
+including reconstituted tars. 
+ 
+ 
+ 
+27.07 
+ 
+Oils and other products of the distillation of high temperature 
+coal tar; similar products in which the weight of the aromatic 
+constituents exceeds that of the non-aromatic constituents. 
+ 
+2707.10 
+- Benzol (benzene) 
+ 
+2707.20 
+- Toluol (toluene) 
+ 
+2707.30 
+- Xylol (xylenes) 
+ 
+2707.40 
+- Naphthalene 
+ 
+2707.50 
+- Other aromatic hydrocarbon mixtures of which 65 % or more by 
+volume (including losses) distils at 250 °C by the ISO 3405 
+method (equivalent to the ASTM D 86 method) 
+ 
+ 
+- Other : 
+ 
+2707.91 
+-- Creosote oils 
+ 
+2707.99 
+-- Other 
+ 
+ 
+ 
+27.08 
+ 
+Pitch and pitch coke, obtained from coal tar or from other 
+mineral tars. 
+ 
+2708.10 
+- Pitch 
+ 
+2708.20 
+- Pitch coke 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+27.09 
+2709.00 
+Petroleum oils and oils obtained from bituminous minerals, 
+crude. 
+ 
+ 
+ 
+27.10 
+ 
+Petroleum oils and oils obtained from bituminous minerals, 
+other than crude; preparations not elsewhere specified or 
+included, containing by weight 70 % or more of petroleum oils 
+or of oils obtained from bituminous minerals, these oils being 
+the basic constituents of the preparations; waste oils. 
+ 
+ 
+- Petroleum oils and oils obtained from bituminous minerals (other 
+than crude) and preparations not elsewhere specified or included, 
+containing by weight 70 % or more of petroleum oils or of oils 
+obtained from bituminous minerals, these oils being the basic 
+constituents of the preparations, other than those containing 
+biodiesel and other than waste oils : 
+ 
+2710.12 
+-- Light oils and preparations 
+ 
+2710.19 
+-- Other 
+ 
+2710.20 
+- Petroleum oils and oils obtained from bituminous minerals (other 
+than crude) and preparations not elsewhere specified or included, 
+containing by weight 70 % or more of petroleum oils or of oils 
+obtained from bituminous minerals, these oils being the basic 
+constituents of the preparations, containing biodiesel, other than 
+waste oils 
+ 
+ 
+- Waste oils : 
+ 
+2710.91 
+-- Containing polychlorinated biphenyls (PCBs), polychlorinated 
+terphenyls (PCTs) or polybrominated biphenyls (PBBs) 
+ 
+2710.99 
+-- Other 
+ 
+ 
+ 
+27.11 
+ 
+Petroleum gases and other gaseous hydrocarbons. 
+ 
+ 
+- Liquefied : 
+ 
+2711.11 
+-- Natural gas 
+ 
+2711.12 
+-- Propane 
+ 
+2711.13 
+-- Butanes 
+ 
+2711.14 
+-- Ethylene, propylene, butylene and butadiene 
+ 
+2711.19 
+-- Other 
+ 
+ 
+- In gaseous state : 
+ 
+2711.21 
+-- Natural gas 
+ 
+2711.29 
+-- Other 
+ 
+ 
+ 
+27.12 
+ 
+Petroleum jelly; paraffin wax, micro-crystalline petroleum wax, 
+slack wax, ozokerite, lignite wax, peat wax, other mineral waxes, 
+and similar products obtained by synthesis or by other processes, 
+whether or not coloured. 
+ 
+2712.10 
+- Petroleum jelly 
+ 
+2712.20 
+- Paraffin wax containing by weight less than 0.75 % of oil 
+ 
+2712.90 
+- Other 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+27.13 
+ 
+Petroleum coke, petroleum bitumen and other residues of 
+petroleum oils or of oils obtained from bituminous minerals. 
+ 
+ 
+- Petroleum coke : 
+ 
+2713.11 
+-- Not calcined 
+ 
+2713.12 
+-- Calcined 
+ 
+2713.20 
+- Petroleum bitumen 
+ 
+2713.90 
+- Other residues of petroleum oils or of oils obtained from bituminous 
+minerals 
+ 
+ 
+ 
+27.14 
+ 
+Bitumen and asphalt, natural; bituminous or oil shale and tar 
+sands; asphaltites and asphaltic rocks. 
+ 
+2714.10 
+- Bituminous or oil shale and tar sands 
+ 
+2714.90 
+- Other 
+ 
+ 
+ 
+27.15 
+2715.00 
+Bituminous mixtures based on natural asphalt, on natural 
+bitumen, on petroleum bitumen, on mineral tar or on mineral tar 
+pitch (for example, bituminous mastics, cut-backs). 
+ 
+ 
+ 
+27.16 
+2716.00 
+Electrical energy. (optional heading) 
+_________________ 

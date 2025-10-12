@@ -1,0 +1,226 @@
+ 
+ 
+Chapter 34 
+ 
+Soap, organic surface-active agents, washing preparations, 
+lubricating preparations, artificial waxes, prepared waxes, 
+polishing or scouring preparations, candles and similar articles, 
+modelling pastes, “dental waxes” and dental preparations 
+with a basis of plaster 
+ 
+Notes. 
+1.- This Chapter does not cover : 
+ 
+(a) Edible mixtures or preparations of animal, vegetable or microbial fats or oils of a kind used as 
+mould release preparations (heading 15.17); 
+ 
+(b) Separate chemically defined compounds; or 
+ 
+(c) Shampoos, dentifrices, shaving creams and foams, or bath preparations, containing soap or other 
+organic surface-active agents (heading 33.05, 33.06 or 33.07). 
+2.- For the purposes of heading 34.01, the expression “soap” applies only to soap soluble in water.  Soap 
+and the other products of heading 34.01 may contain added substances (for example, disinfectants, 
+abrasive powders, fillers or medicaments).  Products containing abrasive powders remain classified in 
+heading 34.01 only if in the form of bars, cakes or moulded pieces or shapes.  In other forms they are to 
+be classified in heading 34.05 as “scouring powders and similar preparations”. 
+3.- For the purposes of heading 34.02, “organic surface-active agents” are products which when mixed with 
+water at a concentration of 0.5 % at 20 C and left to stand for one hour at the same temperature : 
+ 
+(a) give a transparent or translucent liquid or stable emulsion without separation of insoluble matter; and 
+ 
+(b) reduce the surface tension of water to 4.5 x 10-2 N/m (45 dyne/cm) or less. 
+4.- In heading 34.03 the expression “petroleum oils and oils obtained from bituminous minerals” applies to 
+the products defined in Note 2 to Chapter 27. 
+5.- In heading 34.04, subject to the exclusions provided below, the expression “artificial waxes and prepared 
+waxes” applies only to : 
+ 
+(a) Chemically produced organic products of a waxy character, whether or not water-soluble; 
+ 
+(b) Products obtained by mixing different waxes; 
+ 
+(c) Products of a waxy character with a basis of one or more waxes and containing fats, resins, mineral 
+substances or other materials. 
+  The heading does not apply to : 
+ 
+(a) Products of heading 15.16, 34.02 or 38.23, even if having a waxy character; 
+ 
+(b) Unmixed animal waxes or unmixed vegetable waxes, whether or not refined or coloured, of 
+heading 15.21; 
+ 
+(c) Mineral waxes or similar products of heading 27.12, whether or not intermixed or merely coloured; 
+or 
+ 
+(d) Waxes mixed with, dispersed in or dissolved in a liquid medium (headings 34.05, 38.09, etc.). 
+_________________
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+34.01 
+ 
+Soap; organic surface-active products and preparations for use 
+as soap, in the form of bars, cakes, moulded pieces or shapes, 
+whether or not containing soap; organic surface-active products 
+and preparations for washing the skin, in the form of liquid or 
+cream and put up for retail sale, whether or not containing 
+soap; paper, wadding, felt and nonwovens, impregnated, coated 
+or covered with soap or detergent. 
+ 
+ 
+- Soap and organic surface-active products and preparations, in the 
+form of bars, cakes, moulded pieces or shapes, and paper, wadding, 
+felt and nonwovens, impregnated, coated or covered with soap or 
+detergent : 
+ 
+3401.11 
+-- For toilet use (including medicated products) 
+ 
+3401.19 
+-- Other 
+ 
+3401.20 
+- Soap in other forms 
+ 
+3401.30 
+- Organic surface-active products and preparations for washing the 
+skin, in the form of liquid or cream and put up for retail sale, 
+whether or not containing soap 
+ 
+ 
+ 
+34.02 
+ 
+Organic surface-active agents (other than soap); surface-active 
+preparations, washing preparations (including auxiliary washing 
+preparations) and cleaning preparations, whether or not 
+containing soap, other than those of heading 34.01. 
+ 
+ 
+- Anionic organic surface-active agents, whether or not put up for 
+retail sale : 
+ 
+3402.31 
+-- Linear alkylbenzene sulphonic acids and their salts 
+ 
+3402.39 
+-- Other 
+ 
+ 
+- Other organic surface-active agents, whether or not put up for 
+retail sale : 
+ 
+3402.41 
+-- Cationic 
+ 
+3402.42 
+-- Non-ionic 
+ 
+3402.49 
+-- Other 
+ 
+3402.50 
+- Preparations put up for retail sale 
+ 
+3402.90 
+- Other 
+
+ 
+ 
+Heading 
+H.S.  
+Code 
+ 
+34.03 
+ 
+Lubricating preparations (including cutting-oil preparations, 
+bolt or nut release preparations, anti-rust or anti-corrosion 
+preparations and mould release preparations, based on 
+lubricants) and preparations of a kind used for the oil or grease 
+treatment of textile materials, leather, furskins or other 
+materials, but excluding preparations containing, as basic 
+constituents, 70 % or more by weight of petroleum oils or of oils 
+obtained from bituminous minerals. 
+ 
+ 
+- Containing petroleum oils or oils obtained from bituminous 
+minerals : 
+ 
+3403.11 
+-- Preparations for the treatment of textile materials, leather, furskins 
+or other materials 
+ 
+3403.19 
+-- Other 
+ 
+ 
+- Other : 
+ 
+3403.91 
+-- Preparations for the treatment of textile materials, leather, furskins 
+or other materials 
+ 
+3403.99 
+-- Other 
+ 
+ 
+ 
+34.04 
+ 
+Artificial waxes and prepared waxes. 
+ 
+3404.20 
+- Of poly(oxyethylene) (polyethylene glycol) 
+ 
+3404.90 
+- Other 
+ 
+ 
+ 
+34.05 
+ 
+Polishes and creams, for footwear, furniture, floors, coachwork, 
+glass or metal, scouring pastes and powders and similar 
+preparations (whether or not in the form of paper, wadding, felt, 
+nonwovens, cellular plastics or cellular rubber, impregnated, 
+coated or covered with such preparations), excluding waxes of 
+heading 34.04. 
+ 
+3405.10 
+- Polishes, creams and similar preparations for footwear or leather 
+ 
+3405.20 
+- Polishes, creams and similar preparations for the maintenance of 
+wooden furniture, floors or other woodwork 
+ 
+3405.30 
+- Polishes and similar preparations for coachwork, other than metal 
+polishes 
+ 
+3405.40 
+- Scouring pastes and powders and other scouring preparations 
+ 
+3405.90 
+- Other 
+ 
+ 
+ 
+34.06 
+3406.00 
+Candles, tapers and the like. 
+ 
+ 
+ 
+34.07 
+3407.00 
+Modelling pastes, including those put up for children's 
+amusement; preparations known as “dental wax” or as “dental 
+impression compounds”, put up in sets, in packings for retail sale 
+or in plates, horseshoe shapes, sticks or similar forms; other 
+preparations for use in dentistry, with a basis of plaster (of 
+calcined gypsum or calcium sulphate). 
+_________________ 
+ 
+ 
