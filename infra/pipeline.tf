@@ -109,7 +109,7 @@ resource "aws_codebuild_project" "build" {
       value = aws_ecr_repository.app.repository_url
     }
     environment_variable {
-      name  = "SERVICES"
+      name  = "SERVICE"
       value = each.value
     }
     environment_variable {

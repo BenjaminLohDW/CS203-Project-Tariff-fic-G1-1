@@ -13,19 +13,21 @@ locals {
     user     = { path = "/user/*",     port = 5001, health = "/health" }
     product  = { path = "/product/*",  port = 5002, health = "/health" }
     history  = { path = "/history/*",  port = 5003, health = "/health" }
-    forecast = { path = "/forecast/*", port = 5004, health = "/health" }
+    tariff = { path = "/api/tariff/*", port = 5004, health = "/health" }
     country  = { path = "/countries/*",  port = 5005, health = "/health" }
-    tariff   = { path = "api/tariff/*",   port = 5006, health = "/health" }
+    agreement  = { path = "/agreements/*",  port = 5006, health = "/health"}
+    forecast   = { path = "/forecast/*",   port = 5007, health = "/health" }
   }
 
   # Default desired count per service (can be overridden in variables)
   desired_counts = {
     user     = 1
-    history  = 1
-    country  = 1
     product  = 1
-    forecast = 1
+    history  = 1
     tariff   = 1
+    country  = 1
+    agreement = 1
+    forecast = 1
   }
 
   # Common tags applied to all resources

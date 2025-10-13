@@ -83,6 +83,26 @@ class Agreement(db.Model):
 # Routes
 # ============================================================
 
+# ---- Healthcheck api for ALB ----
+@app.route("/health", methods=["GET"])
+def healthcheck():
+    #healthcheck for ALB target group
+    try:
+        # Quick DB connection check
+        db.session.execute(db.text("SELECT 1"))
+        return jsonify({
+            "status": "healthy",
+            "service": "history",
+            "timestamp": datetime.utcnow().isoformat()
+        }), 200
+    except Exception as e:
+        return jsonify({
+            "status": "unhealthy",
+            "service": "history",
+            "error": str(e)
+        }), 503
+    
+
 @app.route('/agreements', methods=['POST'])
 def create_agreement():
     """

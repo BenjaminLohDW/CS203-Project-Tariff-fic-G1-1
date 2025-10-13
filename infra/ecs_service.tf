@@ -121,7 +121,8 @@ resource "aws_ecs_service" "svc" {
   
 
   depends_on = [
-    aws_lb_listener.http
+    aws_lb_listener.http,
+    aws_lb_listener_rule.http_paths  # Add this line
   ]
 
   tags = local.tags

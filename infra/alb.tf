@@ -25,6 +25,10 @@ resource "aws_lb_target_group" "svc" {
     timeout             = 5
   }
 
+  lifecycle {
+    create_before_destroy = true
+  }
+
   tags = local.tags
 }
 

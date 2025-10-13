@@ -244,7 +244,7 @@ variable "github_branch" {
 variable "services" {
   description = "List of microservices to build and deploy"
   type        = list(string)
-  default     = ["user", "history", "country", "product", "forecast", "tariff"]
+  default     = ["user", "product", "history", "country", "tariff", "agreement", "forecast"]
   validation {
     condition     = length(var.services) > 0
     error_message = "At least one service must be defined"
