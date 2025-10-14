@@ -55,6 +55,7 @@ resource "aws_ecs_task_definition" "svc" {
 
       #----- DB configs ------
       environment = [
+        { name = "SPRING_PROFILES_ACTIVE", value = "docker" },
         { name = "DB_HOST",     value = var.enable_rds_proxy ? aws_db_proxy.this[0].endpoint : aws_db_instance.writer.address },
         { name = "DB_PORT",     value = tostring(var.db_port) },
         { name = "DB_NAME",     value = var.db_name },

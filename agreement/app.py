@@ -109,7 +109,7 @@ def healthcheck():
     return jsonify({
         "status": "healthy",
         "service": "user",
-        "timestamp": datetime.utcnow().isoformat()
+        "timestamp": datetime.datetime.utcnow().isoformat()
     }), 200
     
 
