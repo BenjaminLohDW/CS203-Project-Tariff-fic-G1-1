@@ -8,7 +8,7 @@ import sys
 import subprocess
 import time
 
-app = FastAPI();
+app = FastAPI()
 
 @app.get("/health")
 async def health_check():

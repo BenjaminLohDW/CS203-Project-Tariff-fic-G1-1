@@ -2,7 +2,7 @@
 
 
 #===================== SERVICE DISCOVERY (CLOUD MAP) =====================
-# Optional private DNS namespace for Cloud Map
+# private DNS namespace for Cloud Map
 resource "aws_service_discovery_private_dns_namespace" "ns" {
   count       = var.enable_cloud_map ? 1 : 0
   name        = "svc.local"
@@ -98,17 +98,22 @@ resource "aws_ecs_service" "svc" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets = module.vpc.private_subnets # <— match how you pass these elsewhere
-    security_groups = [aws_security_group.ecs.id]  # <— align with your SG name
-    assign_public_ip = false
+    subnets = module.vpc.private_subnets # services all in private subnet
+    security_groups = [aws_security_group.ecs.id] 
+    assign_public_ip = false #no public IPs
   }
 
-  load_balancer {
-    target_group_arn = aws_lb_target_group.svc[each.key].arn
-    container_name   = each.key
-    container_port   = each.value.port
+  # NOTE: only PUBLIC services will be attached to load balancer
+  dynamic "load_balancer" {
+    for_each = contains(keys(local.public_services), each.key) ? [1] : []
+    content {
+      target_group_arn = aws_lb_target_group.svc[each.key].arn
+      container_name   = each.key
+      container_port   = each.value.port
+    }
   }
 
+  # service discovery for ALL services - (for service to service internal communication)
   dynamic "service_registries" {
     for_each = var.enable_cloud_map ? [1] : []
     content {
@@ -123,7 +128,7 @@ resource "aws_ecs_service" "svc" {
 
   depends_on = [
     aws_lb_listener.http,
-    aws_lb_listener_rule.http_paths  # Add this line
+    aws_lb_listener_rule.http_paths
   ]
 
   tags = local.tags
