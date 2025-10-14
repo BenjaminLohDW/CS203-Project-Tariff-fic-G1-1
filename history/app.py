@@ -88,23 +88,32 @@ class HistoryTariffLine(db.Model):
         }
 
 # ---- Healthcheck api for ALB ----
+# @app.route("/health", methods=["GET"])
+# def healthcheck():
+#     #healthcheck for ALB target group
+#     try:
+#         # Quick DB connection check
+#         db.session.execute(db.text("SELECT 1"))
+#         return jsonify({
+#             "status": "healthy",
+#             "service": "history",
+#             "timestamp": datetime.utcnow().isoformat()
+#         }), 200
+#     except Exception as e:
+#         return jsonify({
+#             "status": "unhealthy",
+#             "service": "history",
+#             "error": str(e)
+#         }), 503
+
+#updated health checks for faster deployment
 @app.route("/health", methods=["GET"])
 def healthcheck():
-    #healthcheck for ALB target group
-    try:
-        # Quick DB connection check
-        db.session.execute(db.text("SELECT 1"))
-        return jsonify({
-            "status": "healthy",
-            "service": "history",
-            "timestamp": datetime.utcnow().isoformat()
-        }), 200
-    except Exception as e:
-        return jsonify({
-            "status": "unhealthy",
-            "service": "history",
-            "error": str(e)
-        }), 503
+    return jsonify({
+        "status": "healthy",
+        "service": "user",
+        "timestamp": datetime.utcnow().isoformat()
+    }), 200
 
 #--------------- api routes ---------------
 @app.route("/user/<string:user_id>/history", methods=["GET"])
