@@ -39,19 +39,19 @@ RUN pip install --no-cache-dir -r requirements.txt && \
 # Copy application code
 COPY src/ ./src/
 COPY start_service.py ./
-COPY build_embeddings.py ./
-COPY test_search.py ./
 
-# Copy HS nomenclature data
-COPY hs_nomenclature/ ./hs_nomenclature/
+# Copy only precomputed embeddings and required metadata to keep image small.
+# We assume embeddings are present in hs_nomenclature/embeddings on the host.
+# If you later want to rebuild embeddings inside the image, copy the full
+# hs_nomenclature/ directory or uncomment the build step.
+COPY hs_nomenclature/embeddings/ /app/hs_nomenclature/embeddings/
+COPY hs_nomenclature/chapters_combined.csv /app/hs_nomenclature/chapters_combined.csv
 
-# Create directories
-RUN mkdir -p /app/downloads/hsresults
-RUN mkdir -p /app/logs
-RUN mkdir -p /app/hs_nomenclature/embeddings
+# Create lightweight runtime directories
+RUN mkdir -p /app/downloads/hsresults /app/logs
 
 # Optional: Pre-build embeddings (uncomment if you want embeddings built in image)
-# This increases build time by 10-30 minutes but makes container startup faster
+# This increases build time significantly but makes container startup faster
 # RUN python build_embeddings.py || echo "Warning: Failed to build embeddings"
 
 # Expose port
