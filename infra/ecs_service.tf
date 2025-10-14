@@ -61,12 +61,15 @@ resource "aws_ecs_task_definition" "svc" {
         { name = "DB_USER",     value = var.db_username },
         { name = "DB_PASSWORD", value = var.db_password },
         { name = "DB_SSLMODE",  value = var.db_sslmode },
-        # { name = "DB_APPROLE",  value = var.db_approle },  # optional
-        { name = "DB_SECRET_ARN", value = var.enable_rds_proxy ? aws_secretsmanager_secret.db.arn : "" }, # optional
-        { name = "DB_PROXY_ENDPOINT", value = var.enable_rds_proxy ? aws_db_proxy.this[0].endpoint : "" }, # optional
-        { name = "REDIS_HOST",  value = var.enable_redis ? aws_elasticache_replication_group.this[0].primary_endpoint_address : "" }, # optional
-        { name = "REDIS_PORT",  value = "6379"}, # optional
-        { name = "AWS_REGION",  value = var.aws_region } # for SDK calls
+        { name = "DB_SECRET_ARN", value = var.enable_rds_proxy ? aws_secretsmanager_secret.db.arn : "" }, 
+        { name = "DB_PROXY_ENDPOINT", value = var.enable_rds_proxy ? aws_db_proxy.this[0].endpoint : "" }, 
+        { name = "REDIS_HOST",  value = var.enable_redis ? aws_elasticache_replication_group.this[0].primary_endpoint_address : "" },
+        { name = "REDIS_PORT",  value = "6379"}, 
+        { name = "AWS_REGION",  value = var.aws_region }, # for SDK calls
+          
+        # internal service discovery endpoint
+        { name = "COUNTRY_MS_BASE",  value = var.enable_cloud_map ? "http://country.svc.local:5005" : "http://localhost:5005" },
+        { name = "PRODUCT_MS_BASE",  value = var.enable_cloud_map ? "http://country.svc.local:5002" : "http://localhost:5002" },
       ]
 
       logConfiguration = {
@@ -97,6 +100,8 @@ resource "aws_ecs_service" "svc" {
   desired_count   = lookup(local.desired_counts, each.key, var.desired_count)
   launch_type     = "FARGATE"
 
+  health_check_grace_period_seconds = contains(keys(local.public_services), each.key) ? 120 : null  # Give services 2 minutes to start
+
   network_configuration {
     subnets = module.vpc.private_subnets # services all in private subnet
     security_groups = [aws_security_group.ecs.id] 
@@ -121,10 +126,14 @@ resource "aws_ecs_service" "svc" {
     }
   }
 
-  deployment_minimum_healthy_percent = 50
-  deployment_maximum_percent         = 200
+  deployment_minimum_healthy_percent = 100 # changed from 50 - ensure old tasks stay running until new ones are healthy
+  deployment_maximum_percent         = 200 #
 
-  
+  # automatic roll back if fails
+  deployment_circuit_breaker {
+    enable   = true
+    rollback = true
+  }
 
   depends_on = [
     aws_lb_listener.http,

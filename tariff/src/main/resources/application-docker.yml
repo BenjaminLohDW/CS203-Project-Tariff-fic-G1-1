@@ -13,10 +13,11 @@ spring:
 
 # external MS (point to real hosts later if you spin them up)
 country:
-  base-url: http://country:5005
+  base-url: ${COUNTRY_MS_BASE:http://country:5005}
   by-name-path: /api/countries/by-name
+
 product:
-  base-url: http://product:5002
+  base-url: ${PRODUCT_MS_BASE:http://product:5002}
   lookup-path: /api/v1/hs-code/lookup
 
 server:

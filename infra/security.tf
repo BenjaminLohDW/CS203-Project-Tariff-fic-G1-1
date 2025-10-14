@@ -97,3 +97,13 @@ resource "aws_vpc_security_group_ingress_rule" "endpoints_from_vpc" {
   ip_protocol       = "tcp"
   description       = "Allow HTTPS from VPC to reach VPC endpoints"
 }
+
+resource "aws_vpc_security_group_egress_rule" "ecs_to_endpoints" {
+  count                        = var.enable_endpoints ? 1 : 0
+  security_group_id            = aws_security_group.ecs.id
+  referenced_security_group_id = aws_security_group.endpoints[0].id
+  ip_protocol                  = "tcp"
+  from_port                    = 443
+  to_port                      = 443
+  description                  = "Allow ECS to reach VPC endpoints"
+}
