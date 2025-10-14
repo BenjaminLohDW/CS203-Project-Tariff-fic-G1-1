@@ -59,6 +59,7 @@ resource "aws_ecs_task_definition" "svc" {
         { name = "DB_PORT",     value = tostring(var.db_port) },
         { name = "DB_NAME",     value = var.db_name },
         { name = "DB_USER",     value = var.db_username },
+        { name = "DB_PASSWORD", value = var.db_password },
         { name = "DB_SSLMODE",  value = var.db_sslmode },
         # { name = "DB_APPROLE",  value = var.db_approle },  # optional
         { name = "DB_SECRET_ARN", value = var.enable_rds_proxy ? aws_secretsmanager_secret.db.arn : "" }, # optional

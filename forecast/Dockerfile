@@ -25,7 +25,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Expose the port the app runs on
-EXPOSE 5008
+EXPOSE 5007
 
 # Command to run the application
-CMD ["flask", "run", "--host=0.0.0.0", "--port=5008"]
+CMD ["flask", "run", "--host=0.0.0.0", "--port=5007"]
