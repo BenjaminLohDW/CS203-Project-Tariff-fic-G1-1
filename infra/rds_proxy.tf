@@ -69,7 +69,7 @@ resource "aws_db_proxy" "this" {
   role_arn                  = aws_iam_role.rds_proxy.arn
   vpc_subnet_ids            = module.vpc.database_subnets
   vpc_security_group_ids    = [aws_security_group.rds_proxy.id]
-  require_tls               = true
+  require_tls               = false
   idle_client_timeout       = 1800
   debug_logging             = false
   auth {

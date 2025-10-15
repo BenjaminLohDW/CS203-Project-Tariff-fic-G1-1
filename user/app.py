@@ -14,13 +14,20 @@ app = Flask(__name__)
 CORS(app)
 load_dotenv()
 
+ENV = os.getenv('ENV', 'local')
 user = os.getenv("DB_USER")
 pwd  = quote_plus(os.getenv("DB_PASSWORD", ""))  # URL-escape if needed
 host = os.getenv("DB_HOST", "localhost")
 port = os.getenv("DB_PORT", "5440")
 dbname = os.getenv("DB_NAME", "default")
+
+if ENV == 'aws':
+    dbsslmode = os.getenv('DB_SSLMODE', 'require')
+else:
+    dbsslmode = 'disable'
+    
 app.config["SQLALCHEMY_DATABASE_URI"] = (
-    f"postgresql+psycopg2://{user}:{pwd}@{host}:{port}/{dbname}"
+    f"postgresql+psycopg2://{user}:{pwd}@{host}:{port}/{dbname}?sslmode={dbsslmode}"
 )
 
 db = SQLAlchemy(app)
