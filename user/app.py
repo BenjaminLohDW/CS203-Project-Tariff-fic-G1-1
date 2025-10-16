@@ -22,7 +22,7 @@ port = os.getenv("DB_PORT", "5440")
 dbname = os.getenv("DB_NAME", "default")
 
 if ENV == 'aws':
-    dbsslmode = 'disbale' #os.getenv('DB_SSLMODE', 'require')
+    dbsslmode = os.getenv('DB_SSLMODE', 'require') #'disbale'
 else:
     dbsslmode = 'disable'
 
@@ -71,7 +71,7 @@ def healthcheck():
 
 
 #----api routes----
-@app.route("/user", methods=["GET"])
+@app.route("/user/all", methods=["GET"])
 def get_all_users():
     try:
         #pagination of rows; max return 100 rows per page, default 20

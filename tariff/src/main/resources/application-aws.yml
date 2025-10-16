@@ -1,7 +1,7 @@
 spring:
     datasource:
         # 🔥 No SSL for now (until you fix RDS Proxy TLS)
-        url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+        url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=require&ssl=true
         # 🔥 This will be used when you enable TLS in the future
         # url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}?ssl=true&sslmode=require
         username: ${DB_USER}
@@ -10,6 +10,10 @@ spring:
         hikari:
             connection-timeout: 60000
             maximum-pool-size: 5
+
+            data-source-properties:
+            ssl: true
+            sslmode: require
             
     jpa:
         hibernate:

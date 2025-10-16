@@ -59,7 +59,7 @@ DB_PORT = os.getenv('DB_PORT', '5432')
 DB_NAME = os.getenv('DB_NAME', 'default')
 
 if ENV == 'aws':
-    DB_SSLMODE = 'disbale' #os.getenv('DB_SSLMODE', 'require')
+    DB_SSLMODE = os.getenv('DB_SSLMODE', 'require') #'disbale'
 else:
     DB_SSLMODE = 'disable'
 
@@ -268,7 +268,7 @@ def health_check():
 
 
 #======================== COUNTRY ==========================
-@app.route('/countries', methods=['GET'])
+@app.route('/countries/all', methods=['GET'])
 def list_countries():
     """
     Get list of all countries

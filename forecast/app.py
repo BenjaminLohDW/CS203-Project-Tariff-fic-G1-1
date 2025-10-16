@@ -28,7 +28,7 @@ def health():
 
 
 #----- API ENDPOINTS -----
-@app.route("/api/forecast", methods=["POST"])
+@app.route("/forecast/predict", methods=["POST"])
 def forecast_tariff():
     try:
         data = request.get_json()
@@ -68,7 +68,7 @@ def forecast_tariff():
             "message": str(e)
         }), 500
     
-@app.route("/api/simulate", methods =["POST"])
+@app.route("/forecast/simulate", methods =["POST"])
 def simulate_country_rel():
     try: 
         data = request.get_json()

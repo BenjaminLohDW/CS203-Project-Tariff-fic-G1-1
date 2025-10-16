@@ -22,7 +22,7 @@ DB_PORT = os.getenv('DB_PORT', '5432')
 DB_NAME = os.getenv('DB_NAME', 'default')
 
 if ENV == 'aws':
-    DB_SSLMODE = 'disbale' #os.getenv('DB_SSLMODE', 'require')
+    DB_SSLMODE = os.getenv('DB_SSLMODE', 'require') #'disbale'
 else:
     DB_SSLMODE = 'disable'
 
@@ -119,7 +119,7 @@ def healthcheck():
     }), 200
     
 
-@app.route('/agreements', methods=['POST'])
+@app.route('/agreements/create', methods=['POST'])
 def create_agreement():
     """
     Create an agreement
@@ -199,7 +199,7 @@ def create_agreement():
     return jsonify(ag.to_dict()), 201
 
 
-@app.route('/agreements', methods=['GET'])
+@app.route('/agreements/all', methods=['GET'])
 def list_agreements():
     """
     List agreements (optionally filtered)

@@ -22,7 +22,7 @@ port = os.getenv("DB_PORT", "5440")
 dbname = os.getenv("DB_NAME", "default")
 
 if ENV == 'aws':
-    dbsslmode = 'disbale' #os.getenv('DB_SSLMODE', 'require')
+    dbsslmode = os.getenv('DB_SSLMODE', 'require') #'disbale'
 else:
     dbsslmode = 'disable'
 
