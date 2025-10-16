@@ -13,15 +13,15 @@ locals {
   public_services = {
     user     = { path = "/user*",     port = 5001, health = "/health" }
     history  = { path = "/history*",  port = 5003, health = "/health" }
-    tariff = { path = "/api/tariff/*", port = 5004, health = "/health" }
-    agreement  = { path = "/agreements/*",  port = 5006, health = "/health"}
-    forecast   = { path = "/forecast/*",   port = 5007, health = "/health" }
+    tariff = { path = "/api/tariff/*", port = 5004, health = "/api/tariff//health" }
+    agreement  = { path = "/agreements*",  port = 5006, health = "/health"}
+    forecast   = { path = "/forecast*",   port = 5007, health = "/health" }
   }
 
   #internal (can only be acccessed via service discovery)
   internal_services = {
     product  = { path = "/product*",  port = 5002, health = "/health" }
-    country  = { path = "/countries/*",  port = 5005, health = "/health" }
+    country  = { path = "/countries*",  port = 5005, health = "/health" }
   }
 
   # All services combined (for creating ECS tasks, target groups, etc.)
