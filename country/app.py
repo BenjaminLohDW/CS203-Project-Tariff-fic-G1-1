@@ -51,14 +51,20 @@ swagger_template = {
 
 swagger = Swagger(app, config=swagger_config, template=swagger_template)
 
-DB_USER = os.getenv('DB_USER')
+ENV = os.getenv('ENV', 'local')
+DB_USER = os.getenv('DB_USER', 'pgsql')
 DB_PASSWORD = quote_plus(os.getenv('DB_PASSWORD', ''))
 DB_HOST = os.getenv('DB_HOST', 'localhost')
 DB_PORT = os.getenv('DB_PORT', '5432')
 DB_NAME = os.getenv('DB_NAME', 'default')
 
+if ENV == 'aws':
+    DB_SSLMODE = os.getenv('DB_SSLMODE', 'require') #'disbale'
+else:
+    DB_SSLMODE = 'disable'
+
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?sslmode={DB_SSLMODE}"
 )
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -262,7 +268,7 @@ def health_check():
 
 
 #======================== COUNTRY ==========================
-@app.route('/countries', methods=['GET'])
+@app.route('/countries/all', methods=['GET'])
 def list_countries():
     """
     Get list of all countries

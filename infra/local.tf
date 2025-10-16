@@ -7,25 +7,39 @@ locals {
   # Build name prefix from project and environment
   name_prefix = "${var.project_name}-${var.env}"
 
-  # Service definitions - MUST match your actual microservices
-  # Each service needs a unique port and path prefix
-  services = {
+  # Service definitions
+
+  #public (connects to alb directly; communication with frontend)
+  public_services = {
     user     = { path = "/user/*",     port = 5001, health = "/health" }
-    product  = { path = "/product/*",  port = 5002, health = "/health" }
     history  = { path = "/history/*",  port = 5003, health = "/health" }
-    forecast = { path = "/forecast/*", port = 5004, health = "/health" }
-    country  = { path = "/countries/*",  port = 5005, health = "/health" }
-    tariff   = { path = "api/tariff/*",   port = 5006, health = "/health" }
+    tariff = { path = "/api/tariffs/*", port = 5004, health = "/api/tariffs/health" }
+    agreement  = { path = "/agreements/*",  port = 5006, health = "/health"}
+    forecast   = { path = "/forecast/*",   port = 5007, health = "/health" }
   }
+
+  #internal (can only be acccessed via service discovery)
+  internal_services = {
+    product  = { path = "/product/*",  port = 5002, health = "/health" }
+    country  = { path = "/countries/*",  port = 5005, health = "/health" }
+  }
+
+  # All services combined (for creating ECS tasks, target groups, etc.)
+  services = merge(
+    local.public_services,
+    # Add path for internal services (not used by ALB, but needed for consistency)
+    { for k, v in local.internal_services : k => merge(v, { path = "/${k}/*" }) }
+  )
 
   # Default desired count per service (can be overridden in variables)
   desired_counts = {
     user     = 1
-    history  = 1
-    country  = 1
     product  = 1
-    forecast = 1
+    history  = 1
     tariff   = 1
+    country  = 1
+    agreement = 1
+    forecast = 1
   }
 
   # Common tags applied to all resources

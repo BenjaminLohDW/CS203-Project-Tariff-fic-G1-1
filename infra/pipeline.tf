@@ -2,6 +2,7 @@
 # pipeline.tf
 # CI/CD Pipeline: GitHub -> CodeBuild -> ECR -> ECS
 ############################
+#update 1.1.0 10/11/2025: changed codebuild logic to build services parallelly instead of sequentially; added caching
 
 # ================= CodeStar GitHub Connection =================
 resource "aws_codestarconnections_connection" "github" {
@@ -77,7 +78,8 @@ resource "aws_iam_role_policy_attachment" "codebuild_s3" {
 
 # ================= 2. CodeBuild Project: actul packaging of images into services =================
 resource "aws_codebuild_project" "build" {
-  name         = "${local.name_prefix}-build"
+  for_each = toset(var.services)
+  name         = "${local.name_prefix}-build-${each.value}"
   service_role = aws_iam_role.codebuild.arn
 
   artifacts {
@@ -86,6 +88,13 @@ resource "aws_codebuild_project" "build" {
 
   source {
     type = "CODEPIPELINE"
+    buildspec = "buildspec.yml"  # Add this line - specify the path to your buildspec
+  }
+
+  #added caching so that coudebuild does not build images from scratch; uses previous docker layers for common base images
+  cache {
+    type = "LOCAL"
+    modes = ["LOCAL_DOCKER_LAYER_CACHE", "LOCAL_SOURCE_CACHE"]
   }
 
   environment {
@@ -100,8 +109,8 @@ resource "aws_codebuild_project" "build" {
       value = aws_ecr_repository.app.repository_url
     }
     environment_variable {
-      name  = "SERVICES"
-      value = join(" ", var.services)
+      name  = "SERVICE"
+      value = each.value
     }
     environment_variable {
       name  = "IMAGE_TAG"
@@ -163,7 +172,7 @@ data "aws_iam_policy_document" "codepipeline_policy" {
       "codebuild:StartBuild"
     ]
     resources = [
-      aws_codebuild_project.build.arn
+      for project in aws_codebuild_project.build : project.arn
     ]
   }
 
@@ -227,16 +236,20 @@ resource "aws_codepipeline" "this" {
   # Stage 2: Build (Docker build & push to ECR)
   stage {
     name = "Build"
-    action {
-      name             = "Build"
-      category         = "Build"
-      owner            = "AWS"
-      provider         = "CodeBuild"
-      version          = "1"
-      input_artifacts  = ["source_output"]
-      output_artifacts = ["build_output"]
-      configuration = {
-        ProjectName = aws_codebuild_project.build.name
+    dynamic "action" {
+      for_each = var.services
+      content {
+        name             = "Build-${action.value}"
+        category         = "Build"
+        owner            = "AWS"
+        provider         = "CodeBuild"
+        version          = "1"
+        input_artifacts  = ["source_output"]
+        output_artifacts = ["build_output_${action.value}"]
+        run_order = 1 # ensure parallel build
+        configuration = {
+          ProjectName = aws_codebuild_project.build[action.value].name
+        }
       }
     }
   }
@@ -253,7 +266,8 @@ resource "aws_codepipeline" "this" {
         owner           = "AWS"
         provider        = "ECS"
         version         = "1"
-        input_artifacts = ["build_output"]
+        input_artifacts = ["build_output_${action.value}"]
+        run_order = 1 #ensure parellel deployment
         configuration = {
           ClusterName = aws_ecs_cluster.this.name
           ServiceName = aws_ecs_service.svc[action.value].name

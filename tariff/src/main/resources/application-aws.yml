@@ -1,0 +1,55 @@
+spring:
+    datasource:
+        # 🔥 No SSL for now (until you fix RDS Proxy TLS)
+        url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=require&ssl=true
+        # 🔥 This will be used when you enable TLS in the future
+        # url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}?ssl=true&sslmode=require
+        username: ${DB_USER}
+        password: ${DB_PASSWORD}
+    
+        hikari:
+            connection-timeout: 60000
+            maximum-pool-size: 5
+
+            data-source-properties:
+            ssl: true
+            sslmode: require
+            
+    jpa:
+        hibernate:
+            ddl-auto: validate
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.PostgreSQLDialect
+        show-sql: false  # Don't log SQL in production
+        
+    flyway:
+        enabled: true
+        baseline-on-migrate: true
+        validate-on-migrate: false
+
+# Logging configuration
+logging:
+    level:
+        root: INFO
+        com.cs203g1t1.tariff: DEBUG
+        org.springframework.jdbc: DEBUG
+        org.hibernate.SQL: DEBUG
+        com.zaxxer.hikari: DEBUG
+
+# 🔥 AWS Service Discovery URLs
+country:
+    baseUrl: ${COUNTRY_MS_BASE:http://country.svc.local:5005}
+    byNamePath: /api/countries/by-name
+
+product:
+    baseUrl: ${{PRODUCT_MS_BASE:http://product.svc.local:5002}
+    lookupPath: /api/v1/hs-code/lookup
+
+server:
+    port: 5004
+
+logging:
+    level:
+        root: INFO
+        com.cs203g1t1.tariff: DEBUG

@@ -7,8 +7,9 @@ resource "aws_lb" "public" {
   tags               = local.tags
 }
 
+# health check target group - for ALL SERVICES to perform health check 
 resource "aws_lb_target_group" "svc" {
-  for_each = local.services
+  for_each = local.public_services
 
   name        = "${local.name_prefix}-${each.key}-tg"
   port        = each.value.port
@@ -18,11 +19,15 @@ resource "aws_lb_target_group" "svc" {
 
   health_check {
     path                = lookup(each.value, "health", "/")
-    matcher             = "200-399"
-    interval            = 30
+    matcher             = "200-299"
+    interval            = 15
     healthy_threshold   = 2
-    unhealthy_threshold = 5
-    timeout             = 5
+    unhealthy_threshold = 3
+    timeout             = 10
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 
   tags = local.tags
@@ -83,9 +88,9 @@ resource "aws_lb_listener" "https" {
 }
 
 
-# HTTP path rules (useful if you're running only on HTTP)
+# HTTP path rules (for PUBLIC SERVICES - connects directly to frontend through ALB)
 resource "aws_lb_listener_rule" "http_paths" {
-  for_each     = local.services
+  for_each     = local.public_services
   listener_arn = aws_lb_listener.http.arn
   priority     = 100 + index(keys(local.services), each.key)
 
@@ -103,7 +108,7 @@ resource "aws_lb_listener_rule" "http_paths" {
 
 # HTTPS path rules (only created when ACM is present)
 resource "aws_lb_listener_rule" "https_paths" {
-  for_each = var.acm_certificate_arn == "" ? {} : local.services
+  for_each = var.acm_certificate_arn == "" ? {} : local.public_services
 
   listener_arn = aws_lb_listener.https[0].arn
   priority     = 200 + index(keys(local.services), each.key)

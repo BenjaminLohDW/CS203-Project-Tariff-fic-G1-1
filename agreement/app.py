@@ -7,17 +7,24 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_cors import CORS
 import requests
+import datetime
 
 load_dotenv()
 
 # ============================================================
 # Database Config
 # ============================================================
+ENV = os.getenv('ENV', 'local')
 DB_USER = os.getenv('DB_USER', 'pgsql')
 DB_PASSWORD = quote_plus(os.getenv('DB_PASSWORD', ''))
 DB_HOST = os.getenv('DB_HOST', 'localhost')
 DB_PORT = os.getenv('DB_PORT', '5432')
 DB_NAME = os.getenv('DB_NAME', 'default')
+
+if ENV == 'aws':
+    DB_SSLMODE = os.getenv('DB_SSLMODE', 'require') #'disbale'
+else:
+    DB_SSLMODE = 'disable'
 
 COUNTRY_MS_URL = os.getenv('COUNTRY_MS_BASE', 'http://country:5005')
 
@@ -25,7 +32,7 @@ app = Flask(__name__)
 CORS(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?sslmode={DB_SSLMODE}"
 )
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -83,7 +90,36 @@ class Agreement(db.Model):
 # Routes
 # ============================================================
 
-@app.route('/agreements', methods=['POST'])
+# ---- Healthcheck api for ALB ----
+# @app.route("/health", methods=["GET"])
+# def healthcheck():
+#     #healthcheck for ALB target group
+#     try:
+#         # Quick DB connection check
+#         db.session.execute(db.text("SELECT 1"))
+#         return jsonify({
+#             "status": "healthy",
+#             "service": "history",
+#             "timestamp": datetime.utcnow().isoformat()
+#         }), 200
+#     except Exception as e:
+#         return jsonify({
+#             "status": "unhealthy",
+#             "service": "history",
+#             "error": str(e)
+#         }), 503
+    
+#updated health checks for faster deployment
+@app.route("/health", methods=["GET"])
+def healthcheck():
+    return jsonify({
+        "status": "healthy",
+        "service": "user",
+        "timestamp": datetime.datetime.utcnow().isoformat()
+    }), 200
+    
+
+@app.route('/agreements/create', methods=['POST'])
 def create_agreement():
     """
     Create an agreement
@@ -163,7 +199,7 @@ def create_agreement():
     return jsonify(ag.to_dict()), 201
 
 
-@app.route('/agreements', methods=['GET'])
+@app.route('/agreements/all', methods=['GET'])
 def list_agreements():
     """
     List agreements (optionally filtered)

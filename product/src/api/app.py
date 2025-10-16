@@ -4,6 +4,10 @@ from flasgger import Swagger, swag_from
 import logging
 import os
 import sys
+import tempfile
+import shutil
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import Any, Dict, List
 from datetime import datetime
 
 # Add the parent directory to sys.path to enable absolute imports
@@ -11,6 +15,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..'))
 
 from src.scrapers.captcha_resistant_scraper import CaptchaResistantScraper
 from src.config.settings import config
+from src.models.hs_search_engine import HSSearchEngine
 
 # Setup logging
 logging.basicConfig(
@@ -24,6 +29,22 @@ logging.basicConfig(
 
 app = Flask(__name__)
 CORS(app)
+
+# Initialize HS Search Engine (lazy initialization)
+search_engine = None
+
+def get_search_engine():
+    """Get or initialize the search engine singleton"""
+    global search_engine
+    if search_engine is None:
+        search_engine = HSSearchEngine()
+        try:
+            search_engine.initialize()
+        except Exception as e:
+            logging.error(f"Failed to initialize search engine: {e}")
+            # Don't fail the entire app if search engine fails
+            logging.warning("Search endpoints will be unavailable")
+    return search_engine
 
 # Swagger configuration
 swagger_config = {
@@ -63,11 +84,45 @@ swagger_template = {
         {
             "name": "HS Code Lookup",
             "description": "HS code lookup and batch processing endpoints"
+        },
+        {
+            "name": "HS Code Search",
+            "description": "Semantic search for HS codes using AI-powered hybrid search"
         }
     ]
 }
 
 swagger = Swagger(app, config=swagger_config, template=swagger_template)
+
+def _parse_max_workers():
+  try:
+    value = int(os.getenv('BATCH_MAX_WORKERS', '5'))
+    return value if value > 0 else 1
+  except (TypeError, ValueError):
+    logging.warning('Invalid BATCH_MAX_WORKERS value; defaulting to 1 (sequential).')
+    return 1
+
+
+BATCH_MAX_WORKERS = _parse_max_workers()
+
+
+def _lookup_single_query(query: str):
+  """
+  Lookup a single query with its own isolated download directory.
+  This prevents race conditions when multiple workers run concurrently.
+  """
+  # Create a unique per-call download directory to avoid cross-worker collisions
+  download_dir = tempfile.mkdtemp(prefix="hs_results_")
+  try:
+    with CaptchaResistantScraper(download_dir=download_dir) as scraper:
+      return scraper.scrape_with_retry(query)
+  finally:
+    # Best-effort cleanup: remove temp dir if empty (scraper moves files to hsresults)
+    try:
+      if os.path.exists(download_dir) and not os.listdir(download_dir):
+        shutil.rmtree(download_dir)
+    except Exception:
+      pass
 
 @app.route('/health', methods=['GET'])
 def health_check():
@@ -214,25 +269,25 @@ def lookup_hs_code():
     """
     try:
         data = request.get_json()
-        
+
         if not data or 'query' not in data:
             return jsonify({
                 'error': 'Missing required field: query',
                 'example': {'query': 'Apple iPhone smartphone'}
             }), 400
-        
+
         query = data['query'].strip()
         if not query:
             return jsonify({
                 'error': 'Query cannot be empty'
             }), 400
-        
+
         # Perform HS code lookup
         with CaptchaResistantScraper() as scraper:
             result = scraper.scrape_with_retry(query)
-        
+
         return jsonify(result.to_dict())
-        
+
     except Exception as e:
         logging.error(f"Error in HS code lookup: {str(e)}")
         return jsonify({
@@ -362,47 +417,366 @@ def batch_lookup_hs_code():
     """
     try:
         data = request.get_json()
-        
+
         if not data or 'queries' not in data:
             return jsonify({
                 'error': 'Missing required field: queries',
                 'example': {'queries': ['Apple iPhone', 'Samsung Galaxy']}
             }), 400
-        
+
         queries = data['queries']
         if not isinstance(queries, list) or len(queries) == 0:
             return jsonify({
                 'error': 'Queries must be a non-empty list'
             }), 400
-        
+
         if len(queries) > 10:  # Limit batch size
             return jsonify({
                 'error': 'Maximum 10 queries allowed per batch'
             }), 400
-        
-        results = []
-        
-        with CaptchaResistantScraper() as scraper:
-            for query in queries:
-                if query and query.strip():
-                    result = scraper.scrape_with_retry(query.strip())
-                    results.append(result.to_dict())
-                else:
-                    results.append({
-                        'query': query,
-                        'success': False,
-                        'error_message': 'Empty query'
-                    })
-        
+
+        results: List[Any] = [None] * len(queries)
+
+        if BATCH_MAX_WORKERS <= 1:
+            with CaptchaResistantScraper() as scraper:
+                for idx, query in enumerate(queries):
+                    trimmed = query.strip() if isinstance(query, str) else ''
+                    if trimmed:
+                        result = scraper.scrape_with_retry(trimmed)
+                        results[idx] = result.to_dict()
+                    else:
+                        results[idx] = {
+                            'query': query,
+                            'success': False,
+                            'error_message': 'Empty query'
+                        }
+        else:
+            futures: Dict[Any, Any] = {}
+            with ThreadPoolExecutor(max_workers=BATCH_MAX_WORKERS) as executor:
+                for idx, query in enumerate(queries):
+                    trimmed = query.strip() if isinstance(query, str) else ''
+                    if not trimmed:
+                        results[idx] = {
+                            'query': query,
+                            'success': False,
+                            'error_message': 'Empty query'
+                        }
+                        continue
+                    futures[executor.submit(_lookup_single_query, trimmed)] = (idx, trimmed)
+
+                for future in as_completed(futures):
+                    idx, trimmed_query = futures[future]
+                    try:
+                        result = future.result()
+                        results[idx] = result.to_dict()
+                    except Exception as exc:  # noqa: BLE001
+                        logging.error('Batch lookup failed for query "%s": %s', trimmed_query, exc)
+                        results[idx] = {
+                            'query': trimmed_query,
+                            'success': False,
+                            'error_message': str(exc)
+                        }
+
         return jsonify({
             'results': results,
             'total_processed': len(results)
         })
-        
+
     except Exception as e:
         logging.error(f"Error in batch HS code lookup: {str(e)}")
         return jsonify({
             'error': 'Internal server error',
+            'message': str(e)
+        }), 500
+
+@app.route('/api/v1/hs-code/search', methods=['POST'])
+def search_hs_codes():
+    """Semantic search for HS codes using AI
+    ---
+    tags:
+      - HS Code Search
+    summary: AI-powered semantic search for HS codes
+    description: |
+      Performs hybrid semantic search across the entire HS code hierarchy using AI embeddings.
+      Returns the most relevant HS codes based on product description, with hierarchical scoring
+      that considers chapters, headings, and subheadings. Much faster than web scraping and
+      provides better semantic understanding of product descriptions.
+    consumes:
+      - application/json
+    produces:
+      - application/json
+    parameters:
+      - in: body
+        name: body
+        description: Search query and parameters
+        required: true
+        schema:
+          type: object
+          required:
+            - query
+          properties:
+            query:
+              type: string
+              description: Product description to search for
+              example: "frozen beef cuts boneless"
+              minLength: 1
+            top_k:
+              type: integer
+              description: Number of results to return (1-50)
+              example: 10
+              default: 10
+              minimum: 1
+              maximum: 50
+            w_sub:
+              type: number
+              format: float
+              description: Weight for subheading similarity (0-1)
+              example: 0.7
+              default: 0.7
+            w_head:
+              type: number
+              format: float
+              description: Weight for heading similarity (0-1)
+              example: 0.2
+              default: 0.2
+            w_ch:
+              type: number
+              format: float
+              description: Weight for chapter similarity (0-1)
+              example: 0.1
+              default: 0.1
+    responses:
+      200:
+        description: Search completed successfully
+        schema:
+          type: object
+          properties:
+            query:
+              type: string
+              example: "frozen beef cuts boneless"
+            results:
+              type: array
+              items:
+                type: object
+                properties:
+                  rank:
+                    type: integer
+                    example: 1
+                  score:
+                    type: number
+                    format: float
+                    example: 0.8542
+                  subheading:
+                    type: string
+                    example: "020230"
+                  subheading_value:
+                    type: string
+                    example: "Frozen, boneless"
+                  heading:
+                    type: string
+                    example: "0202"
+                  heading_value:
+                    type: string
+                    example: "Meat of bovine animals, frozen"
+                  chapter:
+                    type: string
+                    example: "02"
+                  chapter_value:
+                    type: string
+                    example: "Meat and edible meat offal"
+                  scores_breakdown:
+                    type: object
+                    properties:
+                      subheading:
+                        type: number
+                        format: float
+                      heading:
+                        type: number
+                        format: float
+                      chapter:
+                        type: number
+                        format: float
+            total_results:
+              type: integer
+              example: 10
+            search_timestamp:
+              type: string
+              format: date-time
+      400:
+        description: Invalid request
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+      503:
+        description: Search engine not available
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+    """
+    try:
+        data = request.get_json()
+        
+        if not data or 'query' not in data:
+            return jsonify({
+                'error': 'Missing required field: query',
+                'example': {'query': 'smartphone', 'top_k': 10}
+            }), 400
+        
+        query = data.get('query', '').strip()
+        if not query:
+            return jsonify({'error': 'Query cannot be empty'}), 400
+        
+        # Get optional parameters
+        top_k = data.get('top_k', 10)
+        w_sub = data.get('w_sub', 0.7)
+        w_head = data.get('w_head', 0.2)
+        w_ch = data.get('w_ch', 0.1)
+        
+        # Validate parameters
+        if not isinstance(top_k, int) or top_k < 1 or top_k > 50:
+            return jsonify({'error': 'top_k must be an integer between 1 and 50'}), 400
+        
+        # Get search engine
+        engine = get_search_engine()
+        if engine is None or not engine._is_initialized:
+            return jsonify({
+                'error': 'Search engine not available',
+                'message': 'The semantic search engine is not initialized. Please contact support.'
+            }), 503
+        
+        # Perform search
+        results = engine.search(
+            query=query,
+            top_k=top_k,
+            w_sub=w_sub,
+            w_head=w_head,
+            w_ch=w_ch
+        )
+        
+        return jsonify({
+            'query': query,
+            'results': results,
+            'total_results': len(results),
+            'search_timestamp': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        logging.error(f"Error in HS code search: {str(e)}")
+        return jsonify({
+            'error': 'Internal server error',
+            'message': str(e)
+        }), 500
+
+@app.route('/api/v1/hs-code/search/stats', methods=['GET'])
+def search_engine_stats():
+    """Get search engine statistics
+    ---
+    tags:
+      - HS Code Search
+    summary: Get search engine information and statistics
+    description: Returns information about the search engine status, model details, and database statistics
+    responses:
+      200:
+        description: Statistics retrieved successfully
+        schema:
+          type: object
+          properties:
+            initialized:
+              type: boolean
+              example: true
+            model_name:
+              type: string
+              example: "BAAI/bge-m3"
+            device:
+              type: string
+              example: "cuda:0"
+            cuda_available:
+              type: boolean
+              example: true
+            total_chapters:
+              type: integer
+              example: 98
+            total_headings:
+              type: integer
+              example: 1244
+            total_subheadings:
+              type: integer
+              example: 5387
+            embeddings_dir:
+              type: string
+              example: "hs_nomenclature/embeddings"
+    """
+    try:
+        engine = get_search_engine()
+        if engine is None:
+            return jsonify({'initialized': False, 'error': 'Search engine not initialized'})
+        
+        stats = engine.get_stats()
+        return jsonify(stats)
+        
+    except Exception as e:
+        logging.error(f"Error getting search engine stats: {str(e)}")
+        return jsonify({
+            'error': 'Failed to retrieve statistics',
+            'message': str(e)
+        }), 500
+
+@app.route('/api/v1/hs-code/search/rebuild', methods=['POST'])
+def rebuild_search_index():
+    """Rebuild search engine embeddings (admin only)
+    ---
+    tags:
+      - HS Code Search
+    summary: Force rebuild of search embeddings
+    description: |
+      Rebuilds all embeddings from the source CSV file. This is a slow operation
+      (can take 10-30 minutes) and should only be used when the source data has been updated.
+      Requires admin privileges in production.
+    responses:
+      200:
+        description: Rebuild completed successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Search index rebuilt successfully"
+            stats:
+              type: object
+      500:
+        description: Rebuild failed
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+    """
+    try:
+        logging.info("Rebuilding search engine embeddings...")
+        engine = get_search_engine()
+        
+        if engine is None:
+            # Create new engine if none exists
+            global search_engine
+            search_engine = HSSearchEngine()
+            engine = search_engine
+        
+        # Force rebuild
+        engine.initialize(force_rebuild=True)
+        
+        return jsonify({
+            'message': 'Search index rebuilt successfully',
+            'stats': engine.get_stats()
+        })
+        
+    except Exception as e:
+        logging.error(f"Error rebuilding search index: {str(e)}")
+        return jsonify({
+            'error': 'Failed to rebuild search index',
             'message': str(e)
         }), 500
 
@@ -469,7 +843,10 @@ def root():
         'health_check': '/health',
         'endpoints': {
             'single_lookup': 'POST /api/v1/hs-code/lookup',
-            'batch_lookup': 'POST /api/v1/hs-code/batch'
+            'batch_lookup': 'POST /api/v1/hs-code/batch',
+            'semantic_search': 'POST /api/v1/hs-code/search',
+            'search_stats': 'GET /api/v1/hs-code/search/stats',
+            'rebuild_index': 'POST /api/v1/hs-code/search/rebuild'
         },
         'data_source': 'Singapore HS Code Database (https://hscodechecker.gobusiness.gov.sg/)'
     })

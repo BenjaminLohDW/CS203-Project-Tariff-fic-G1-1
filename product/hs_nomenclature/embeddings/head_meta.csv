@@ -1,0 +1,1229 @@
+Chapter,Chapter Value,Heading,Heading Value
+01,Live animals,01.01,"Live horses, asses, mules and hinnies."
+01,Live animals,01.02,Live bovine animals.
+01,Live animals,01.03,Live swine.
+01,Live animals,01.04,Live sheep and goats.
+01,Live animals,01.05,"Live poultry, that is to say, fowls of the species Gallus domesticus,"
+01,Live animals,01.06,Other live animals.
+02,Meat and edible meat offal,02.01,"Meat of bovine animals, fresh or chilled."
+02,Meat and edible meat offal,02.02,"Meat of bovine animals, frozen."
+02,Meat and edible meat offal,02.03,"Meat of swine, fresh, chilled or frozen."
+02,Meat and edible meat offal,02.04,"Meat of sheep or goats, fresh, chilled or frozen."
+02,Meat and edible meat offal,02.05,
+02,Meat and edible meat offal,02.06,"Edible offal of bovine animals, swine, sheep, goats, horses, asses,"
+02,Meat and edible meat offal,02.07,"Meat and edible offal, of the poultry of heading 01.05, fresh,"
+02,Meat and edible meat offal,02.08,"Other meat and edible meat offal, fresh, chilled or frozen."
+02,Meat and edible meat offal,02.09,"Pig fat, free of lean meat, and poultry fat, not rendered or"
+02,Meat and edible meat offal,02.10,"Meat and edible meat offal, salted, in brine, dried or smoked;"
+03,"Fish and crustaceans, molluscs and other",03.01,Live fish.
+03,"Fish and crustaceans, molluscs and other",03.02,"Fish, fresh or chilled, excluding fish fillets and other fish meat of"
+03,"Fish and crustaceans, molluscs and other",03.03,"Fish, frozen, excluding fish fillets and other fish meat of heading"
+03,"Fish and crustaceans, molluscs and other",03.04,"Fish fillets and other fish meat (whether or not minced), fresh,"
+03,"Fish and crustaceans, molluscs and other",03.05,"Fish, dried, salted or in brine; smoked fish, whether or not"
+03,"Fish and crustaceans, molluscs and other",03.06,"Crustaceans, whether in shell or not, live, fresh, chilled, frozen,"
+03,"Fish and crustaceans, molluscs and other",03.07,"Molluscs, whether in shell or not, live, fresh, chilled, frozen,"
+03,"Fish and crustaceans, molluscs and other",03.08,"Aquatic invertebrates other than crustaceans and molluscs, live,"
+03,"Fish and crustaceans, molluscs and other",03.09,"Flours, meals and pellets of fish, crustaceans, molluscs and"
+04,Dairy produce; birds' eggs; natural honey;,04.01,"Milk and cream, not concentrated nor containing added sugar or"
+04,Dairy produce; birds' eggs; natural honey;,04.02,"Milk and cream, concentrated or containing added sugar or"
+04,Dairy produce; birds' eggs; natural honey;,04.03,"Yogurt; buttermilk, curdled milk and cream, kephir and other"
+04,Dairy produce; birds' eggs; natural honey;,04.04,"Whey, whether or not concentrated or containing added sugar or"
+04,Dairy produce; birds' eggs; natural honey;,04.05,Butter and other fats and oils derived from milk; dairy spreads.
+04,Dairy produce; birds' eggs; natural honey;,04.06,Cheese and curd.
+04,Dairy produce; birds' eggs; natural honey;,04.07,"Birds' eggs, in shell, fresh, preserved or cooked."
+04,Dairy produce; birds' eggs; natural honey;,04.08,"Birds' eggs, not in shell, and egg yolks, fresh, dried, cooked by"
+04,Dairy produce; birds' eggs; natural honey;,04.09,
+04,Dairy produce; birds' eggs; natural honey;,04.10,"Insects and other edible products of animal origin, not"
+05,"Products of animal origin,",05.01,
+05,"Products of animal origin,",05.02,"Pigs', hogs' or boars' bristles and hair; badger hair and other"
+05,"Products of animal origin,",05.04,
+05,"Products of animal origin,",05.05,"Skins and other parts of birds, with their feathers or down,"
+05,"Products of animal origin,",05.06,"Bones and horn-cores, unworked, defatted, simply prepared (but"
+05,"Products of animal origin,",05.07,"Ivory, tortoise-shell, whalebone and whalebone hair, horns,"
+05,"Products of animal origin,",05.08,
+05,"Products of animal origin,",05.10,
+05,"Products of animal origin,",05.11,Animal products not elsewhere specified or included; dead
+06,"Live trees and other plants; bulbs, roots and the like;",06.01,"Bulbs, tubers, tuberous roots, corms, crowns and rhizomes,"
+06,"Live trees and other plants; bulbs, roots and the like;",06.02,"Other live plants (including their roots), cuttings and slips;"
+06,"Live trees and other plants; bulbs, roots and the like;",06.03,Cut flowers and flower buds of a kind suitable for bouquets or
+06,"Live trees and other plants; bulbs, roots and the like;",06.04,"Foliage, branches and other parts of plants, without flowers or"
+07,Edible vegetables and certain roots and tubers,07.01,"Potatoes, fresh or chilled."
+07,Edible vegetables and certain roots and tubers,07.02,
+07,Edible vegetables and certain roots and tubers,07.03,"Onions, shallots, garlic, leeks and other alliaceous vegetables,"
+07,Edible vegetables and certain roots and tubers,07.04,"Cabbages, cauliflowers, kohlrabi, kale and similar edible"
+07,Edible vegetables and certain roots and tubers,07.05,"Lettuce (Lactuca sativa) and chicory (Cichorium spp.), fresh or"
+07,Edible vegetables and certain roots and tubers,07.06,"Carrots, turnips, salad beetroot, salsify, celeriac, radishes and"
+07,Edible vegetables and certain roots and tubers,07.07,
+07,Edible vegetables and certain roots and tubers,07.08,"Leguminous vegetables, shelled or unshelled, fresh or chilled."
+07,Edible vegetables and certain roots and tubers,07.09,"Other vegetables, fresh or chilled."
+07,Edible vegetables and certain roots and tubers,07.10,"Vegetables (uncooked or cooked by steaming or boiling in water),"
+07,Edible vegetables and certain roots and tubers,07.11,"Vegetables provisionally preserved, but unsuitable in that state"
+07,Edible vegetables and certain roots and tubers,07.12,"Dried vegetables, whole, cut, sliced, broken or in powder, but not"
+07,Edible vegetables and certain roots and tubers,07.13,"Dried leguminous vegetables, shelled, whether or not skinned or"
+07,Edible vegetables and certain roots and tubers,07.14,"Manioc, arrowroot, salep, Jerusalem artichokes, sweet potatoes"
+08,Edible fruit and nuts; peel of citrus fruit or melons,08.01,"Coconuts, Brazil nuts and cashew nuts, fresh or dried, whether"
+08,Edible fruit and nuts; peel of citrus fruit or melons,08.02,"Other nuts, fresh or dried, whether or not shelled or peeled."
+08,Edible fruit and nuts; peel of citrus fruit or melons,08.03,"Bananas, including plantains, fresh or dried."
+08,Edible fruit and nuts; peel of citrus fruit or melons,08.04,"Dates, figs, pineapples, avocados, guavas, mangoes and"
+08,Edible fruit and nuts; peel of citrus fruit or melons,08.05,"Citrus fruit, fresh or dried."
+08,Edible fruit and nuts; peel of citrus fruit or melons,08.06,"Grapes, fresh or dried."
+08,Edible fruit and nuts; peel of citrus fruit or melons,08.07,"Melons (including watermelons) and papaws (papayas), fresh."
+08,Edible fruit and nuts; peel of citrus fruit or melons,08.08,"Apples, pears and quinces, fresh."
+08,Edible fruit and nuts; peel of citrus fruit or melons,08.09,"Apricots, cherries, peaches (including nectarines), plums and"
+08,Edible fruit and nuts; peel of citrus fruit or melons,08.10,"Other fruit, fresh."
+08,Edible fruit and nuts; peel of citrus fruit or melons,08.11,"Fruit and nuts, uncooked or cooked by steaming or boiling in"
+08,Edible fruit and nuts; peel of citrus fruit or melons,08.12,"Fruit and nuts provisionally preserved, but unsuitable in that"
+08,Edible fruit and nuts; peel of citrus fruit or melons,08.13,"Fruit, dried, other than that of headings 08.01 to 08.06; mixtures"
+08,Edible fruit and nuts; peel of citrus fruit or melons,08.14,
+09,"Coffee, tea, maté and spices",09.01,"Coffee, whether or not roasted or decaffeinated; coffee husks and"
+09,"Coffee, tea, maté and spices",09.02,"Tea, whether or not flavoured."
+09,"Coffee, tea, maté and spices",09.03,
+09,"Coffee, tea, maté and spices",09.04,Pepper of the genus Piper; dried or crushed or ground fruits of
+09,"Coffee, tea, maté and spices",09.05,Vanilla.
+09,"Coffee, tea, maté and spices",09.06,Cinnamon and cinnamon-tree flowers.
+09,"Coffee, tea, maté and spices",09.07,"Cloves (whole fruit, cloves and stems)."
+09,"Coffee, tea, maté and spices",09.08,"Nutmeg, mace and cardamoms."
+09,"Coffee, tea, maté and spices",09.09,"Seeds of anise, badian, fennel, coriander, cumin or caraway;"
+09,"Coffee, tea, maté and spices",09.10,"Ginger, saffron, turmeric (curcuma), thyme, bay leaves, curry"
+10,Cereals,10.01,Wheat and meslin.
+10,Cereals,10.02,Rye.
+10,Cereals,10.03,Barley.
+10,Cereals,10.04,Oats.
+10,Cereals,10.05,Maize (corn).
+10,Cereals,10.06,Rice.
+10,Cereals,10.07,Grain sorghum.
+10,Cereals,10.08,"Buckwheat, millet and canary seeds; other cereals."
+11,Products of the milling industry; malt; starches;,11.01,
+11,Products of the milling industry; malt; starches;,11.02,Cereal flours other than of wheat or meslin.
+11,Products of the milling industry; malt; starches;,11.03,"Cereal groats, meal and pellets."
+11,Products of the milling industry; malt; starches;,11.04,"Cereal grains otherwise worked (for example, hulled, rolled,"
+11,Products of the milling industry; malt; starches;,11.05,"Flour, meal, powder, flakes, granules and pellets of potatoes."
+11,Products of the milling industry; malt; starches;,11.06,"Flour, meal and powder of the dried leguminous vegetables of"
+11,Products of the milling industry; malt; starches;,11.07,"Malt, whether or not roasted."
+11,Products of the milling industry; malt; starches;,11.08,Starches; inulin.
+11,Products of the milling industry; malt; starches;,11.09,
+12,"Oil seeds and oleaginous fruits; miscellaneous grains,",12.01,"Soya beans, whether or not broken."
+12,"Oil seeds and oleaginous fruits; miscellaneous grains,",12.02,"Ground-nuts, not roasted or otherwise cooked, whether or not"
+12,"Oil seeds and oleaginous fruits; miscellaneous grains,",12.03,
+12,"Oil seeds and oleaginous fruits; miscellaneous grains,",12.04,
+12,"Oil seeds and oleaginous fruits; miscellaneous grains,",12.05,"Rape or colza seeds, whether or not broken."
+12,"Oil seeds and oleaginous fruits; miscellaneous grains,",12.06,
+12,"Oil seeds and oleaginous fruits; miscellaneous grains,",12.07,"Other oil seeds and oleaginous fruits, whether or not broken."
+12,"Oil seeds and oleaginous fruits; miscellaneous grains,",12.08,"Flours and meals of oil seeds or oleaginous fruits, other than"
+12,"Oil seeds and oleaginous fruits; miscellaneous grains,",12.09,"Seeds, fruit and spores, of a kind used for sowing."
+12,"Oil seeds and oleaginous fruits; miscellaneous grains,",12.10,"Hop cones, fresh or dried, whether or not ground, powdered or"
+12,"Oil seeds and oleaginous fruits; miscellaneous grains,",12.11,"Plants and parts of plants (including seeds and fruits), of a kind"
+12,"Oil seeds and oleaginous fruits; miscellaneous grains,",12.12,"Locust beans, seaweeds and other algae, sugar beet and sugar"
+12,"Oil seeds and oleaginous fruits; miscellaneous grains,",12.13,
+12,"Oil seeds and oleaginous fruits; miscellaneous grains,",12.14,"Swedes, mangolds, fodder roots, hay, lucerne (alfalfa), clover,"
+13,"Lac; gums, resins and other vegetable saps and extracts",13.01,"Lac; natural gums, resins, gum-resins and oleoresins (for"
+13,"Lac; gums, resins and other vegetable saps and extracts",13.02,"Vegetable saps and extracts; pectic substances, pectinates and"
+14,Vegetable plaiting materials; vegetable products,14.01,Vegetable materials of a kind used primarily for plaiting (for
+14,Vegetable plaiting materials; vegetable products,14.04,Vegetable products not elsewhere specified or included.
+15,"Animal, vegetable or microbial fats and oils",15.01,"Pig fat (including lard) and poultry fat, other than that of"
+15,"Animal, vegetable or microbial fats and oils",15.02,"Fats of bovine animals, sheep or goats, other than those of"
+15,"Animal, vegetable or microbial fats and oils",15.03,
+15,"Animal, vegetable or microbial fats and oils",15.04,"Fats and oils and their fractions, of fish or marine mammals,"
+15,"Animal, vegetable or microbial fats and oils",15.05,
+15,"Animal, vegetable or microbial fats and oils",15.06,
+15,"Animal, vegetable or microbial fats and oils",15.07,"Soya-bean oil and its fractions, whether or not refined, but not"
+15,"Animal, vegetable or microbial fats and oils",15.08,"Ground-nut oil and its fractions, whether or not refined, but not"
+15,"Animal, vegetable or microbial fats and oils",15.09,"Olive oil and its fractions, whether or not refined, but not"
+15,"Animal, vegetable or microbial fats and oils",15.10,"Other oils and their fractions, obtained solely from olives,"
+15,"Animal, vegetable or microbial fats and oils",15.11,"Palm oil and its fractions, whether or not refined, but not"
+15,"Animal, vegetable or microbial fats and oils",15.12,"Sunflower-seed, safflower or cotton-seed oil and fractions"
+15,"Animal, vegetable or microbial fats and oils",15.13,"Coconut (copra), palm kernel or babassu oil and fractions"
+15,"Animal, vegetable or microbial fats and oils",15.14,"Rape, colza or mustard oil and fractions thereof, whether or not"
+15,"Animal, vegetable or microbial fats and oils",15.15,Other fixed vegetable or microbial fats and oils (including
+15,"Animal, vegetable or microbial fats and oils",15.16,"Animal, vegetable or microbial fats and oils and their fractions,"
+15,"Animal, vegetable or microbial fats and oils",15.17,"Margarine; edible mixtures or preparations of animal,"
+15,"Animal, vegetable or microbial fats and oils",15.18,
+15,"Animal, vegetable or microbial fats and oils",15.20,
+15,"Animal, vegetable or microbial fats and oils",15.21,"Vegetable waxes (other than triglycerides), beeswax, other insect"
+15,"Animal, vegetable or microbial fats and oils",15.22,
+16,"Preparations of meat, of fish, of crustaceans,",16.01,
+16,"Preparations of meat, of fish, of crustaceans,",16.02,"Other prepared or preserved meat, meat offal, blood or insects."
+16,"Preparations of meat, of fish, of crustaceans,",16.03,
+16,"Preparations of meat, of fish, of crustaceans,",16.04,Prepared or preserved fish; caviar and caviar substitutes
+16,"Preparations of meat, of fish, of crustaceans,",16.05,"Crustaceans, molluscs and other aquatic invertebrates, prepared"
+17,Sugars and sugar confectionery,17.01,"Cane or beet sugar and chemically pure sucrose, in solid form."
+17,Sugars and sugar confectionery,17.02,"Other sugars, including chemically pure lactose, maltose, glucose"
+17,Sugars and sugar confectionery,17.03,Molasses resulting from the extraction or refining of sugar.
+17,Sugars and sugar confectionery,17.04,"Sugar confectionery (including white chocolate), not containing"
+18,Cocoa and cocoa preparations,18.01,
+18,Cocoa and cocoa preparations,18.02,
+18,Cocoa and cocoa preparations,18.03,"Cocoa paste, whether or not defatted."
+18,Cocoa and cocoa preparations,18.04,
+18,Cocoa and cocoa preparations,18.05,
+18,Cocoa and cocoa preparations,18.06,Chocolate and other food preparations containing cocoa.
+19,"Preparations of cereals, flour, starch or milk;",19.01,"Malt extract; food preparations of flour, groats, meal, starch or"
+19,"Preparations of cereals, flour, starch or milk;",19.02,"Pasta, whether or not cooked or stuffed (with meat or other"
+19,"Preparations of cereals, flour, starch or milk;",19.03,
+19,"Preparations of cereals, flour, starch or milk;",19.04,Prepared foods obtained by the swelling or roasting of cereals or
+19,"Preparations of cereals, flour, starch or milk;",19.05,"Bread, pastry, cakes, biscuits and other bakers' wares, whether"
+20,"Preparations of vegetables, fruit, nuts or other parts of plants",20.01,"Vegetables, fruit, nuts and other edible parts of plants, prepared"
+20,"Preparations of vegetables, fruit, nuts or other parts of plants",20.02,Tomatoes prepared or preserved otherwise than by vinegar or
+20,"Preparations of vegetables, fruit, nuts or other parts of plants",20.03,"Mushrooms and truffles, prepared or preserved otherwise than"
+20,"Preparations of vegetables, fruit, nuts or other parts of plants",20.04,Other vegetables prepared or preserved otherwise than by
+20,"Preparations of vegetables, fruit, nuts or other parts of plants",20.05,Other vegetables prepared or preserved otherwise than by
+20,"Preparations of vegetables, fruit, nuts or other parts of plants",20.06,
+20,"Preparations of vegetables, fruit, nuts or other parts of plants",20.07,"Jams, fruit jellies, marmalades, fruit or nut purée and fruit or"
+20,"Preparations of vegetables, fruit, nuts or other parts of plants",20.08,"Fruit, nuts and other edible parts of plants, otherwise prepared"
+20,"Preparations of vegetables, fruit, nuts or other parts of plants",20.09,Fruit or nut juices (including grape must and coconut water) and
+21,Miscellaneous edible preparations,21.01,"Extracts, essences and concentrates, of coffee, tea or maté and"
+21,Miscellaneous edible preparations,21.02,"Yeasts (active or inactive); other single-cell micro-organisms,"
+21,Miscellaneous edible preparations,21.03,Sauces and preparations therefor; mixed condiments and mixed
+21,Miscellaneous edible preparations,21.04,Soups and broths and preparations therefor; homogenised
+21,Miscellaneous edible preparations,21.05,
+21,Miscellaneous edible preparations,21.06,Food preparations not elsewhere specified or included.
+22,"Beverages, spirits and vinegar",22.01,"Waters, including natural or artificial mineral waters and"
+22,"Beverages, spirits and vinegar",22.02,"Waters, including mineral waters and aerated waters,"
+22,"Beverages, spirits and vinegar",22.03,
+22,"Beverages, spirits and vinegar",22.04,"Wine of fresh grapes, including fortified wines; grape must other"
+22,"Beverages, spirits and vinegar",22.05,Vermouth and other wine of fresh grapes flavoured with plants
+22,"Beverages, spirits and vinegar",22.06,
+22,"Beverages, spirits and vinegar",22.07,Undenatured ethyl alcohol of an alcoholic strength by volume of
+22,"Beverages, spirits and vinegar",22.08,Undenatured ethyl alcohol of an alcoholic strength by volume of
+22,"Beverages, spirits and vinegar",22.09,
+23,Residues and waste from the food industries;,23.01,"Flours, meals and pellets, of meat or meat offal, of fish or of"
+23,Residues and waste from the food industries;,23.02,"Bran, sharps and other residues, whether or not in the form of"
+23,Residues and waste from the food industries;,23.03,"Residues of starch manufacture and similar residues, beet-pulp,"
+23,Residues and waste from the food industries;,23.04,
+23,Residues and waste from the food industries;,23.05,
+23,Residues and waste from the food industries;,23.06,"Oil-cake and other solid residues, whether or not ground or in"
+23,Residues and waste from the food industries;,23.07,
+23,Residues and waste from the food industries;,23.08,
+23,Residues and waste from the food industries;,23.09,Preparations of a kind used in animal feeding.
+24,Tobacco and manufactured tobacco substitutes;,24.01,Unmanufactured tobacco; tobacco refuse.
+24,Tobacco and manufactured tobacco substitutes;,24.02,"Cigars, cheroots, cigarillos and cigarettes, of tobacco or of"
+24,Tobacco and manufactured tobacco substitutes;,24.03,Other manufactured tobacco and manufactured tobacco
+24,Tobacco and manufactured tobacco substitutes;,24.04,"Products containing tobacco, reconstituted tobacco, nicotine, or"
+25,Salt; sulphur; earths and stone;,25.01,
+25,Salt; sulphur; earths and stone;,25.02,
+25,Salt; sulphur; earths and stone;,25.03,
+25,Salt; sulphur; earths and stone;,25.04,Natural graphite.
+25,Salt; sulphur; earths and stone;,25.05,"Natural sands of all kinds, whether or not coloured, other than"
+25,Salt; sulphur; earths and stone;,25.06,"Quartz (other than natural sands); quartzite, whether or not"
+25,Salt; sulphur; earths and stone;,25.07,
+25,Salt; sulphur; earths and stone;,25.08,"Other clays (not including expanded clays of heading 68.06),"
+25,Salt; sulphur; earths and stone;,25.09,
+25,Salt; sulphur; earths and stone;,25.10,"Natural calcium phosphates, natural aluminium calcium"
+25,Salt; sulphur; earths and stone;,25.11,Natural barium sulphate (barytes); natural barium carbonate
+25,Salt; sulphur; earths and stone;,25.12,
+25,Salt; sulphur; earths and stone;,25.13,"Pumice stone; emery; natural corundum, natural garnet and"
+25,Salt; sulphur; earths and stone;,25.14,
+25,Salt; sulphur; earths and stone;,25.15,"Marble, travertine, ecaussine and other calcareous monumental"
+25,Salt; sulphur; earths and stone;,25.16,"Granite, porphyry, basalt, sandstone and other monumental or"
+25,Salt; sulphur; earths and stone;,25.17,"Pebbles, gravel, broken or crushed stone, of a kind commonly"
+25,Salt; sulphur; earths and stone;,25.18,"Dolomite, whether or not calcined or sintered, including"
+25,Salt; sulphur; earths and stone;,25.19,Natural magnesium carbonate (magnesite); fused magnesia;
+25,Salt; sulphur; earths and stone;,25.20,Gypsum; anhydrite; plasters (consisting of calcined gypsum or
+25,Salt; sulphur; earths and stone;,25.21,
+25,Salt; sulphur; earths and stone;,25.22,"Quicklime, slaked lime and hydraulic lime, other than calcium"
+25,Salt; sulphur; earths and stone;,25.23,"Portland cement, aluminous cement, slag cement, supersulphate"
+25,Salt; sulphur; earths and stone;,25.24,Asbestos.
+25,Salt; sulphur; earths and stone;,25.25,"Mica, including splittings; mica waste."
+25,Salt; sulphur; earths and stone;,25.26,"Natural steatite, whether or not roughly trimmed or merely cut,"
+25,Salt; sulphur; earths and stone;,25.28,
+25,Salt; sulphur; earths and stone;,25.29,"Feldspar; leucite, nepheline and nepheline syenite; fluorspar."
+25,Salt; sulphur; earths and stone;,25.30,Mineral substances not elsewhere specified or included.
+26,"Ores, slag and ash",26.01,"Iron ores and concentrates, including roasted iron pyrites."
+26,"Ores, slag and ash",26.02,
+26,"Ores, slag and ash",26.03,
+26,"Ores, slag and ash",26.04,
+26,"Ores, slag and ash",26.05,
+26,"Ores, slag and ash",26.06,
+26,"Ores, slag and ash",26.07,
+26,"Ores, slag and ash",26.08,
+26,"Ores, slag and ash",26.09,
+26,"Ores, slag and ash",26.10,
+26,"Ores, slag and ash",26.11,
+26,"Ores, slag and ash",26.12,Uranium or thorium ores and concentrates.
+26,"Ores, slag and ash",26.13,Molybdenum ores and concentrates.
+26,"Ores, slag and ash",26.14,
+26,"Ores, slag and ash",26.15,"Niobium, tantalum, vanadium or zirconium ores and"
+26,"Ores, slag and ash",26.16,Precious metal ores and concentrates.
+26,"Ores, slag and ash",26.17,Other ores and concentrates.
+26,"Ores, slag and ash",26.18,
+26,"Ores, slag and ash",26.19,
+26,"Ores, slag and ash",26.20,"Slag, ash and residues (other than from the manufacture of iron"
+26,"Ores, slag and ash",26.21,"Other slag and ash, including seaweed ash (kelp); ash and"
+27,"Mineral fuels, mineral oils and products of their distillation;",27.01,"Coal; briquettes, ovoids and similar solid fuels manufactured"
+27,"Mineral fuels, mineral oils and products of their distillation;",27.02,"Lignite, whether or not agglomerated, excluding jet."
+27,"Mineral fuels, mineral oils and products of their distillation;",27.03,
+27,"Mineral fuels, mineral oils and products of their distillation;",27.04,
+27,"Mineral fuels, mineral oils and products of their distillation;",27.05,
+27,"Mineral fuels, mineral oils and products of their distillation;",27.06,
+27,"Mineral fuels, mineral oils and products of their distillation;",27.07,Oils and other products of the distillation of high temperature
+27,"Mineral fuels, mineral oils and products of their distillation;",27.08,"Pitch and pitch coke, obtained from coal tar or from other"
+27,"Mineral fuels, mineral oils and products of their distillation;",27.09,
+27,"Mineral fuels, mineral oils and products of their distillation;",27.10,"Petroleum oils and oils obtained from bituminous minerals,"
+27,"Mineral fuels, mineral oils and products of their distillation;",27.11,Petroleum gases and other gaseous hydrocarbons.
+27,"Mineral fuels, mineral oils and products of their distillation;",27.12,"Petroleum jelly; paraffin wax, micro-crystalline petroleum wax,"
+27,"Mineral fuels, mineral oils and products of their distillation;",27.13,"Petroleum coke, petroleum bitumen and other residues of"
+27,"Mineral fuels, mineral oils and products of their distillation;",27.14,"Bitumen and asphalt, natural; bituminous or oil shale and tar"
+27,"Mineral fuels, mineral oils and products of their distillation;",27.15,
+27,"Mineral fuels, mineral oils and products of their distillation;",27.16,
+28,Inorganic chemicals; organic or inorganic compounds,28.01,"Fluorine, chlorine, bromine and iodine."
+28,Inorganic chemicals; organic or inorganic compounds,28.02,
+28,Inorganic chemicals; organic or inorganic compounds,28.03,
+28,Inorganic chemicals; organic or inorganic compounds,28.04,"Hydrogen, rare gases and other non-metals."
+28,Inorganic chemicals; organic or inorganic compounds,28.05,"Alkali or alkaline-earth metals; rare-earth metals, scandium and"
+28,Inorganic chemicals; organic or inorganic compounds,28.06,Hydrogen chloride (hydrochloric acid); chlorosulphuric acid.
+28,Inorganic chemicals; organic or inorganic compounds,28.07,
+28,Inorganic chemicals; organic or inorganic compounds,28.08,
+28,Inorganic chemicals; organic or inorganic compounds,28.09,Diphosphorus pentaoxide; phosphoric acid; polyphosphoric
+28,Inorganic chemicals; organic or inorganic compounds,28.10,
+28,Inorganic chemicals; organic or inorganic compounds,28.11,Other inorganic acids and other inorganic oxygen compounds of
+28,Inorganic chemicals; organic or inorganic compounds,28.12,Halides and halide oxides of non-metals.
+28,Inorganic chemicals; organic or inorganic compounds,28.13,Sulphides of non-metals; commercial phosphorus trisulphide.
+28,Inorganic chemicals; organic or inorganic compounds,28.14,"Ammonia, anhydrous or in aqueous solution."
+28,Inorganic chemicals; organic or inorganic compounds,28.15,Sodium hydroxide (caustic soda); potassium hydroxide (caustic
+28,Inorganic chemicals; organic or inorganic compounds,28.16,"Hydroxide and peroxide of magnesium; oxides, hydroxides and"
+28,Inorganic chemicals; organic or inorganic compounds,28.17,
+28,Inorganic chemicals; organic or inorganic compounds,28.18,"Artificial corundum, whether or not chemically defined;"
+28,Inorganic chemicals; organic or inorganic compounds,28.19,Chromium oxides and hydroxides.
+28,Inorganic chemicals; organic or inorganic compounds,28.20,Manganese oxides.
+28,Inorganic chemicals; organic or inorganic compounds,28.21,Iron oxides and hydroxides; earth colours containing 70 % or
+28,Inorganic chemicals; organic or inorganic compounds,28.22,
+28,Inorganic chemicals; organic or inorganic compounds,28.23,
+28,Inorganic chemicals; organic or inorganic compounds,28.24,Lead oxides; red lead and orange lead.
+28,Inorganic chemicals; organic or inorganic compounds,28.25,Hydrazine and hydroxylamine and their inorganic salts; other
+28,Inorganic chemicals; organic or inorganic compounds,28.26,"Fluorides; fluorosilicates, fluoroaluminates and other complex"
+28,Inorganic chemicals; organic or inorganic compounds,28.27,"Chlorides, chloride oxides and chloride hydroxides; bromides"
+28,Inorganic chemicals; organic or inorganic compounds,28.28,Hypochlorites; commercial calcium hypochlorite; chlorites;
+28,Inorganic chemicals; organic or inorganic compounds,28.29,Chlorates and perchlorates; bromates and perbromates; iodates
+28,Inorganic chemicals; organic or inorganic compounds,28.30,"Sulphides; polysulphides, whether or not chemically defined."
+28,Inorganic chemicals; organic or inorganic compounds,28.31,Dithionites and sulphoxylates.
+28,Inorganic chemicals; organic or inorganic compounds,28.32,Sulphites; thiosulphates.
+28,Inorganic chemicals; organic or inorganic compounds,28.33,Sulphates; alums; peroxosulphates (persulphates).
+28,Inorganic chemicals; organic or inorganic compounds,28.34,Nitrites; nitrates.
+28,Inorganic chemicals; organic or inorganic compounds,28.35,"Phosphinates (hypophosphites), phosphonates (phosphites) and"
+28,Inorganic chemicals; organic or inorganic compounds,28.36,Carbonates; peroxocarbonates (percarbonates); commercial
+28,Inorganic chemicals; organic or inorganic compounds,28.37,"Cyanides, cyanide oxides and complex cyanides."
+28,Inorganic chemicals; organic or inorganic compounds,28.39,Silicates; commercial alkali metal silicates.
+28,Inorganic chemicals; organic or inorganic compounds,28.40,Borates; peroxoborates (perborates).
+28,Inorganic chemicals; organic or inorganic compounds,28.41,Salts of oxometallic or peroxometallic acids.
+28,Inorganic chemicals; organic or inorganic compounds,28.42,Other salts of inorganic acids or peroxoacids (including
+28,Inorganic chemicals; organic or inorganic compounds,28.43,Colloidal precious metals; inorganic or organic compounds of
+28,Inorganic chemicals; organic or inorganic compounds,28.44,Radioactive
+28,Inorganic chemicals; organic or inorganic compounds,28.45,"Isotopes other than those of heading 28.44; compounds, inorganic"
+28,Inorganic chemicals; organic or inorganic compounds,28.46,"Compounds, inorganic or organic, of rare-earth metals, of"
+28,Inorganic chemicals; organic or inorganic compounds,28.47,
+28,Inorganic chemicals; organic or inorganic compounds,28.49,"Carbides, whether or not chemically defined."
+28,Inorganic chemicals; organic or inorganic compounds,28.50,
+28,Inorganic chemicals; organic or inorganic compounds,28.52,"Inorganic or organic compounds of mercury, whether or not"
+28,Inorganic chemicals; organic or inorganic compounds,28.53,"Phosphides, whether or not chemically defined, excluding"
+29,Organic chemicals,29.01,Acyclic hydrocarbons.
+29,Organic chemicals,29.02,Cyclic hydrocarbons.
+29,Organic chemicals,29.03,Halogenated derivatives of hydrocarbons.
+29,Organic chemicals,29.04,"Sulphonated, nitrated or nitrosated derivatives of hydrocarbons,"
+29,Organic chemicals,29.05,"Acyclic alcohols and their halogenated, sulphonated, nitrated or"
+29,Organic chemicals,29.06,"Cyclic alcohols and their halogenated, sulphonated, nitrated or"
+29,Organic chemicals,29.07,Phenols; phenol-alcohols.
+29,Organic chemicals,29.08,"Halogenated, sulphonated, nitrated or nitrosated derivatives of"
+29,Organic chemicals,29.09,"Ethers, ether-alcohols, ether-phenols, ether-alcohol-phenols,"
+29,Organic chemicals,29.10,"Epoxides, epoxyalcohols, epoxyphenols and epoxyethers, with a"
+29,Organic chemicals,29.11,
+29,Organic chemicals,29.12,"Aldehydes, whether or not with other oxygen function; cyclic"
+29,Organic chemicals,29.13,
+29,Organic chemicals,29.14,"Ketones and quinones, whether or not with other oxygen"
+29,Organic chemicals,29.15,"Saturated acyclic monocarboxylic acids and their anhydrides,"
+29,Organic chemicals,29.16,"Unsaturated acyclic monocarboxylic acids, cyclic monocarboxylic"
+29,Organic chemicals,29.17,"Polycarboxylic acids, their anhydrides, halides, peroxides and"
+29,Organic chemicals,29.18,Carboxylic acids with additional oxygen function and their
+29,Organic chemicals,29.19,"Phosphoric esters and their salts, including lactophosphates;"
+29,Organic chemicals,29.20,Esters of other inorganic acids of non-metals (excluding esters
+29,Organic chemicals,29.21,Amine-function compounds.
+29,Organic chemicals,29.22,Oxygen-function amino-compounds.
+29,Organic chemicals,29.23,Quaternary ammonium salts and hydroxides; lecithins and
+29,Organic chemicals,29.24,Carboxyamide-function compounds; amide-function compounds
+29,Organic chemicals,29.25,Carboxyimide-function compounds (including saccharin and its
+29,Organic chemicals,29.26,Nitrile-function compounds.
+29,Organic chemicals,29.27,
+29,Organic chemicals,29.28,
+29,Organic chemicals,29.29,Compounds with other nitrogen function.
+29,Organic chemicals,29.30,Organo-sulphur compounds.
+29,Organic chemicals,29.31,Other organo-inorganic compounds.
+29,Organic chemicals,29.32,Heterocyclic compounds with oxygen hetero-atom(s) only.
+29,Organic chemicals,29.33,Heterocyclic compounds with nitrogen hetero-atom(s) only.
+29,Organic chemicals,29.34,"Nucleic acids and their salts, whether or not chemically defined;"
+29,Organic chemicals,29.35,Sulphonamides.
+29,Organic chemicals,29.36,"Provitamins and vitamins, natural or reproduced by synthesis"
+29,Organic chemicals,29.37,"Hormones, prostaglandins, thromboxanes and leukotrienes,"
+29,Organic chemicals,29.38,"Glycosides, natural or reproduced by synthesis, and their salts,"
+29,Organic chemicals,29.39,"Alkaloids, natural or reproduced by synthesis, and their salts,"
+29,Organic chemicals,29.40,
+29,Organic chemicals,29.41,Antibiotics.
+29,Organic chemicals,29.42,
+30,Pharmaceutical products,30.01,"Glands and other organs for organo-therapeutic uses, dried,"
+30,Pharmaceutical products,30.02,"Human blood; animal blood prepared for therapeutic,"
+30,Pharmaceutical products,30.03,"Medicaments (excluding goods of heading 30.02, 30.05 or 30.06)"
+30,Pharmaceutical products,30.04,"Medicaments (excluding goods of heading 30.02, 30.05 or 30.06)"
+30,Pharmaceutical products,30.05,"Wadding, gauze, bandages and similar articles (for example,"
+30,Pharmaceutical products,30.06,Pharmaceutical goods specified in Note 4 to this Chapter.
+31,Fertilisers,31.01,
+31,Fertilisers,31.02,"Mineral or chemical fertilisers, nitrogenous."
+31,Fertilisers,31.03,"Mineral or chemical fertilisers, phosphatic."
+31,Fertilisers,31.04,"Mineral or chemical fertilisers, potassic."
+31,Fertilisers,31.05,Mineral or chemical fertilisers containing two or three of the
+32,"Tanning or dyeing extracts; tannins and their derivatives; dyes,",32.01,"Tanning extracts of vegetable origin; tannins and their salts,"
+32,"Tanning or dyeing extracts; tannins and their derivatives; dyes,",32.02,Synthetic organic tanning substances; inorganic tanning
+32,"Tanning or dyeing extracts; tannins and their derivatives; dyes,",32.03,
+32,"Tanning or dyeing extracts; tannins and their derivatives; dyes,",32.04,"Synthetic organic colouring matter, whether or not chemically"
+32,"Tanning or dyeing extracts; tannins and their derivatives; dyes,",32.05,
+32,"Tanning or dyeing extracts; tannins and their derivatives; dyes,",32.06,Other colouring matter; preparations as specified in Note 3 to
+32,"Tanning or dyeing extracts; tannins and their derivatives; dyes,",32.07,"Prepared pigments, prepared opacifiers and prepared colours,"
+32,"Tanning or dyeing extracts; tannins and their derivatives; dyes,",32.08,Paints and varnishes (including enamels and lacquers) based on
+32,"Tanning or dyeing extracts; tannins and their derivatives; dyes,",32.09,Paints and varnishes (including enamels and lacquers) based on
+32,"Tanning or dyeing extracts; tannins and their derivatives; dyes,",32.10,
+32,"Tanning or dyeing extracts; tannins and their derivatives; dyes,",32.11,
+32,"Tanning or dyeing extracts; tannins and their derivatives; dyes,",32.12,Pigments (including metallic powders and flakes) dispersed in
+32,"Tanning or dyeing extracts; tannins and their derivatives; dyes,",32.13,"Artists', students' or signboard painters' colours, modifying tints,"
+32,"Tanning or dyeing extracts; tannins and their derivatives; dyes,",32.14,"Glaziers' putty, grafting putty, resin cements, caulking"
+32,"Tanning or dyeing extracts; tannins and their derivatives; dyes,",32.15,"Printing ink, writing or drawing ink and other inks, whether or"
+33,"Essential oils and resinoids; perfumery,",33.01,"Essential oils (terpeneless or not), including concretes and"
+33,"Essential oils and resinoids; perfumery,",33.02,Mixtures of odoriferous substances and mixtures (including
+33,"Essential oils and resinoids; perfumery,",33.03,
+33,"Essential oils and resinoids; perfumery,",33.04,Beauty or make-up preparations and preparations for the care of
+33,"Essential oils and resinoids; perfumery,",33.05,Preparations for use on the hair.
+33,"Essential oils and resinoids; perfumery,",33.06,"Preparations for oral or dental hygiene, including denture"
+33,"Essential oils and resinoids; perfumery,",33.07,"Pre-shave, shaving or after-shave preparations, personal"
+34,"Soap, organic surface-active agents, washing preparations,",34.01,Soap; organic surface-active products and preparations for use
+34,"Soap, organic surface-active agents, washing preparations,",34.02,Organic surface-active agents (other than soap); surface-active
+34,"Soap, organic surface-active agents, washing preparations,",34.03,"Lubricating preparations (including cutting-oil preparations,"
+34,"Soap, organic surface-active agents, washing preparations,",34.04,Artificial waxes and prepared waxes.
+34,"Soap, organic surface-active agents, washing preparations,",34.05,"Polishes and creams, for footwear, furniture, floors, coachwork,"
+34,"Soap, organic surface-active agents, washing preparations,",34.06,
+34,"Soap, organic surface-active agents, washing preparations,",34.07,
+35,Albuminoidal substances; modified starches;,35.01,"Casein, caseinates and other casein derivatives; casein glues."
+35,Albuminoidal substances; modified starches;,35.02,"Albumins (including concentrates of two or more whey proteins,"
+35,Albuminoidal substances; modified starches;,35.03,
+35,Albuminoidal substances; modified starches;,35.04,
+35,Albuminoidal substances; modified starches;,35.05,"Dextrins and other modified starches (for example, pregelatinised"
+35,Albuminoidal substances; modified starches;,35.06,"Prepared glues and other prepared adhesives, not elsewhere"
+35,Albuminoidal substances; modified starches;,35.07,Enzymes; prepared enzymes not elsewhere specified or included.
+36,Explosives; pyrotechnic products; matches;,36.01,
+36,Explosives; pyrotechnic products; matches;,36.02,
+36,Explosives; pyrotechnic products; matches;,36.03,Safety fuses; detonating cords; percussion or detonating caps;
+36,Explosives; pyrotechnic products; matches;,36.04,"Fireworks, signalling flares, rain rockets, fog signals and other"
+36,Explosives; pyrotechnic products; matches;,36.05,
+36,Explosives; pyrotechnic products; matches;,36.06,Ferro-cerium and other pyrophoric alloys in all forms; articles of
+37,Photographic or cinematographic goods,37.01,"Photographic plates and film in the flat, sensitised, unexposed, of"
+37,Photographic or cinematographic goods,37.02,"Photographic film in rolls, sensitised, unexposed, of any material"
+37,Photographic or cinematographic goods,37.03,"Photographic paper, paperboard and textiles, sensitised,"
+37,Photographic or cinematographic goods,37.04,
+37,Photographic or cinematographic goods,37.05,
+37,Photographic or cinematographic goods,37.06,"Cinematographic film, exposed and developed, whether or not"
+37,Photographic or cinematographic goods,37.07,Chemical preparations for photographic uses (other than
+38,Miscellaneous chemical products,38.01,Artificial
+38,Miscellaneous chemical products,38.02,Activated carbon; activated natural mineral products; animal
+38,Miscellaneous chemical products,38.03,
+38,Miscellaneous chemical products,38.04,
+38,Miscellaneous chemical products,38.05,"Gum, wood or sulphate turpentine and other terpenic oils"
+38,Miscellaneous chemical products,38.06,"Rosin and resin acids, and derivatives thereof; rosin spirit and"
+38,Miscellaneous chemical products,38.07,
+38,Miscellaneous chemical products,38.08,"Insecticides, rodenticides, fungicides, herbicides, anti-sprouting"
+38,Miscellaneous chemical products,38.09,"Finishing agents, dye carriers to accelerate the dyeing or fixing of"
+38,Miscellaneous chemical products,38.10,Pickling preparations for metal surfaces; fluxes and other
+38,Miscellaneous chemical products,38.11,"Anti-knock preparations, oxidation inhibitors, gum inhibitors,"
+38,Miscellaneous chemical products,38.12,Prepared rubber accelerators; compound plasticisers for rubber
+38,Miscellaneous chemical products,38.13,
+38,Miscellaneous chemical products,38.14,
+38,Miscellaneous chemical products,38.15,Reaction
+38,Miscellaneous chemical products,38.16,
+38,Miscellaneous chemical products,38.17,
+38,Miscellaneous chemical products,38.18,
+38,Miscellaneous chemical products,38.19,
+38,Miscellaneous chemical products,38.20,
+38,Miscellaneous chemical products,38.21,
+38,Miscellaneous chemical products,38.22,"Diagnostic or laboratory reagents on a backing, prepared"
+38,Miscellaneous chemical products,38.23,Industrial monocarboxylic fatty acids; acid oils from refining;
+38,Miscellaneous chemical products,38.24,Prepared binders for foundry moulds or cores; chemical
+38,Miscellaneous chemical products,38.25,"Residual products of the chemical or allied industries, not"
+38,Miscellaneous chemical products,38.26,
+38,Miscellaneous chemical products,38.27,"Mixtures containing halogenated derivatives of methane, ethane"
+39,Plastics and articles thereof,39.01,"Polymers of ethylene, in primary forms."
+39,Plastics and articles thereof,39.02,"Polymers of propylene or of other olefins, in primary forms."
+39,Plastics and articles thereof,39.03,"Polymers of styrene, in primary forms."
+39,Plastics and articles thereof,39.04,"Polymers of vinyl chloride or of other halogenated olefins, in"
+39,Plastics and articles thereof,39.05,"Polymers of vinyl acetate or of other vinyl esters, in primary"
+39,Plastics and articles thereof,39.06,Acrylic polymers in primary forms.
+39,Plastics and articles thereof,39.07,"Polyacetals, other polyethers and epoxide resins, in primary"
+39,Plastics and articles thereof,39.08,Polyamides in primary forms.
+39,Plastics and articles thereof,39.09,"Amino-resins, phenolic resins and polyurethanes, in primary"
+39,Plastics and articles thereof,39.10,
+39,Plastics and articles thereof,39.11,Petroleum
+39,Plastics and articles thereof,39.12,"Cellulose and its chemical derivatives, not elsewhere specified or"
+39,Plastics and articles thereof,39.13,"Natural polymers (for example, alginic acid) and modified"
+39,Plastics and articles thereof,39.14,
+39,Plastics and articles thereof,39.15,"Waste, parings and scrap, of plastics."
+39,Plastics and articles thereof,39.16,Monofilament of which any cross-sectional dimension exceeds
+39,Plastics and articles thereof,39.17,"Tubes, pipes and hoses, and fittings therefor (for example, joints,"
+39,Plastics and articles thereof,39.18,"Floor coverings of plastics, whether or not self-adhesive, in rolls"
+39,Plastics and articles thereof,39.19,"Self-adhesive plates, sheets, film, foil, tape, strip and other flat"
+39,Plastics and articles thereof,39.20,"Other plates, sheets, film, foil and strip, of plastics, non-cellular"
+39,Plastics and articles thereof,39.21,"Other plates, sheets, film, foil and strip, of plastics."
+39,Plastics and articles thereof,39.22,"Baths, shower-baths, sinks, wash-basins, bidets, lavatory pans,"
+39,Plastics and articles thereof,39.23,"Articles for the conveyance or packing of goods, of plastics;"
+39,Plastics and articles thereof,39.24,"Tableware, kitchenware, other household articles and hygienic"
+39,Plastics and articles thereof,39.25,"Builders' ware of plastics, not elsewhere specified or included."
+39,Plastics and articles thereof,39.26,Other articles of plastics and articles of other materials of
+40,Rubber and articles thereof,40.01,"Natural rubber, balata, gutta-percha, guayule, chicle and similar"
+40,Rubber and articles thereof,40.02,"Synthetic rubber and factice derived from oils, in primary forms"
+40,Rubber and articles thereof,40.03,
+40,Rubber and articles thereof,40.04,
+40,Rubber and articles thereof,40.05,"Compounded rubber, unvulcanised, in primary forms or in"
+40,Rubber and articles thereof,40.06,"Other forms (for example, rods, tubes and profile shapes) and"
+40,Rubber and articles thereof,40.07,
+40,Rubber and articles thereof,40.08,"Plates, sheets, strip, rods and profile shapes, of vulcanised rubber"
+40,Rubber and articles thereof,40.09,"Tubes, pipes and hoses, of vulcanised rubber other than hard"
+40,Rubber and articles thereof,40.10,"Conveyor or transmission belts or belting, of vulcanised rubber."
+40,Rubber and articles thereof,40.11,"New pneumatic tyres, of rubber."
+40,Rubber and articles thereof,40.12,Retreaded or used pneumatic tyres of rubber; solid or cushion
+40,Rubber and articles thereof,40.13,"Inner tubes, of rubber."
+40,Rubber and articles thereof,40.14,"Hygienic or pharmaceutical articles (including teats), of"
+40,Rubber and articles thereof,40.15,"Articles of apparel and clothing accessories (including gloves,"
+40,Rubber and articles thereof,40.16,Other articles of vulcanised rubber other than hard rubber.
+40,Rubber and articles thereof,40.17,
+41,Raw hides and skins (other than furskins) and leather,41.01,Raw hides and skins of bovine (including buffalo) or equine
+41,Raw hides and skins (other than furskins) and leather,41.02,"Raw skins of sheep or lambs (fresh, or salted, dried, limed,"
+41,Raw hides and skins (other than furskins) and leather,41.03,"Other raw hides and skins (fresh, or salted, dried, limed, pickled"
+41,Raw hides and skins (other than furskins) and leather,41.04,Tanned or crust hides and skins of bovine (including buffalo) or
+41,Raw hides and skins (other than furskins) and leather,41.05,"Tanned or crust skins of sheep or lambs, without wool on,"
+41,Raw hides and skins (other than furskins) and leather,41.06,"Tanned or crust hides and skins of other animals, without wool"
+41,Raw hides and skins (other than furskins) and leather,41.07,"Leather further prepared after tanning or crusting, including"
+41,Raw hides and skins (other than furskins) and leather,41.12,
+41,Raw hides and skins (other than furskins) and leather,41.13,"Leather further prepared after tanning or crusting, including"
+41,Raw hides and skins (other than furskins) and leather,41.14,Chamois (including combination chamois) leather; patent
+41,Raw hides and skins (other than furskins) and leather,41.15,"Composition leather with a basis of leather or leather fibre, in"
+42,Articles of leather; saddlery and harness;,42.01,
+42,Articles of leather; saddlery and harness;,42.02,"Trunks, suit-cases, vanity-cases, executive-cases, brief-cases,"
+42,Articles of leather; saddlery and harness;,42.03,"Articles of apparel and clothing accessories, of leather or of"
+42,Articles of leather; saddlery and harness;,42.05,
+42,Articles of leather; saddlery and harness;,42.06,
+43,Furskins and artificial fur; manufactures thereof,43.01,"Raw furskins (including heads, tails, paws and other pieces or"
+43,Furskins and artificial fur; manufactures thereof,43.02,"Tanned or dressed furskins (including heads, tails, paws and"
+43,Furskins and artificial fur; manufactures thereof,43.03,"Articles of apparel, clothing accessories and other articles of"
+43,Furskins and artificial fur; manufactures thereof,43.04,
+44,Wood and articles of wood; wood charcoal,44.01,"Fuel wood, in logs, in billets, in twigs, in faggots or in similar"
+44,Wood and articles of wood; wood charcoal,44.02,"Wood charcoal (including shell or nut charcoal), whether or not"
+44,Wood and articles of wood; wood charcoal,44.03,"Wood in the rough, whether or not stripped of bark or sapwood,"
+44,Wood and articles of wood; wood charcoal,44.04,"Hoopwood; split poles; piles, pickets and stakes of wood, pointed"
+44,Wood and articles of wood; wood charcoal,44.05,
+44,Wood and articles of wood; wood charcoal,44.06,Railway or tramway sleepers (cross-ties) of wood.
+44,Wood and articles of wood; wood charcoal,44.07,"Wood sawn or chipped lengthwise, sliced or peeled, whether or"
+44,Wood and articles of wood; wood charcoal,44.08,Sheets for veneering (including those obtained by slicing
+44,Wood and articles of wood; wood charcoal,44.09,"Wood (including strips and friezes for parquet flooring, not"
+44,Wood and articles of wood; wood charcoal,44.10,"Particle board, oriented strand board (OSB) and similar board"
+44,Wood and articles of wood; wood charcoal,44.11,"Fibreboard of wood or other ligneous materials, whether or not"
+44,Wood and articles of wood; wood charcoal,44.12,"Plywood, veneered panels and similar laminated wood."
+44,Wood and articles of wood; wood charcoal,44.13,
+44,Wood and articles of wood; wood charcoal,44.14,"Wooden frames for paintings, photographs, mirrors or similar"
+44,Wood and articles of wood; wood charcoal,44.15,"Packing cases, boxes, crates, drums and similar packings, of"
+44,Wood and articles of wood; wood charcoal,44.16,
+44,Wood and articles of wood; wood charcoal,44.17,
+44,Wood and articles of wood; wood charcoal,44.18,"Builders' joinery and carpentry of wood, including cellular wood"
+44,Wood and articles of wood; wood charcoal,44.19,"Tableware and kitchenware, of wood."
+44,Wood and articles of wood; wood charcoal,44.20,Wood marquetry and inlaid wood; caskets and cases for
+44,Wood and articles of wood; wood charcoal,44.21,Other articles of wood.
+45,Cork and articles of cork,45.01,"Natural cork, raw or simply prepared; waste cork; crushed,"
+45,Cork and articles of cork,45.02,
+45,Cork and articles of cork,45.03,Articles of natural cork.
+45,Cork and articles of cork,45.04,Agglomerated cork (with or without a binding substance) and
+46,"Manufactures of straw, of esparto or of other plaiting",46.01,"Plaits and similar products of plaiting materials, whether or not"
+46,"Manufactures of straw, of esparto or of other plaiting",46.02,"Basketwork, wickerwork and other articles, made directly to"
+47,Pulp of wood or of other fibrous cellulosic material;,47.01,
+47,Pulp of wood or of other fibrous cellulosic material;,47.02,
+47,Pulp of wood or of other fibrous cellulosic material;,47.03,"Chemical wood pulp, soda or sulphate, other than dissolving"
+47,Pulp of wood or of other fibrous cellulosic material;,47.04,"Chemical wood pulp, sulphite, other than dissolving grades."
+47,Pulp of wood or of other fibrous cellulosic material;,47.05,
+47,Pulp of wood or of other fibrous cellulosic material;,47.06,Pulps of fibres derived from recovered (waste and scrap) paper
+47,Pulp of wood or of other fibrous cellulosic material;,47.07,Recovered (waste and scrap) paper or paperboard.
+48,"Paper and paperboard; articles of paper pulp,",48.01,
+48,"Paper and paperboard; articles of paper pulp,",48.02,"Uncoated paper and paperboard, of a kind used for writing,"
+48,"Paper and paperboard; articles of paper pulp,",48.03,
+48,"Paper and paperboard; articles of paper pulp,",48.04,"Uncoated kraft paper and paperboard, in rolls or sheets, other"
+48,"Paper and paperboard; articles of paper pulp,",48.05,"Other uncoated paper and paperboard, in rolls or sheets, not"
+48,"Paper and paperboard; articles of paper pulp,",48.06,"Vegetable parchment, greaseproof papers, tracing papers and"
+48,"Paper and paperboard; articles of paper pulp,",48.07,
+48,"Paper and paperboard; articles of paper pulp,",48.08,"Paper and paperboard, corrugated (with or without glued flat"
+48,"Paper and paperboard; articles of paper pulp,",48.09,"Carbon paper, self-copy paper and other copying or transfer"
+48,"Paper and paperboard; articles of paper pulp,",48.10,"Paper and paperboard, coated on one or both sides with kaolin"
+48,"Paper and paperboard; articles of paper pulp,",48.11,"Paper, paperboard, cellulose wadding and webs of cellulose"
+48,"Paper and paperboard; articles of paper pulp,",48.12,
+48,"Paper and paperboard; articles of paper pulp,",48.13,"Cigarette paper, whether or not cut to size or in the form of"
+48,"Paper and paperboard; articles of paper pulp,",48.14,Wallpaper and similar wall coverings; window transparencies of
+48,"Paper and paperboard; articles of paper pulp,",48.16,"Carbon paper, self-copy paper and other copying or transfer"
+48,"Paper and paperboard; articles of paper pulp,",48.17,"Envelopes, letter cards, plain postcards and correspondence"
+48,"Paper and paperboard; articles of paper pulp,",48.18,"Toilet paper and similar paper, cellulose wadding or webs of"
+48,"Paper and paperboard; articles of paper pulp,",48.19,"Cartons, boxes, cases, bags and other packing containers, of"
+48,"Paper and paperboard; articles of paper pulp,",48.20,"Registers, account books, note books, order books, receipt books,"
+48,"Paper and paperboard; articles of paper pulp,",48.21,"Paper or paperboard labels of all kinds, whether or not printed."
+48,"Paper and paperboard; articles of paper pulp,",48.22,"Bobbins, spools, cops and similar supports of paper pulp, paper"
+48,"Paper and paperboard; articles of paper pulp,",48.23,"Other paper, paperboard, cellulose wadding and webs of"
+49,"Printed books, newspapers, pictures and other products",49.01,"Printed books, brochures, leaflets and similar printed matter,"
+49,"Printed books, newspapers, pictures and other products",49.02,"Newspapers, journals and periodicals, whether or not illustrated"
+49,"Printed books, newspapers, pictures and other products",49.03,
+49,"Printed books, newspapers, pictures and other products",49.04,
+49,"Printed books, newspapers, pictures and other products",49.05,"Maps and hydrographic or similar charts of all kinds, including"
+49,"Printed books, newspapers, pictures and other products",49.06,
+49,"Printed books, newspapers, pictures and other products",49.07,
+49,"Printed books, newspapers, pictures and other products",49.08,Transfers (decalcomanias).
+49,"Printed books, newspapers, pictures and other products",49.09,
+49,"Printed books, newspapers, pictures and other products",49.10,
+49,"Printed books, newspapers, pictures and other products",49.11,Other
+50,Silk,50.01,
+50,Silk,50.02,
+50,Silk,50.03,
+50,Silk,50.04,
+50,Silk,50.05,
+50,Silk,50.06,
+50,Silk,50.07,Woven fabrics of silk or of silk waste.
+51,"Wool, fine or coarse animal hair; horsehair yarn",51.01,"Wool, not carded or combed."
+51,"Wool, fine or coarse animal hair; horsehair yarn",51.02,"Fine or coarse animal hair, not carded or combed."
+51,"Wool, fine or coarse animal hair; horsehair yarn",51.03,"Waste of wool or of fine or coarse animal hair, including yarn"
+51,"Wool, fine or coarse animal hair; horsehair yarn",51.04,
+51,"Wool, fine or coarse animal hair; horsehair yarn",51.05,"Wool and fine or coarse animal hair, carded or combed"
+51,"Wool, fine or coarse animal hair; horsehair yarn",51.06,"Yarn of carded wool, not put up for retail sale."
+51,"Wool, fine or coarse animal hair; horsehair yarn",51.07,"Yarn of combed wool, not put up for retail sale."
+51,"Wool, fine or coarse animal hair; horsehair yarn",51.08,"Yarn of fine animal hair (carded or combed), not put up for"
+51,"Wool, fine or coarse animal hair; horsehair yarn",51.09,"Yarn of wool or of fine animal hair, put up for retail sale."
+51,"Wool, fine or coarse animal hair; horsehair yarn",51.10,
+51,"Wool, fine or coarse animal hair; horsehair yarn",51.11,Woven fabrics of carded wool or of carded fine animal hair.
+51,"Wool, fine or coarse animal hair; horsehair yarn",51.12,Woven fabrics of combed wool or of combed fine animal hair.
+51,"Wool, fine or coarse animal hair; horsehair yarn",51.13,
+52,Cotton,52.01,
+52,Cotton,52.02,Cotton waste (including yarn waste and garnetted stock).
+52,Cotton,52.03,
+52,Cotton,52.04,"Cotton sewing thread, whether or not put up for retail sale."
+52,Cotton,52.05,"Cotton yarn (other than sewing thread), containing 85 % or"
+52,Cotton,52.06,"Cotton yarn (other than sewing thread), containing less than"
+52,Cotton,52.07,Cotton yarn (other than sewing thread) put up for retail sale.
+52,Cotton,52.08,"Woven fabrics of cotton, containing 85 % or more by weight of"
+52,Cotton,52.09,"Woven fabrics of cotton, containing 85 % or more by weight of"
+52,Cotton,52.10,"Woven fabrics of cotton, containing less than 85 % by weight of"
+52,Cotton,52.11,"Woven fabrics of cotton, containing less than 85 % by weight of"
+52,Cotton,52.12,Other woven fabrics of cotton.
+53,Other vegetable textile fibres;,53.01,"Flax, raw or processed but not spun; flax tow and waste"
+53,Other vegetable textile fibres;,53.02,"True hemp (Cannabis sativa L.), raw or processed but not spun;"
+53,Other vegetable textile fibres;,53.03,"Jute and other textile bast fibres (excluding flax, true hemp and"
+53,Other vegetable textile fibres;,53.05,
+53,Other vegetable textile fibres;,53.06,Flax yarn.
+53,Other vegetable textile fibres;,53.07,Yarn of jute or of other textile bast fibres of heading 53.03.
+53,Other vegetable textile fibres;,53.08,Yarn of other vegetable textile fibres; paper yarn.
+53,Other vegetable textile fibres;,53.09,Woven fabrics of flax.
+53,Other vegetable textile fibres;,53.10,Woven fabrics of jute or of other textile bast fibres of
+53,Other vegetable textile fibres;,53.11,
+54,Man-made filaments; strip and the like of man-made textile materials,54.01,"Sewing thread of man-made filaments, whether or not put up for"
+54,Man-made filaments; strip and the like of man-made textile materials,54.02,"Synthetic filament yarn (other than sewing thread), not put up"
+54,Man-made filaments; strip and the like of man-made textile materials,54.03,"Artificial filament yarn (other than sewing thread), not put up"
+54,Man-made filaments; strip and the like of man-made textile materials,54.04,Synthetic monofilament of 67 decitex or more and of which no
+54,Man-made filaments; strip and the like of man-made textile materials,54.05,
+54,Man-made filaments; strip and the like of man-made textile materials,54.06,
+54,Man-made filaments; strip and the like of man-made textile materials,54.07,"Woven fabrics of synthetic filament yarn, including woven"
+54,Man-made filaments; strip and the like of man-made textile materials,54.08,"Woven fabrics of artificial filament yarn, including woven"
+55,Man-made staple fibres,55.01,Synthetic filament tow.
+55,Man-made staple fibres,55.02,Artificial filament tow.
+55,Man-made staple fibres,55.03,"Synthetic staple fibres, not carded, combed or otherwise"
+55,Man-made staple fibres,55.04,"Artificial staple fibres, not carded, combed or otherwise"
+55,Man-made staple fibres,55.05,"Waste (including noils, yarn waste and garnetted stock) of man-"
+55,Man-made staple fibres,55.06,"Synthetic staple fibres, carded, combed or otherwise processed"
+55,Man-made staple fibres,55.07,
+55,Man-made staple fibres,55.08,"Sewing thread of man-made staple fibres, whether or not put up"
+55,Man-made staple fibres,55.09,"Yarn (other than sewing thread) of synthetic staple fibres, not"
+55,Man-made staple fibres,55.10,"Yarn (other than sewing thread) of artificial staple fibres, not put"
+55,Man-made staple fibres,55.11,"Yarn (other than sewing thread) of man-made staple fibres, put"
+55,Man-made staple fibres,55.12,"Woven fabrics of synthetic staple fibres, containing 85 % or more"
+55,Man-made staple fibres,55.13,"Woven fabrics of synthetic staple fibres, containing less than"
+55,Man-made staple fibres,55.14,"Woven fabrics of synthetic staple fibres, containing less than"
+55,Man-made staple fibres,55.15,Other woven fabrics of synthetic staple fibres.
+55,Man-made staple fibres,55.16,Woven fabrics of artificial staple fibres.
+56,"Wadding, felt and nonwovens; special yarns;",56.01,"Wadding of textile materials and articles thereof; textile fibres,"
+56,"Wadding, felt and nonwovens; special yarns;",56.02,"Felt, whether or not impregnated, coated, covered or laminated."
+56,"Wadding, felt and nonwovens; special yarns;",56.03,"Nonwovens, whether or not impregnated, coated, covered or"
+56,"Wadding, felt and nonwovens; special yarns;",56.04,"Rubber thread and cord, textile covered; textile yarn, and strip"
+56,"Wadding, felt and nonwovens; special yarns;",56.05,
+56,"Wadding, felt and nonwovens; special yarns;",56.06,
+56,"Wadding, felt and nonwovens; special yarns;",56.07,"Twine, cordage, ropes and cables, whether or not plaited or"
+56,"Wadding, felt and nonwovens; special yarns;",56.08,"Knotted netting of twine, cordage or rope; made up fishing nets"
+56,"Wadding, felt and nonwovens; special yarns;",56.09,
+57,Carpets and other textile floor coverings,57.01,"Carpets and other textile floor coverings, knotted, whether or not"
+57,Carpets and other textile floor coverings,57.02,"Carpets and other textile floor coverings, woven, not tufted or"
+57,Carpets and other textile floor coverings,57.03,"Carpets and other textile floor coverings (including turf), tufted,"
+57,Carpets and other textile floor coverings,57.04,"Carpets and other textile floor coverings, of felt, not tufted or"
+57,Carpets and other textile floor coverings,57.05,
+58,Special woven fabrics; tufted textile fabrics;,58.01,"Woven pile fabrics and chenille fabrics, other than fabrics of"
+58,Special woven fabrics; tufted textile fabrics;,58.02,"Terry towelling and similar woven terry fabrics, other than"
+58,Special woven fabrics; tufted textile fabrics;,58.03,
+58,Special woven fabrics; tufted textile fabrics;,58.04,"Tulles and other net fabrics, not including woven, knitted or"
+58,Special woven fabrics; tufted textile fabrics;,58.05,
+58,Special woven fabrics; tufted textile fabrics;,58.06,"Narrow woven fabrics, other than goods of heading 58.07;"
+58,Special woven fabrics; tufted textile fabrics;,58.07,"Labels, badges and similar articles of textile materials, in the"
+58,Special woven fabrics; tufted textile fabrics;,58.08,"Braids in the piece; ornamental trimmings in the piece, without"
+58,Special woven fabrics; tufted textile fabrics;,58.09,
+58,Special woven fabrics; tufted textile fabrics;,58.10,"Embroidery in the piece, in strips or in motifs."
+58,Special woven fabrics; tufted textile fabrics;,58.11,
+59,"Impregnated, coated, covered or laminated textile fabrics;",59.01,"Textile fabrics coated with gum or amylaceous substances, of a"
+59,"Impregnated, coated, covered or laminated textile fabrics;",59.02,Tyre cord fabric of high tenacity yarn of nylon or other
+59,"Impregnated, coated, covered or laminated textile fabrics;",59.03,"Textile fabrics impregnated, coated, covered or laminated with"
+59,"Impregnated, coated, covered or laminated textile fabrics;",59.04,"Linoleum, whether or not cut to shape; floor coverings consisting"
+59,"Impregnated, coated, covered or laminated textile fabrics;",59.05,
+59,"Impregnated, coated, covered or laminated textile fabrics;",59.06,"Rubberised textile fabrics, other than those of heading 59.02."
+59,"Impregnated, coated, covered or laminated textile fabrics;",59.07,
+59,"Impregnated, coated, covered or laminated textile fabrics;",59.08,
+59,"Impregnated, coated, covered or laminated textile fabrics;",59.09,
+59,"Impregnated, coated, covered or laminated textile fabrics;",59.10,
+59,"Impregnated, coated, covered or laminated textile fabrics;",59.11,"Textile products and articles, for technical uses, specified in"
+60,Knitted or crocheted fabrics,60.01,"Pile fabrics, including “long pile” fabrics and terry fabrics,"
+60,Knitted or crocheted fabrics,60.02,"Knitted or crocheted fabrics of a width not exceeding 30 cm,"
+60,Knitted or crocheted fabrics,60.03,"Knitted or crocheted fabrics of a width not exceeding 30 cm,"
+60,Knitted or crocheted fabrics,60.04,"Knitted or crocheted fabrics of a width exceeding 30 cm,"
+60,Knitted or crocheted fabrics,60.05,Warp knit fabrics (including those made on galloon knitting
+60,Knitted or crocheted fabrics,60.06,Other knitted or crocheted fabrics.
+61,"Articles of apparel and clothing accessories,",61.01,"Men's or boys' overcoats, car-coats, capes, cloaks, anoraks"
+61,"Articles of apparel and clothing accessories,",61.02,"Women's or girls' overcoats, car-coats, capes, cloaks, anoraks"
+61,"Articles of apparel and clothing accessories,",61.03,"Men's or boys' suits, ensembles, jackets, blazers, trousers, bib"
+61,"Articles of apparel and clothing accessories,",61.04,"Women's or girls' suits, ensembles, jackets, blazers, dresses,"
+61,"Articles of apparel and clothing accessories,",61.05,"Men's or boys' shirts, knitted or crocheted."
+61,"Articles of apparel and clothing accessories,",61.06,"Women's or girls' blouses, shirts and shirt-blouses, knitted or"
+61,"Articles of apparel and clothing accessories,",61.07,"Men's or boys' underpants, briefs, nightshirts, pyjamas,"
+61,"Articles of apparel and clothing accessories,",61.08,"Women's or girls' slips, petticoats, briefs, panties, nightdresses,"
+61,"Articles of apparel and clothing accessories,",61.09,"T-shirts, singlets and other vests, knitted or crocheted."
+61,"Articles of apparel and clothing accessories,",61.10,"Jerseys, pullovers, cardigans, waistcoats and similar articles,"
+61,"Articles of apparel and clothing accessories,",61.11,"Babies' garments and clothing accessories, knitted or crocheted."
+61,"Articles of apparel and clothing accessories,",61.12,"Track suits, ski suits and swimwear, knitted or crocheted."
+61,"Articles of apparel and clothing accessories,",61.13,
+61,"Articles of apparel and clothing accessories,",61.14,"Other garments, knitted or crocheted."
+61,"Articles of apparel and clothing accessories,",61.15,"Panty hose, tights, stockings, socks and other hosiery, including"
+61,"Articles of apparel and clothing accessories,",61.16,"Gloves, mittens and mitts, knitted or crocheted."
+61,"Articles of apparel and clothing accessories,",61.17,"Other made up clothing accessories, knitted or crocheted; knitted"
+62,"Articles of apparel and clothing accessories,",62.01,"Men’s or boys’ overcoats, car-coats, capes, cloaks, anoraks"
+62,"Articles of apparel and clothing accessories,",62.02,"Women's or girls' overcoats, car-coats, capes, cloaks, anoraks"
+62,"Articles of apparel and clothing accessories,",62.03,"Men's or boys' suits, ensembles, jackets, blazers, trousers, bib"
+62,"Articles of apparel and clothing accessories,",62.04,"Women's or girls' suits, ensembles, jackets, blazers, dresses,"
+62,"Articles of apparel and clothing accessories,",62.05,Men's or boys' shirts.
+62,"Articles of apparel and clothing accessories,",62.06,"Women's or girls' blouses, shirts and shirt-blouses."
+62,"Articles of apparel and clothing accessories,",62.07,"Men's or boys' singlets and other vests, underpants, briefs,"
+62,"Articles of apparel and clothing accessories,",62.08,"Women's or girls' singlets and other vests, slips, petticoats, briefs,"
+62,"Articles of apparel and clothing accessories,",62.09,Babies' garments and clothing accessories.
+62,"Articles of apparel and clothing accessories,",62.10,"Garments, made up of fabrics of heading 56.02, 56.03, 59.03,"
+62,"Articles of apparel and clothing accessories,",62.11,"Track suits, ski suits and swimwear; other garments."
+62,"Articles of apparel and clothing accessories,",62.12,"Brassieres, girdles, corsets, braces, suspenders, garters and"
+62,"Articles of apparel and clothing accessories,",62.13,Handkerchiefs.
+62,"Articles of apparel and clothing accessories,",62.14,"Shawls, scarves, mufflers, mantillas, veils and the like."
+62,"Articles of apparel and clothing accessories,",62.15,"Ties, bow ties and cravats."
+62,"Articles of apparel and clothing accessories,",62.16,
+62,"Articles of apparel and clothing accessories,",62.17,Other made up clothing accessories; parts of garments or of
+63,Other made up textile articles; sets;,63.01,Blankets and travelling rugs.
+63,Other made up textile articles; sets;,63.02,"Bed linen, table linen, toilet linen and kitchen linen."
+63,Other made up textile articles; sets;,63.03,Curtains (including drapes) and interior blinds; curtain or bed
+63,Other made up textile articles; sets;,63.04,"Other furnishing articles, excluding those of heading 94.04."
+63,Other made up textile articles; sets;,63.05,"Sacks and bags, of a kind used for the packing of goods."
+63,Other made up textile articles; sets;,63.06,"Tarpaulins, awnings and sunblinds; tents (including temporary"
+63,Other made up textile articles; sets;,63.07,"Other made up articles, including dress patterns."
+63,Other made up textile articles; sets;,63.08,
+63,Other made up textile articles; sets;,63.09,
+63,Other made up textile articles; sets;,63.10,"Used or new rags, scrap twine, cordage, rope and cables and"
+64,"Footwear, gaiters and the like; parts of such articles",64.01,Waterproof footwear with outer soles and uppers of rubber or of
+64,"Footwear, gaiters and the like; parts of such articles",64.02,Other footwear with outer soles and uppers of rubber or plastics.
+64,"Footwear, gaiters and the like; parts of such articles",64.03,"Footwear with outer soles of rubber, plastics, leather or"
+64,"Footwear, gaiters and the like; parts of such articles",64.04,"Footwear with outer soles of rubber, plastics, leather or"
+64,"Footwear, gaiters and the like; parts of such articles",64.05,Other footwear.
+64,"Footwear, gaiters and the like; parts of such articles",64.06,Parts of footwear (including uppers whether or not attached to
+65,Headgear and parts thereof,65.01,
+65,Headgear and parts thereof,65.02,
+65,Headgear and parts thereof,65.04,
+65,Headgear and parts thereof,65.05,
+65,Headgear and parts thereof,65.06,"Other headgear, whether or not lined or trimmed."
+65,Headgear and parts thereof,65.07,
+66,"Umbrellas, sun umbrellas, walking-sticks, seat-sticks,",66.01,Umbrellas
+66,"Umbrellas, sun umbrellas, walking-sticks, seat-sticks,",66.02,
+66,"Umbrellas, sun umbrellas, walking-sticks, seat-sticks,",66.03,"Parts, trimmings and accessories of articles of heading 66.01 or"
+67,Prepared feathers and down and articles made of feathers or of down;,67.01,
+67,Prepared feathers and down and articles made of feathers or of down;,67.02,"Artificial flowers, foliage and fruit and parts thereof; articles"
+67,Prepared feathers and down and articles made of feathers or of down;,67.03,
+67,Prepared feathers and down and articles made of feathers or of down;,67.04,"Wigs, false beards, eyebrows and eyelashes, switches and the like,"
+68,"Articles of stone, plaster, cement, asbestos,",68.01,
+68,"Articles of stone, plaster, cement, asbestos,",68.02,Worked monumental or building stone (except slate) and articles
+68,"Articles of stone, plaster, cement, asbestos,",68.03,
+68,"Articles of stone, plaster, cement, asbestos,",68.04,"Millstones, grindstones, grinding wheels and the like, without"
+68,"Articles of stone, plaster, cement, asbestos,",68.05,"Natural or artificial abrasive powder or grain, on a base of textile"
+68,"Articles of stone, plaster, cement, asbestos,",68.06,"Slag wool, rock wool and similar mineral wools; exfoliated"
+68,"Articles of stone, plaster, cement, asbestos,",68.07,"Articles of asphalt or of similar material (for example, petroleum"
+68,"Articles of stone, plaster, cement, asbestos,",68.08,
+68,"Articles of stone, plaster, cement, asbestos,",68.09,Articles of plaster or of compositions based on plaster.
+68,"Articles of stone, plaster, cement, asbestos,",68.10,"Articles of cement, of concrete or of artificial stone, whether or"
+68,"Articles of stone, plaster, cement, asbestos,",68.11,"Articles of asbestos-cement, of cellulose fibre-cement or the like."
+68,"Articles of stone, plaster, cement, asbestos,",68.12,Fabricated asbestos fibres; mixtures with a basis of asbestos or
+68,"Articles of stone, plaster, cement, asbestos,",68.13,"Friction material and articles thereof (for example, sheets, rolls,"
+68,"Articles of stone, plaster, cement, asbestos,",68.14,"Worked mica and articles of mica, including agglomerated or"
+68,"Articles of stone, plaster, cement, asbestos,",68.15,Articles of stone or of other mineral substances (including
+69,Ceramic products,69.01,
+69,Ceramic products,69.02,"Refractory bricks, blocks, tiles and similar refractory ceramic"
+69,Ceramic products,69.03,"Other refractory ceramic goods (for example, retorts, crucibles,"
+69,Ceramic products,69.04,"Ceramic building bricks, flooring blocks, support or filler tiles"
+69,Ceramic products,69.05,"Roofing tiles, chimney-pots, cowls, chimney liners, architectural"
+69,Ceramic products,69.06,
+69,Ceramic products,69.07,"Ceramic flags and paving, hearth or wall tiles; ceramic mosaic"
+69,Ceramic products,69.09,"Ceramic wares for laboratory, chemical or other technical uses;"
+69,Ceramic products,69.10,"Ceramic sinks, wash basins, wash basin pedestals, baths, bidets,"
+69,Ceramic products,69.11,"Tableware, kitchenware, other household articles and toilet"
+69,Ceramic products,69.12,
+69,Ceramic products,69.13,Statuettes and other ornamental ceramic articles.
+69,Ceramic products,69.14,Other ceramic articles.
+70,Glass and glassware,70.01,
+70,Glass and glassware,70.02,"Glass in balls (other than microspheres of heading 70.18), rods or"
+70,Glass and glassware,70.03,"Cast glass and rolled glass, in sheets or profiles, whether or not"
+70,Glass and glassware,70.04,"Drawn glass and blown glass, in sheets, whether or not having an"
+70,Glass and glassware,70.05,"Float glass and surface ground or polished glass, in sheets,"
+70,Glass and glassware,70.06,
+70,Glass and glassware,70.07,"Safety glass, consisting of toughened (tempered) or laminated"
+70,Glass and glassware,70.08,
+70,Glass and glassware,70.09,"Glass mirrors, whether or not framed, including rear-view"
+70,Glass and glassware,70.10,"Carboys, bottles, flasks, jars, pots, phials, ampoules and other"
+70,Glass and glassware,70.11,"Glass envelopes (including bulbs and tubes), open, and glass"
+70,Glass and glassware,70.13,"Glassware of a kind used for table, kitchen, toilet, office, indoor"
+70,Glass and glassware,70.14,
+70,Glass and glassware,70.15,"Clock or watch glasses and similar glasses, glasses for non-"
+70,Glass and glassware,70.16,"Paving blocks, slabs, bricks, squares, tiles and other articles of"
+70,Glass and glassware,70.17,"Laboratory, hygienic or pharmaceutical glassware, whether or"
+70,Glass and glassware,70.18,"Glass beads, imitation pearls, imitation precious or semi-precious"
+70,Glass and glassware,70.19,Glass fibres (including glass wool) and articles thereof (for
+70,Glass and glassware,70.20,
+71,"Natural or cultured pearls, precious or semi-precious stones,",71.01,"Pearls, natural or cultured, whether or not worked or graded but"
+71,"Natural or cultured pearls, precious or semi-precious stones,",71.02,"Diamonds, whether or not worked, but not mounted or set."
+71,"Natural or cultured pearls, precious or semi-precious stones,",71.03,"Precious stones (other than diamonds) and semi-precious stones,"
+71,"Natural or cultured pearls, precious or semi-precious stones,",71.04,"Synthetic or reconstructed precious or semi-precious stones,"
+71,"Natural or cultured pearls, precious or semi-precious stones,",71.05,Dust and powder of natural or synthetic precious or semi-
+71,"Natural or cultured pearls, precious or semi-precious stones,",71.06,"Silver (including silver plated with gold or platinum), unwrought"
+71,"Natural or cultured pearls, precious or semi-precious stones,",71.07,
+71,"Natural or cultured pearls, precious or semi-precious stones,",71.08,Gold (including gold plated with platinum) unwrought or in
+71,"Natural or cultured pearls, precious or semi-precious stones,",71.09,
+71,"Natural or cultured pearls, precious or semi-precious stones,",71.10,"Platinum, unwrought or in semi-manufactured forms, or in"
+71,"Natural or cultured pearls, precious or semi-precious stones,",71.11,
+71,"Natural or cultured pearls, precious or semi-precious stones,",71.12,Waste and scrap of precious metal or of metal clad with
+71,"Natural or cultured pearls, precious or semi-precious stones,",71.13,"Articles of jewellery and parts thereof, of precious metal or of"
+71,"Natural or cultured pearls, precious or semi-precious stones,",71.14,"Articles of goldsmiths' or silversmiths' wares and parts thereof,"
+71,"Natural or cultured pearls, precious or semi-precious stones,",71.15,Other articles of precious metal or of metal clad with precious
+71,"Natural or cultured pearls, precious or semi-precious stones,",71.16,"Articles of natural or cultured pearls, precious or semi-precious"
+71,"Natural or cultured pearls, precious or semi-precious stones,",71.17,Imitation jewellery.
+71,"Natural or cultured pearls, precious or semi-precious stones,",71.18,Coin.
+72,Iron and steel,72.01,"Pig iron and spiegeleisen in pigs, blocks or other primary forms."
+72,Iron and steel,72.02,Ferro-alloys.
+72,Iron and steel,72.03,Ferrous products obtained by direct reduction of iron ore and
+72,Iron and steel,72.04,Ferrous waste and scrap; remelting scrap ingots of iron or steel.
+72,Iron and steel,72.05,"Granules and powders, of pig iron, spiegeleisen, iron or steel."
+72,Iron and steel,72.06,Iron and non-alloy steel in ingots or other primary forms
+72,Iron and steel,72.07,Semi-finished products of iron or non-alloy steel.
+72,Iron and steel,72.08,"Flat-rolled products of iron or non-alloy steel, of a width of"
+72,Iron and steel,72.09,"Flat-rolled products of iron or non-alloy steel, of a width of"
+72,Iron and steel,72.10,"Flat-rolled products of iron or non-alloy steel, of a width of"
+72,Iron and steel,72.11,"Flat-rolled products of iron or non-alloy steel, of a width of less"
+72,Iron and steel,72.12,"Flat-rolled products of iron or non-alloy steel, of a width of less"
+72,Iron and steel,72.13,"Bars and rods, hot-rolled, in irregularly wound coils, of iron or"
+72,Iron and steel,72.14,"Other bars and rods of iron or non-alloy steel, not further"
+72,Iron and steel,72.15,Other bars and rods of iron or non-alloy steel.
+72,Iron and steel,72.16,"Angles, shapes and sections of iron or non-alloy steel."
+72,Iron and steel,72.17,Wire of iron or non-alloy steel.
+72,Iron and steel,72.18,Stainless steel in ingots or other primary forms; semi-finished
+72,Iron and steel,72.19,"Flat-rolled products of stainless steel, of a width of 600 mm or"
+72,Iron and steel,72.20,"Flat-rolled products of stainless steel, of a width of less than"
+72,Iron and steel,72.21,
+72,Iron and steel,72.22,"Other bars and rods of stainless steel; angles, shapes and sections"
+72,Iron and steel,72.23,
+72,Iron and steel,72.24,Other alloy steel in ingots or other primary forms; semi-finished
+72,Iron and steel,72.25,"Flat-rolled products of other alloy steel, of a width of 600 mm or"
+72,Iron and steel,72.26,"Flat-rolled products of other alloy steel, of a width of less than"
+72,Iron and steel,72.27,"Bars and rods, hot-rolled, in irregularly wound coils, of other"
+72,Iron and steel,72.28,"Other bars and rods of other alloy steel; angles, shapes and"
+72,Iron and steel,72.29,Wire of other alloy steel.
+73,Articles of iron or steel,73.01,"Sheet piling of iron or steel, whether or not drilled, punched or"
+73,Articles of iron or steel,73.02,"Railway or tramway track construction material of iron or steel,"
+73,Articles of iron or steel,73.03,
+73,Articles of iron or steel,73.04,"Tubes, pipes and hollow profiles, seamless, of iron (other than"
+73,Articles of iron or steel,73.05,"Other tubes and pipes (for example, welded, riveted or similarly"
+73,Articles of iron or steel,73.06,"Other tubes, pipes and hollow profiles (for example, open seam"
+73,Articles of iron or steel,73.07,"Tube or pipe fittings (for example, couplings, elbows, sleeves), of"
+73,Articles of iron or steel,73.08,Structures (excluding prefabricated buildings of heading 94.06)
+73,Articles of iron or steel,73.09,
+73,Articles of iron or steel,73.10,"Tanks, casks, drums, cans, boxes and similar containers, for any"
+73,Articles of iron or steel,73.11,
+73,Articles of iron or steel,73.12,"Stranded wire, ropes, cables, plaited bands, slings and the like, of"
+73,Articles of iron or steel,73.13,
+73,Articles of iron or steel,73.14,"Cloth (including endless bands), grill, netting and fencing, of iron"
+73,Articles of iron or steel,73.15,"Chain and parts thereof, of iron or steel."
+73,Articles of iron or steel,73.16,
+73,Articles of iron or steel,73.17,
+73,Articles of iron or steel,73.18,"Screws, bolts, nuts, coach screws, screw hooks, rivets, cotters,"
+73,Articles of iron or steel,73.19,"Sewing needles, knitting needles, bodkins, crochet hooks,"
+73,Articles of iron or steel,73.20,"Springs and leaves for springs, of iron or steel."
+73,Articles of iron or steel,73.21,"Stoves, ranges, grates, cookers (including those with subsidiary"
+73,Articles of iron or steel,73.22,"Radiators for central heating, not electrically heated, and parts"
+73,Articles of iron or steel,73.23,"Table, kitchen or other household articles and parts thereof, of"
+73,Articles of iron or steel,73.24,"Sanitary ware and parts thereof, of iron or steel."
+73,Articles of iron or steel,73.25,Other cast articles of iron or steel.
+73,Articles of iron or steel,73.26,Other articles of iron or steel.
+74,Copper and articles thereof,74.01,
+74,Copper and articles thereof,74.02,
+74,Copper and articles thereof,74.03,"Refined copper and copper alloys, unwrought."
+74,Copper and articles thereof,74.04,
+74,Copper and articles thereof,74.05,
+74,Copper and articles thereof,74.06,Copper powders and flakes.
+74,Copper and articles thereof,74.07,"Copper bars, rods and profiles."
+74,Copper and articles thereof,74.08,Copper wire.
+74,Copper and articles thereof,74.09,"Copper plates, sheets and strip, of a thickness exceeding 0.15 mm."
+74,Copper and articles thereof,74.10,"Copper foil (whether or not printed or backed with paper,"
+74,Copper and articles thereof,74.11,Copper tubes and pipes.
+74,Copper and articles thereof,74.12,"Copper tube or pipe fittings (for example, couplings, elbows,"
+74,Copper and articles thereof,74.13,
+74,Copper and articles thereof,74.15,"Nails, tacks, drawing pins, staples (other than those of"
+74,Copper and articles thereof,74.18,"Table, kitchen or other household articles and parts thereof, of"
+74,Copper and articles thereof,74.19,Other articles of copper.
+75,Nickel and articles thereof,75.01,"Nickel mattes, nickel oxide sinters and other intermediate"
+75,Nickel and articles thereof,75.02,Unwrought nickel.
+75,Nickel and articles thereof,75.03,
+75,Nickel and articles thereof,75.04,
+75,Nickel and articles thereof,75.05,"Nickel bars, rods, profiles and wire."
+75,Nickel and articles thereof,75.06,"Nickel plates, sheets, strip and foil."
+75,Nickel and articles thereof,75.07,"Nickel tubes, pipes and tube or pipe fittings (for example,"
+75,Nickel and articles thereof,75.08,Other articles of nickel.
+76,Aluminium and articles thereof,76.01,Unwrought aluminium.
+76,Aluminium and articles thereof,76.02,
+76,Aluminium and articles thereof,76.03,Aluminium powders and flakes.
+76,Aluminium and articles thereof,76.04,"Aluminium bars, rods and profiles."
+76,Aluminium and articles thereof,76.05,Aluminium wire.
+76,Aluminium and articles thereof,76.06,"Aluminium plates, sheets and strip, of a thickness exceeding"
+76,Aluminium and articles thereof,76.07,"Aluminium foil (whether or not printed or backed with paper,"
+76,Aluminium and articles thereof,76.08,Aluminium tubes and pipes.
+76,Aluminium and articles thereof,76.09,
+76,Aluminium and articles thereof,76.10,Aluminium structures (excluding prefabricated buildings of
+76,Aluminium and articles thereof,76.11,
+76,Aluminium and articles thereof,76.12,"Aluminium casks, drums, cans, boxes and similar containers"
+76,Aluminium and articles thereof,76.13,
+76,Aluminium and articles thereof,76.14,"Stranded wire, cables, plaited bands and the like, of aluminium,"
+76,Aluminium and articles thereof,76.15,"Table, kitchen or other household articles and parts thereof, of"
+76,Aluminium and articles thereof,76.16,Other articles of aluminium.
+78,Lead and articles thereof,78.01,Unwrought lead.
+78,Lead and articles thereof,78.02,
+78,Lead and articles thereof,78.04,"Lead plates, sheets, strip and foil; lead powders and flakes."
+78,Lead and articles thereof,78.06,
+79,Zinc and articles thereof,79.01,Unwrought zinc.
+79,Zinc and articles thereof,79.02,
+79,Zinc and articles thereof,79.03,"Zinc dust, powders and flakes."
+79,Zinc and articles thereof,79.04,
+79,Zinc and articles thereof,79.05,
+79,Zinc and articles thereof,79.07,
+80,Tin and articles thereof,80.01,Unwrought tin.
+80,Tin and articles thereof,80.02,
+80,Tin and articles thereof,80.03,
+80,Tin and articles thereof,80.07,
+81,Other base metals; cermets; articles thereof,81.01,"Tungsten (wolfram) and articles thereof, including waste and"
+81,Other base metals; cermets; articles thereof,81.02,"Molybdenum and articles thereof, including waste and scrap."
+81,Other base metals; cermets; articles thereof,81.03,"Tantalum and articles thereof, including waste and scrap."
+81,Other base metals; cermets; articles thereof,81.04,"Magnesium and articles thereof, including waste and scrap."
+81,Other base metals; cermets; articles thereof,81.05,Cobalt mattes and other intermediate products of cobalt
+81,Other base metals; cermets; articles thereof,81.06,"Bismuth and articles thereof, including waste and scrap."
+81,Other base metals; cermets; articles thereof,81.08,"Titanium and articles thereof, including waste and scrap."
+81,Other base metals; cermets; articles thereof,81.09,"Zirconium and articles thereof, including waste and scrap."
+81,Other base metals; cermets; articles thereof,81.10,"Antimony and articles thereof, including waste and scrap."
+81,Other base metals; cermets; articles thereof,81.11,
+81,Other base metals; cermets; articles thereof,81.12,"Beryllium, chromium, hafnium, rhenium, thallium, cadmium,"
+81,Other base metals; cermets; articles thereof,81.13,
+82,"Tools, implements, cutlery, spoons and forks, of base metal;",82.01,"Hand tools, the following : spades, shovels, mattocks, picks, hoes,"
+82,"Tools, implements, cutlery, spoons and forks, of base metal;",82.02,"Hand saws; blades for saws of all kinds (including slitting,"
+82,"Tools, implements, cutlery, spoons and forks, of base metal;",82.03,"Files, rasps, pliers (including cutting pliers), pincers, tweezers,"
+82,"Tools, implements, cutlery, spoons and forks, of base metal;",82.04,Hand-operated spanners and wrenches (including torque meter
+82,"Tools, implements, cutlery, spoons and forks, of base metal;",82.05,"Hand tools (including glaziers' diamonds), not elsewhere"
+82,"Tools, implements, cutlery, spoons and forks, of base metal;",82.06,
+82,"Tools, implements, cutlery, spoons and forks, of base metal;",82.07,"Interchangeable tools for hand tools, whether or not power-"
+82,"Tools, implements, cutlery, spoons and forks, of base metal;",82.08,"Knives and cutting blades, for machines or for mechanical"
+82,"Tools, implements, cutlery, spoons and forks, of base metal;",82.09,
+82,"Tools, implements, cutlery, spoons and forks, of base metal;",82.10,
+82,"Tools, implements, cutlery, spoons and forks, of base metal;",82.11,"Knives with cutting blades, serrated or not (including pruning"
+82,"Tools, implements, cutlery, spoons and forks, of base metal;",82.12,Razors and razor blades (including razor blade blanks in strips).
+82,"Tools, implements, cutlery, spoons and forks, of base metal;",82.13,
+82,"Tools, implements, cutlery, spoons and forks, of base metal;",82.14,"Other articles of cutlery (for example, hair clippers, butchers' or"
+82,"Tools, implements, cutlery, spoons and forks, of base metal;",82.15,"Spoons, forks, ladles, skimmers, cake-servers, fish-knives, butter-"
+83,Miscellaneous articles of base metal,83.01,"Padlocks and locks (key, combination or electrically operated), of"
+83,Miscellaneous articles of base metal,83.02,"Base metal mountings, fittings and similar articles suitable for"
+83,Miscellaneous articles of base metal,83.03,
+83,Miscellaneous articles of base metal,83.04,
+83,Miscellaneous articles of base metal,83.05,"Fittings for loose-leaf binders or files, letter clips, letter corners,"
+83,Miscellaneous articles of base metal,83.06,"Bells, gongs and the like, non-electric, of base metal; statuettes"
+83,Miscellaneous articles of base metal,83.07,"Flexible tubing of base metal, with or without fittings."
+83,Miscellaneous articles of base metal,83.08,"Clasps, frames with clasps, buckles, buckle-clasps, hooks, eyes,"
+83,Miscellaneous articles of base metal,83.09,"Stoppers, caps and lids (including crown corks, screw caps and"
+83,Miscellaneous articles of base metal,83.10,
+83,Miscellaneous articles of base metal,83.11,"Wire, rods, tubes, plates, electrodes and similar products, of base"
+84,"Nuclear reactors, boilers, machinery",84.01,"Nuclear reactors; fuel elements (cartridges), non-irradiated, for"
+84,"Nuclear reactors, boilers, machinery",84.02,Steam or other vapour generating boilers (other than central
+84,"Nuclear reactors, boilers, machinery",84.03,Central heating boilers other than those of heading 84.02.
+84,"Nuclear reactors, boilers, machinery",84.04,Auxiliary plant for use with boilers of heading 84.02 or 84.03 (for
+84,"Nuclear reactors, boilers, machinery",84.05,"Producer gas or water gas generators, with or without their"
+84,"Nuclear reactors, boilers, machinery",84.06,Steam turbines and other vapour turbines.
+84,"Nuclear reactors, boilers, machinery",84.07,Spark-ignition reciprocating or rotary internal combustion
+84,"Nuclear reactors, boilers, machinery",84.08,Compression-ignition internal combustion piston engines (diesel
+84,"Nuclear reactors, boilers, machinery",84.09,Parts suitable for use solely or principally with the engines of
+84,"Nuclear reactors, boilers, machinery",84.10,"Hydraulic turbines, water wheels, and regulators therefor."
+84,"Nuclear reactors, boilers, machinery",84.11,"Turbo-jets, turbo-propellers and other gas turbines."
+84,"Nuclear reactors, boilers, machinery",84.12,Other engines and motors.
+84,"Nuclear reactors, boilers, machinery",84.13,"Pumps for liquids, whether or not fitted with a measuring device;"
+84,"Nuclear reactors, boilers, machinery",84.14,"Air or vacuum pumps, air or other gas compressors and fans;"
+84,"Nuclear reactors, boilers, machinery",84.15,"Air conditioning machines, comprising a motor-driven fan and"
+84,"Nuclear reactors, boilers, machinery",84.16,"Furnace burners for liquid fuel, for pulverised solid fuel or for"
+84,"Nuclear reactors, boilers, machinery",84.17,"Industrial or laboratory furnaces and ovens, including"
+84,"Nuclear reactors, boilers, machinery",84.18,"Refrigerators, freezers and other refrigerating or freezing"
+84,"Nuclear reactors, boilers, machinery",84.19,"Machinery, plant or laboratory equipment, whether or not"
+84,"Nuclear reactors, boilers, machinery",84.20,"Calendering or other rolling machines, other than for metals or"
+84,"Nuclear reactors, boilers, machinery",84.21,"Centrifuges, including centrifugal dryers; filtering or purifying"
+84,"Nuclear reactors, boilers, machinery",84.22,Dish washing machines; machinery for cleaning or drying bottles
+84,"Nuclear reactors, boilers, machinery",84.23,Weighing machinery (excluding balances of a sensitivity of 5 cg
+84,"Nuclear reactors, boilers, machinery",84.24,Mechanical appliances (whether or not hand-operated) for
+84,"Nuclear reactors, boilers, machinery",84.25,Pulley tackle and hoists other than skip hoists; winches and
+84,"Nuclear reactors, boilers, machinery",84.26,"Ships' derricks; cranes, including cable cranes; mobile lifting"
+84,"Nuclear reactors, boilers, machinery",84.27,Fork-lift trucks; other works trucks fitted with lifting or handling
+84,"Nuclear reactors, boilers, machinery",84.28,"Other lifting, handling, loading or unloading machinery (for"
+84,"Nuclear reactors, boilers, machinery",84.29,Self-propelled
+84,"Nuclear reactors, boilers, machinery",84.30,"Other moving, grading, levelling, scraping, excavating, tamping,"
+84,"Nuclear reactors, boilers, machinery",84.31,Parts suitable for use solely or principally with the machinery of
+84,"Nuclear reactors, boilers, machinery",84.32,"Agricultural, horticultural or forestry machinery for soil"
+84,"Nuclear reactors, boilers, machinery",84.33,"Harvesting or threshing machinery, including straw or fodder"
+84,"Nuclear reactors, boilers, machinery",84.34,Milking machines and dairy machinery.
+84,"Nuclear reactors, boilers, machinery",84.35,"Presses, crushers and similar machinery used in the manufacture"
+84,"Nuclear reactors, boilers, machinery",84.36,"Other agricultural, horticultural, forestry, poultry-keeping or"
+84,"Nuclear reactors, boilers, machinery",84.37,"Machines for cleaning, sorting or grading seed, grain or dried"
+84,"Nuclear reactors, boilers, machinery",84.38,"Machinery, not specified or included elsewhere in this Chapter,"
+84,"Nuclear reactors, boilers, machinery",84.39,Machinery for making pulp of fibrous cellulosic material or for
+84,"Nuclear reactors, boilers, machinery",84.40,"Book-binding machinery, including book-sewing machines."
+84,"Nuclear reactors, boilers, machinery",84.41,"Other machinery for making up paper pulp, paper or"
+84,"Nuclear reactors, boilers, machinery",84.42,"Machinery, apparatus and equipment (other than the machines"
+84,"Nuclear reactors, boilers, machinery",84.43,"Printing machinery used for printing by means of plates,"
+84,"Nuclear reactors, boilers, machinery",84.44,
+84,"Nuclear reactors, boilers, machinery",84.45,"Machines for preparing textile fibres; spinning, doubling or"
+84,"Nuclear reactors, boilers, machinery",84.46,Weaving machines (looms).
+84,"Nuclear reactors, boilers, machinery",84.47,"Knitting machines, stitch-bonding machines and machines for"
+84,"Nuclear reactors, boilers, machinery",84.48,"Auxiliary machinery for use with machines of heading 84.44,"
+84,"Nuclear reactors, boilers, machinery",84.49,
+84,"Nuclear reactors, boilers, machinery",84.50,"Household or laundry-type washing machines, including"
+84,"Nuclear reactors, boilers, machinery",84.51,"Machinery (other than machines of heading 84.50) for washing,"
+84,"Nuclear reactors, boilers, machinery",84.52,"Sewing machines, other than book-sewing machines of"
+84,"Nuclear reactors, boilers, machinery",84.53,"Machinery for preparing, tanning or working hides, skins or"
+84,"Nuclear reactors, boilers, machinery",84.54,"Converters, ladles, ingot moulds and casting machines, of a kind"
+84,"Nuclear reactors, boilers, machinery",84.55,Metal-rolling mills and rolls therefor.
+84,"Nuclear reactors, boilers, machinery",84.56,"Machine-tools for working any material by removal of material,"
+84,"Nuclear reactors, boilers, machinery",84.57,"Machining centres, unit construction machines (single station)"
+84,"Nuclear reactors, boilers, machinery",84.58,Lathes (including turning centres) for removing metal.
+84,"Nuclear reactors, boilers, machinery",84.59,Machine-tools (including way-type unit head machines) for
+84,"Nuclear reactors, boilers, machinery",84.60,"Machine-tools for deburring, sharpening, grinding, honing,"
+84,"Nuclear reactors, boilers, machinery",84.61,"Machine-tools for planing, shaping, slotting, broaching, gear"
+84,"Nuclear reactors, boilers, machinery",84.62,"Machine-tools (including presses) for working metal by forging,"
+84,"Nuclear reactors, boilers, machinery",84.63,"Other machine-tools for working metal or cermets, without"
+84,"Nuclear reactors, boilers, machinery",84.64,"Machine-tools for working stone, ceramics, concrete, asbestos-"
+84,"Nuclear reactors, boilers, machinery",84.65,"Machine-tools (including machines for nailing, stapling, glueing"
+84,"Nuclear reactors, boilers, machinery",84.66,Parts and accessories suitable for use solely or principally with
+84,"Nuclear reactors, boilers, machinery",84.67,"Tools for working in the hand, pneumatic, hydraulic or with"
+84,"Nuclear reactors, boilers, machinery",84.68,"Machinery and apparatus for soldering, brazing or welding,"
+84,"Nuclear reactors, boilers, machinery",84.70,Calculating
+84,"Nuclear reactors, boilers, machinery",84.71,Automatic data processing machines and units thereof;
+84,"Nuclear reactors, boilers, machinery",84.72,"Other office machines (for example, hectograph or stencil"
+84,"Nuclear reactors, boilers, machinery",84.73,"Parts and accessories (other than covers, carrying cases and the"
+84,"Nuclear reactors, boilers, machinery",84.74,Machinery
+84,"Nuclear reactors, boilers, machinery",84.75,"Machines for assembling electric or electronic lamps, tubes or"
+84,"Nuclear reactors, boilers, machinery",84.76,"Automatic goods-vending machines (for example, postage"
+84,"Nuclear reactors, boilers, machinery",84.77,Machinery for working rubber or plastics or for the
+84,"Nuclear reactors, boilers, machinery",84.78,"Machinery for preparing or making up tobacco, not specified or"
+84,"Nuclear reactors, boilers, machinery",84.79,Machines and mechanical appliances having individual
+84,"Nuclear reactors, boilers, machinery",84.80,Moulding boxes for metal foundry; mould bases; moulding
+84,"Nuclear reactors, boilers, machinery",84.81,"Taps, cocks, valves and similar appliances for pipes, boiler"
+84,"Nuclear reactors, boilers, machinery",84.82,Ball or roller bearings.
+84,"Nuclear reactors, boilers, machinery",84.83,Transmission shafts (including cam shafts and crank shafts)
+84,"Nuclear reactors, boilers, machinery",84.84,Gaskets and similar joints of metal sheeting combined with
+84,"Nuclear reactors, boilers, machinery",84.85,Machines for additive manufacturing.
+84,"Nuclear reactors, boilers, machinery",84.86,Machines and apparatus of a kind used solely or principally for
+84,"Nuclear reactors, boilers, machinery",84.87,Machinery
+85,Electrical machinery and equipment and parts thereof;,85.01,Electric motors and generators (excluding generating sets).
+85,Electrical machinery and equipment and parts thereof;,85.02,Electric generating sets and rotary converters.
+85,Electrical machinery and equipment and parts thereof;,85.03,
+85,Electrical machinery and equipment and parts thereof;,85.04,Electrical
+85,Electrical machinery and equipment and parts thereof;,85.05,Electro-magnets; permanent magnets and articles intended to
+85,Electrical machinery and equipment and parts thereof;,85.06,Primary cells and primary batteries.
+85,Electrical machinery and equipment and parts thereof;,85.07,"Electric accumulators, including separators therefor, whether"
+85,Electrical machinery and equipment and parts thereof;,85.08,Vacuum cleaners.
+85,Electrical machinery and equipment and parts thereof;,85.09,"Electro-mechanical domestic appliances, with self-contained"
+85,Electrical machinery and equipment and parts thereof;,85.10,"Shavers, hair clippers and hair-removing appliances, with self-"
+85,Electrical machinery and equipment and parts thereof;,85.11,Electrical ignition or starting equipment of a kind used for
+85,Electrical machinery and equipment and parts thereof;,85.12,Electrical lighting or signalling equipment (excluding articles of
+85,Electrical machinery and equipment and parts thereof;,85.13,Portable electric lamps designed to function by their own source
+85,Electrical machinery and equipment and parts thereof;,85.14,Industrial or laboratory electric furnaces and ovens (including
+85,Electrical machinery and equipment and parts thereof;,85.15,"Electric (including electrically heated gas), laser or other light"
+85,Electrical machinery and equipment and parts thereof;,85.16,Electric instantaneous or storage water heaters and immersion
+85,Electrical machinery and equipment and parts thereof;,85.17,"Telephone sets, including smartphones and other telephones for"
+85,Electrical machinery and equipment and parts thereof;,85.18,"Microphones and stands therefor; loudspeakers, whether or not"
+85,Electrical machinery and equipment and parts thereof;,85.19,Sound recording or reproducing apparatus.
+85,Electrical machinery and equipment and parts thereof;,85.21,"Video recording or reproducing apparatus, whether or not"
+85,Electrical machinery and equipment and parts thereof;,85.22,Parts and accessories suitable for use solely or principally with
+85,Electrical machinery and equipment and parts thereof;,85.23,"Discs, tapes, solid-state non-volatile storage devices, “smart"
+85,Electrical machinery and equipment and parts thereof;,85.24,"Flat panel display modules, whether or not incorporating touch-"
+85,Electrical machinery and equipment and parts thereof;,85.25,"Transmission apparatus for radio-broadcasting or television,"
+85,Electrical machinery and equipment and parts thereof;,85.26,"Radar apparatus, radio navigational aid apparatus and radio"
+85,Electrical machinery and equipment and parts thereof;,85.27,"Reception apparatus for radio-broadcasting, whether or not"
+85,Electrical machinery and equipment and parts thereof;,85.28,"Monitors and projectors, not incorporating television reception"
+85,Electrical machinery and equipment and parts thereof;,85.29,Parts suitable for use solely or principally with the apparatus of
+85,Electrical machinery and equipment and parts thereof;,85.30,"Electrical signalling, safety or traffic control equipment for"
+85,Electrical machinery and equipment and parts thereof;,85.31,"Electric sound or visual signalling apparatus (for example, bells,"
+85,Electrical machinery and equipment and parts thereof;,85.32,"Electrical capacitors, fixed, variable or adjustable (pre-set)."
+85,Electrical machinery and equipment and parts thereof;,85.33,"Electrical resistors (including rheostats and potentiometers),"
+85,Electrical machinery and equipment and parts thereof;,85.34,
+85,Electrical machinery and equipment and parts thereof;,85.35,Electrical apparatus for switching or protecting electrical
+85,Electrical machinery and equipment and parts thereof;,85.36,Electrical apparatus for switching or protecting electrical
+85,Electrical machinery and equipment and parts thereof;,85.37,"Boards, panels, consoles, desks, cabinets and other bases,"
+85,Electrical machinery and equipment and parts thereof;,85.38,Parts suitable for use solely or principally with the apparatus of
+85,Electrical machinery and equipment and parts thereof;,85.39,"Electric filament or discharge lamps, including sealed beam"
+85,Electrical machinery and equipment and parts thereof;,85.40,"Thermionic, cold cathode or photo-cathode valves and tubes"
+85,Electrical machinery and equipment and parts thereof;,85.41,"Semiconductor devices (for example, diodes, transistors,"
+85,Electrical machinery and equipment and parts thereof;,85.42,Electronic integrated circuits.
+85,Electrical machinery and equipment and parts thereof;,85.43,"Electrical machines and apparatus, having individual functions,"
+85,Electrical machinery and equipment and parts thereof;,85.44,"Insulated (including enamelled or anodised) wire, cable"
+85,Electrical machinery and equipment and parts thereof;,85.45,"Carbon electrodes, carbon brushes, lamp carbons, battery"
+85,Electrical machinery and equipment and parts thereof;,85.46,Electrical insulators of any material.
+85,Electrical machinery and equipment and parts thereof;,85.47,"Insulating fittings for electrical machines, appliances or"
+85,Electrical machinery and equipment and parts thereof;,85.48,
+85,Electrical machinery and equipment and parts thereof;,85.49,Electrical and electronic waste and scrap.
+86,"Railway or tramway locomotives, rolling-stock and parts thereof;",86.01,Rail locomotives powered from an external source of electricity
+86,"Railway or tramway locomotives, rolling-stock and parts thereof;",86.02,Other rail locomotives; locomotive tenders.
+86,"Railway or tramway locomotives, rolling-stock and parts thereof;",86.03,"Self-propelled railway or tramway coaches, vans and trucks,"
+86,"Railway or tramway locomotives, rolling-stock and parts thereof;",86.04,
+86,"Railway or tramway locomotives, rolling-stock and parts thereof;",86.05,
+86,"Railway or tramway locomotives, rolling-stock and parts thereof;",86.06,"Railway or tramway goods vans and wagons, not self-propelled."
+86,"Railway or tramway locomotives, rolling-stock and parts thereof;",86.07,Parts of railway or tramway locomotives or rolling-stock.
+86,"Railway or tramway locomotives, rolling-stock and parts thereof;",86.08,
+86,"Railway or tramway locomotives, rolling-stock and parts thereof;",86.09,
+87,"Vehicles other than railway or tramway rolling-stock,",87.01,Tractors (other than tractors of heading 87.09).
+87,"Vehicles other than railway or tramway rolling-stock,",87.02,"Motor vehicles for the transport of ten or more persons,"
+87,"Vehicles other than railway or tramway rolling-stock,",87.03,Motor cars and other motor vehicles principally designed for
+87,"Vehicles other than railway or tramway rolling-stock,",87.04,Motor vehicles for the transport of goods.
+87,"Vehicles other than railway or tramway rolling-stock,",87.05,"Special purpose motor vehicles, other than those principally"
+87,"Vehicles other than railway or tramway rolling-stock,",87.06,
+87,"Vehicles other than railway or tramway rolling-stock,",87.07,"Bodies (including cabs), for the motor vehicles of headings 87.01"
+87,"Vehicles other than railway or tramway rolling-stock,",87.08,Parts and accessories of the motor vehicles of headings 87.01 to
+87,"Vehicles other than railway or tramway rolling-stock,",87.09,"Works trucks, self-propelled, not fitted with lifting or handling"
+87,"Vehicles other than railway or tramway rolling-stock,",87.10,
+87,"Vehicles other than railway or tramway rolling-stock,",87.11,Motorcycles (including mopeds) and cycles fitted with an
+87,"Vehicles other than railway or tramway rolling-stock,",87.12,
+87,"Vehicles other than railway or tramway rolling-stock,",87.13,"Carriages for disabled persons, whether or not motorised or"
+87,"Vehicles other than railway or tramway rolling-stock,",87.14,Parts and accessories of vehicles of headings 87.11 to 87.13.
+87,"Vehicles other than railway or tramway rolling-stock,",87.15,
+87,"Vehicles other than railway or tramway rolling-stock,",87.16,"Trailers and semi-trailers; other vehicles, not mechanically"
+88,"Aircraft, spacecraft, and parts thereof",88.01,
+88,"Aircraft, spacecraft, and parts thereof",88.02,"Other aircraft (for example, helicopters, aeroplanes), except"
+88,"Aircraft, spacecraft, and parts thereof",88.04,
+88,"Aircraft, spacecraft, and parts thereof",88.05,Aircraft launching gear; deck-arrestor or similar gear; ground
+88,"Aircraft, spacecraft, and parts thereof",88.06,Unmanned aircraft.
+88,"Aircraft, spacecraft, and parts thereof",88.07,"Parts of goods of heading 88.01, 88.02 or 88.06."
+89,"Ships, boats and floating structures",89.01,"Cruise ships, excursion boats, ferry-boats, cargo ships, barges"
+89,"Ships, boats and floating structures",89.02,
+89,"Ships, boats and floating structures",89.03,Yachts and other vessels for pleasure or sports; rowing boats
+89,"Ships, boats and floating structures",89.04,
+89,"Ships, boats and floating structures",89.05,"Light-vessels, fire-floats, dredgers, floating cranes and other"
+89,"Ships, boats and floating structures",89.06,"Other vessels, including warships and lifeboats other than"
+89,"Ships, boats and floating structures",89.07,"Other floating structures (for example, rafts, tanks, coffer-"
+89,"Ships, boats and floating structures",89.08,
+90,"Optical, photographic,",90.01,Optical fibres and optical fibre bundles; optical fibre cables other
+90,"Optical, photographic,",90.02,"Lenses, prisms, mirrors and other optical elements, of any"
+90,"Optical, photographic,",90.03,"Frames and mountings for spectacles, goggles or the like, and"
+90,"Optical, photographic,",90.04,"Spectacles, goggles and the like, corrective, protective or other."
+90,"Optical, photographic,",90.05,"Binoculars, monoculars, other optical telescopes, and mountings"
+90,"Optical, photographic,",90.06,Photographic
+90,"Optical, photographic,",90.07,"Cinematographic cameras and projectors, whether or not"
+90,"Optical, photographic,",90.08,"Image projectors, other than cinematographic; photographic"
+90,"Optical, photographic,",90.10,Apparatus
+90,"Optical, photographic,",90.11,Compound
+90,"Optical, photographic,",90.12,Microscopes
+90,"Optical, photographic,",90.13,"Lasers, other than laser diodes; other optical appliances and"
+90,"Optical, photographic,",90.14,Direction finding compasses; other navigational instruments and
+90,"Optical, photographic,",90.15,Surveying
+90,"Optical, photographic,",90.16,
+90,"Optical, photographic,",90.17,"Drawing, marking-out or mathematical calculating instruments"
+90,"Optical, photographic,",90.18,"Instruments and appliances used in medical, surgical, dental or"
+90,"Optical, photographic,",90.19,Mechano-therapy appliances; massage apparatus; psychological
+90,"Optical, photographic,",90.20,
+90,"Optical, photographic,",90.21,"Orthopaedic appliances, including crutches, surgical belts and"
+90,"Optical, photographic,",90.22,"Apparatus based on the use of X-rays or of alpha, beta, gamma"
+90,"Optical, photographic,",90.23,
+90,"Optical, photographic,",90.24,"Machines and appliances for testing the hardness, strength,"
+90,"Optical, photographic,",90.25,"Hydrometers and similar floating instruments, thermometers,"
+90,"Optical, photographic,",90.26,"Instruments and apparatus for measuring or checking the flow,"
+90,"Optical, photographic,",90.27,Instruments and apparatus for physical or chemical analysis (for
+90,"Optical, photographic,",90.28,"Gas, liquid or electricity supply or production meters, including"
+90,"Optical, photographic,",90.29,Revolution
+90,"Optical, photographic,",90.30,"Oscilloscopes, spectrum analysers and other instruments and"
+90,"Optical, photographic,",90.31,"Measuring or checking instruments, appliances and machines,"
+90,"Optical, photographic,",90.32,Automatic regulating or controlling instruments and apparatus.
+90,"Optical, photographic,",90.33,
+91,Clocks and watches and parts thereof,91.01,"Wrist-watches, pocket-watches and other watches, including"
+91,Clocks and watches and parts thereof,91.02,"Wrist-watches, pocket-watches and other watches, including"
+91,Clocks and watches and parts thereof,91.03,"Clocks with watch movements, excluding clocks of heading 91.04."
+91,Clocks and watches and parts thereof,91.04,
+91,Clocks and watches and parts thereof,91.05,Other clocks.
+91,Clocks and watches and parts thereof,91.06,"Time of day recording apparatus and apparatus for measuring,"
+91,Clocks and watches and parts thereof,91.07,
+91,Clocks and watches and parts thereof,91.08,"Watch movements, complete and assembled."
+91,Clocks and watches and parts thereof,91.09,"Clock movements, complete and assembled."
+91,Clocks and watches and parts thereof,91.10,"Complete watch or clock movements, unassembled or partly"
+91,Clocks and watches and parts thereof,91.11,Watch cases and parts thereof.
+91,Clocks and watches and parts thereof,91.12,Clock cases and cases of a similar type for other goods of this
+91,Clocks and watches and parts thereof,91.13,"Watch straps, watch bands and watch bracelets, and parts"
+91,Clocks and watches and parts thereof,91.14,Other clock or watch parts.
+92,Musical instruments;,92.01,"Pianos, including automatic pianos; harpsichords and other"
+92,Musical instruments;,92.02,"Other string musical instruments (for example, guitars, violins,"
+92,Musical instruments;,92.05,"Wind musical instruments (for example, keyboard pipe organs,"
+92,Musical instruments;,92.06,
+92,Musical instruments;,92.07,"Musical instruments, the sound of which is produced, or must be"
+92,Musical instruments;,92.08,"Musical boxes, fairground organs, mechanical street organs,"
+92,Musical instruments;,92.09,"Parts (for example, mechanisms for musical boxes) and"
+93,Arms and ammunition; parts and accessories thereof,93.01,"Military weapons, other than revolvers, pistols and the arms of"
+93,Arms and ammunition; parts and accessories thereof,93.02,
+93,Arms and ammunition; parts and accessories thereof,93.03,Other firearms and similar devices which operate by the firing of
+93,Arms and ammunition; parts and accessories thereof,93.04,
+93,Arms and ammunition; parts and accessories thereof,93.05,Parts and accessories of articles of headings 93.01 to 93.04.
+93,Arms and ammunition; parts and accessories thereof,93.06,"Bombs, grenades, torpedoes, mines, missiles and similar"
+93,Arms and ammunition; parts and accessories thereof,93.07,
+94,"Furniture; bedding, mattresses, mattress supports,",94.01,"Seats (other than those of heading 94.02), whether or not"
+94,"Furniture; bedding, mattresses, mattress supports,",94.02,"Medical, surgical, dental or veterinary furniture (for example,"
+94,"Furniture; bedding, mattresses, mattress supports,",94.03,Other furniture and parts thereof.
+94,"Furniture; bedding, mattresses, mattress supports,",94.04,Mattress supports; articles of bedding and similar furnishing (for
+94,"Furniture; bedding, mattresses, mattress supports,",94.05,Luminaires and lighting fittings including searchlights and
+94,"Furniture; bedding, mattresses, mattress supports,",94.06,Prefabricated buildings.
+95,"Toys, games and sports requisites;",95.03,
+95,"Toys, games and sports requisites;",95.04,"Video game consoles and machines, table or parlour games,"
+95,"Toys, games and sports requisites;",95.05,"Festive, carnival or other entertainment articles, including"
+95,"Toys, games and sports requisites;",95.06,"Articles and equipment for general physical exercise, gymnastics,"
+95,"Toys, games and sports requisites;",95.07,"Fishing rods, fish-hooks and other line fishing tackle; fish landing"
+95,"Toys, games and sports requisites;",95.08,Travelling circuses and travelling menageries; amusement park
+96,Miscellaneous manufactured articles,96.01,"Worked ivory, bone, tortoise-shell, horn, antlers, coral, mother-"
+96,Miscellaneous manufactured articles,96.02,
+96,Miscellaneous manufactured articles,96.03,"Brooms, brushes (including brushes constituting parts of"
+96,Miscellaneous manufactured articles,96.04,
+96,Miscellaneous manufactured articles,96.05,
+96,Miscellaneous manufactured articles,96.06,"Buttons, press-fasteners, snap-fasteners and press-studs, button"
+96,Miscellaneous manufactured articles,96.07,Slide fasteners and parts thereof.
+96,Miscellaneous manufactured articles,96.08,Ball point pens; felt tipped and other porous-tipped pens and
+96,Miscellaneous manufactured articles,96.09,"Pencils (other than pencils of heading 96.08), crayons, pencil"
+96,Miscellaneous manufactured articles,96.10,
+96,Miscellaneous manufactured articles,96.11,
+96,Miscellaneous manufactured articles,96.12,"Typewriter or similar ribbons, inked or otherwise prepared for"
+96,Miscellaneous manufactured articles,96.13,"Cigarette lighters and other lighters, whether or not mechanical"
+96,Miscellaneous manufactured articles,96.14,
+96,Miscellaneous manufactured articles,96.15,"Combs, hair-slides and the like; hairpins, curling pins, curling"
+96,Miscellaneous manufactured articles,96.16,"Scent sprays and similar toilet sprays, and mounts and heads"
+96,Miscellaneous manufactured articles,96.17,
+96,Miscellaneous manufactured articles,96.18,
+96,Miscellaneous manufactured articles,96.19,
+96,Miscellaneous manufactured articles,96.20,
+97,"Works of art, collectors' pieces and antiques",97.01,"Paintings, drawings and pastels, executed entirely by hand,"
+97,"Works of art, collectors' pieces and antiques",97.02,"Original engravings, prints and lithographs."
+97,"Works of art, collectors' pieces and antiques",97.03,"Original sculpture and statuary, in any material."
+97,"Works of art, collectors' pieces and antiques",97.04,
+97,"Works of art, collectors' pieces and antiques",97.05,Collections
+97,"Works of art, collectors' pieces and antiques",97.06,Antiques of an age exceeding 100 years.

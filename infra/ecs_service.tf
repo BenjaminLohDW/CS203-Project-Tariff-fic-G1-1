@@ -2,7 +2,7 @@
 
 
 #===================== SERVICE DISCOVERY (CLOUD MAP) =====================
-# Optional private DNS namespace for Cloud Map
+# private DNS namespace for Cloud Map
 resource "aws_service_discovery_private_dns_namespace" "ns" {
   count       = var.enable_cloud_map ? 1 : 0
   name        = "svc.local"
@@ -55,18 +55,31 @@ resource "aws_ecs_task_definition" "svc" {
 
       #----- DB configs ------
       environment = [
+        { name = "SPRING_PROFILES_ACTIVE", value = each.key =="tariff" ? "aws" : "local" }, # set local/prod env for java services
+        { name = "ENV",         value = "aws" }, # set local/prod env for python services
         { name = "DB_HOST",     value = var.enable_rds_proxy ? aws_db_proxy.this[0].endpoint : aws_db_instance.writer.address },
         { name = "DB_PORT",     value = tostring(var.db_port) },
         { name = "DB_NAME",     value = var.db_name },
         { name = "DB_USER",     value = var.db_username },
+        { name = "DB_PASSWORD", value = var.db_password },
         { name = "DB_SSLMODE",  value = var.db_sslmode },
-        # { name = "DB_APPROLE",  value = var.db_approle },  # optional
-        { name = "DB_SECRET_ARN", value = var.enable_rds_proxy ? aws_secretsmanager_secret.db.arn : "" }, # optional
-        { name = "DB_PROXY_ENDPOINT", value = var.enable_rds_proxy ? aws_db_proxy.this[0].endpoint : "" }, # optional
-        { name = "REDIS_HOST",  value = var.enable_redis ? aws_elasticache_replication_group.this[0].primary_endpoint_address : "" }, # optional
-        { name = "REDIS_PORT",  value = "6379"}, # optional
-        { name = "AWS_REGION",  value = var.aws_region } # for SDK calls
+        { name = "DB_SECRET_ARN", value = var.enable_rds_proxy ? aws_secretsmanager_secret.db.arn : "" }, 
+        { name = "DB_PROXY_ENDPOINT", value = var.enable_rds_proxy ? aws_db_proxy.this[0].endpoint : "" }, 
+        { name = "REDIS_HOST",  value = var.enable_redis ? aws_elasticache_replication_group.this[0].primary_endpoint_address : "" },
+        { name = "REDIS_PORT",  value = "6379"}, 
+        { name = "AWS_REGION",  value = var.aws_region }, # for SDK calls
+        
+        # internal service discovery endpoint
+        { name = "COUNTRY_MS_BASE",  value = var.enable_cloud_map ? "http://country.svc.local:5005" : "http://localhost:5005" },
+        { name = "PRODUCT_MS_BASE",  value = var.enable_cloud_map ? "http://product.svc.local:5002" : "http://localhost:5002" },
       ]
+
+      # secrets = [
+      #   {
+      #     name      = "SPRING_DATASOURCE_PASSWORD"
+      #     valueFrom = "${aws_secretsmanager_secret.db.arn}:password::"
+      #   }
+      # ]
 
       logConfiguration = {
         logDriver = "awslogs"
@@ -96,18 +109,25 @@ resource "aws_ecs_service" "svc" {
   desired_count   = lookup(local.desired_counts, each.key, var.desired_count)
   launch_type     = "FARGATE"
 
+  health_check_grace_period_seconds = contains(keys(local.public_services), each.key) ? 120 : null  # Give services 2 minutes to start
+
   network_configuration {
-    subnets = module.vpc.private_subnets # <— match how you pass these elsewhere
-    security_groups = [aws_security_group.ecs.id]  # <— align with your SG name
-    assign_public_ip = false
+    subnets = module.vpc.private_subnets # services all in private subnet
+    security_groups = [aws_security_group.ecs.id] 
+    assign_public_ip = false #no public IPs
   }
 
-  load_balancer {
-    target_group_arn = aws_lb_target_group.svc[each.key].arn
-    container_name   = each.key
-    container_port   = each.value.port
+  # NOTE: only PUBLIC services will be attached to load balancer
+  dynamic "load_balancer" {
+    for_each = contains(keys(local.public_services), each.key) ? [1] : []
+    content {
+      target_group_arn = aws_lb_target_group.svc[each.key].arn
+      container_name   = each.key
+      container_port   = each.value.port
+    }
   }
 
+  # service discovery for ALL services - (for service to service internal communication)
   dynamic "service_registries" {
     for_each = var.enable_cloud_map ? [1] : []
     content {
@@ -115,11 +135,19 @@ resource "aws_ecs_service" "svc" {
     }
   }
 
-  deployment_minimum_healthy_percent = 50
-  deployment_maximum_percent         = 200
+  deployment_minimum_healthy_percent = 100 # changed from 50 - ensure old tasks stay running until new ones are healthy
+  deployment_maximum_percent         = 200 #
+
+  # automatic roll back if fails
+  deployment_circuit_breaker {
+    enable   = true
+    rollback = true
+  }
 
   depends_on = [
-    aws_lb_listener.http
+    aws_lb_listener.http,
+    aws_lb_listener_rule.http_paths,
+    aws_db_instance.writer,
   ]
 
   tags = local.tags

@@ -53,7 +53,7 @@ services:
       - DB_PORT=5432
 
   # #------------------------ PRODUCT ------------------------
-  # product microservice (HS Code Scraper)
+  # product microservice (HS Code Scraper + AI Search)
   product:
     container_name: product
     build:
@@ -67,6 +67,13 @@ services:
       - FLASK_PORT=5002
       - HEADLESS_MODE=true
       - LOG_LEVEL=INFO
+      - BATCH_MAX_WORKERS=5
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 1G
 
   # #------------------------ HISTORY ------------------------
   history-migrate:
@@ -102,23 +109,31 @@ services:
       - DB_HOST=db
       - DB_PORT=5432
 
-    ##------------------------ FORECAST #------------------------
-  forecast:
-    container_name: forecast
+
+  # #------------------------ TARIFF (Spring Boot) ------------------------
+  tariff:
+    container_name: tariff
     build:
-      context: ./forecast
+      context: ./tariff
       dockerfile: Dockerfile
+    environment:
+      # Keep your docker profile from the service-specific compose
+      SPRING_PROFILES_ACTIVE: docker
+      # # Add Flyway baseline configuration
+      SPRING_FLYWAY_BASELINE_ON_MIGRATE: true
+      SPRING_FLYWAY_BASELINE_VERSION: 0
+      # If you prefer env over yaml config, uncomment these:
+      # SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/tariff
+      # SPRING_DATASOURCE_USERNAME: tariff
+      # SPRING_DATASOURCE_PASSWORD: tariff
+      # If tariff needs to call other services internally (optional):
+      # PRODUCT_BASE_URL: http://product:5002
+      # COUNTRY_BASE_URL: http://country:5005
     ports:
       - "5004:5004"
     depends_on:
       db:
         condition: service_healthy
-    env_file:
-      - ./forecast/.env
-    environment:
-      - FLASK_APP=app.py
-      - DB_HOST=db
-      - DB_PORT=5432
 
   #------------------------ COUNTRY ------------------------
   country-migrate:
@@ -171,31 +186,7 @@ services:
       - FLASK_APP=app.py
       - DB_HOST=db
       - DB_PORT=5432
-
-  #------------------------ TARIFF (Spring Boot) ------------------------
-  tariff:
-    container_name: tariff
-    build:
-      context: ./tariff
-      dockerfile: Dockerfile
-    environment:
-      # Keep your docker profile from the service-specific compose
-      SPRING_PROFILES_ACTIVE: docker
-      # # Add Flyway baseline configuration
-      SPRING_FLYWAY_BASELINE_ON_MIGRATE: true
-      SPRING_FLYWAY_BASELINE_VERSION: 0
-      # If you prefer env over yaml config, uncomment these:
-      # SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/tariff
-      # SPRING_DATASOURCE_USERNAME: tariff
-      # SPRING_DATASOURCE_PASSWORD: tariff
-      # If tariff needs to call other services internally (optional):
-      # PRODUCT_BASE_URL: http://product:5002
-      # COUNTRY_BASE_URL: http://country:5005
-    ports:
-      - "5004:5004"
-    depends_on:
-      db:
-        condition: service_healthy
+  #------------------------ AGREEMENT ------------------------
 
   agreement-migrate:
     build: ./agreement
@@ -230,6 +221,24 @@ services:
       - DB_HOST=db
       - DB_PORT=5432
 
+    #------------------------ FORECAST #------------------------
+  forecast:
+    container_name: forecast
+    build:
+      context: ./forecast
+      dockerfile: Dockerfile
+    ports:
+      - "5007:5007"
+    depends_on:
+      db:
+        condition: service_healthy
+    env_file:
+      - ./forecast/.env
+    environment:
+      - FLASK_APP=app.py
+      - DB_HOST=db
+      - DB_PORT=5432
+      
   #------------------------ FRONTEND (COMMENTED OUT) ------------------------
   # TODO: Uncomment and configure for full containerization deployment
   # Currently running frontend locally for faster development
