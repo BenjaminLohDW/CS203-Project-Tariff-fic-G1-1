@@ -55,8 +55,8 @@ resource "aws_ecs_task_definition" "svc" {
 
       #----- DB configs ------
       environment = [
-        { name = "SPRING_PROFILES_ACTIVE", value = "docker" },
-        { name = "ENV",         value = "aws" },
+        { name = "SPRING_PROFILES_ACTIVE", value = each.key =="tariff" ? "aws" : null }, # set local/prod env for java services
+        { name = "ENV",         value = "aws" }, # set local/prod env for python services
         { name = "DB_HOST",     value = var.enable_rds_proxy ? aws_db_proxy.this[0].endpoint : aws_db_instance.writer.address },
         { name = "DB_PORT",     value = tostring(var.db_port) },
         { name = "DB_NAME",     value = var.db_name },
@@ -68,10 +68,17 @@ resource "aws_ecs_task_definition" "svc" {
         { name = "REDIS_HOST",  value = var.enable_redis ? aws_elasticache_replication_group.this[0].primary_endpoint_address : "" },
         { name = "REDIS_PORT",  value = "6379"}, 
         { name = "AWS_REGION",  value = var.aws_region }, # for SDK calls
-          
+        
         # internal service discovery endpoint
         { name = "COUNTRY_MS_BASE",  value = var.enable_cloud_map ? "http://country.svc.local:5005" : "http://localhost:5005" },
         { name = "PRODUCT_MS_BASE",  value = var.enable_cloud_map ? "http://country.svc.local:5002" : "http://localhost:5002" },
+      ]
+
+      secrets = [
+        {
+          name      = "SPRING_DATASOURCE_PASSWORD"
+          valueFrom = "${aws_secretsmanager_secret.db.arn}:password::"
+        }
       ]
 
       logConfiguration = {

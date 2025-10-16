@@ -1,0 +1,38 @@
+spring:
+    profiles:
+        active: ${SPRING_PROFILES_ACTIVE:local} # Default to 'local' if not set
+
+    # These will be overridden by profile-specific configs
+    datasource:
+        username: ${DB_USER:pgsql}
+        password: ${DB_PASSWORD:cs203g1t1}
+        driver-class-name: org.postgresql.Driver
+        hikari:
+            connection-timeout: 30000
+            maximum-pool-size: 10
+            minimum-idle: 5
+
+    jpa:
+        hibernate:
+            ddl-auto: validate
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.PostgreSQLDialect
+
+    flyway:
+        enabled: true
+        locations: classpath:db/migration
+        baseline-on-migrate: true
+        validate-on-migrate: false
+
+server:
+    port: 5004
+
+# Default to localhost (will be overridden by profiles)
+country:
+    base-url: ${COUNTRY_BASE_URL:http://localhost:5005}
+    by-name-path: /api/countries/by-name
+
+product:
+    base-url: ${PRODUCT_BASE_URL:http://localhost:5002}
+    lookup-path: /api/v1/hs-code/lookup

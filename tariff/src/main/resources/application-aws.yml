@@ -1,0 +1,33 @@
+spring:
+    datasource:
+        # 🔥 No SSL for now (until you fix RDS Proxy TLS)
+        url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}
+        # 🔥 This will be used when you enable TLS in the future
+        # url: jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_NAME}?ssl=true&sslmode=require
+        username: ${DB_USER}
+        password: ${DB_PASSWORD}
+    
+        hikari:
+            connection-timeout: 30000
+            maximum-pool-size: 10
+            
+    jpa:
+        hibernate:
+        ddl-auto: validate
+        
+    flyway:
+        enabled: true
+        baseline-on-migrate: true
+        validate-on-migrate: false
+
+# 🔥 AWS Service Discovery URLs
+country:
+    base-url: ${COUNTRY_BASE_URL:http://country.svc.local:5005}
+    by-name-path: /api/countries/by-name
+
+product:
+    base-url: ${PRODUCT_BASE_URL:http://product.svc.local:5002}
+    lookup-path: /api/v1/hs-code/lookup
+
+server:
+    port: 5004

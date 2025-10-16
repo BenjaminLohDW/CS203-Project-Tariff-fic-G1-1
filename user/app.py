@@ -22,10 +22,10 @@ port = os.getenv("DB_PORT", "5440")
 dbname = os.getenv("DB_NAME", "default")
 
 if ENV == 'aws':
-    dbsslmode = os.getenv('DB_SSLMODE', 'require')
+    dbsslmode = 'disbale' #os.getenv('DB_SSLMODE', 'require')
 else:
     dbsslmode = 'disable'
-    
+
 app.config["SQLALCHEMY_DATABASE_URI"] = (
     f"postgresql+psycopg2://{user}:{pwd}@{host}:{port}/{dbname}?sslmode={dbsslmode}"
 )
