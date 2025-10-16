@@ -71,15 +71,15 @@ resource "aws_ecs_task_definition" "svc" {
         
         # internal service discovery endpoint
         { name = "COUNTRY_MS_BASE",  value = var.enable_cloud_map ? "http://country.svc.local:5005" : "http://localhost:5005" },
-        { name = "PRODUCT_MS_BASE",  value = var.enable_cloud_map ? "http://country.svc.local:5002" : "http://localhost:5002" },
+        { name = "PRODUCT_MS_BASE",  value = var.enable_cloud_map ? "http://product.svc.local:5002" : "http://localhost:5002" },
       ]
 
-      secrets = [
-        {
-          name      = "SPRING_DATASOURCE_PASSWORD"
-          valueFrom = "${aws_secretsmanager_secret.db.arn}:password::"
-        }
-      ]
+      # secrets = [
+      #   {
+      #     name      = "SPRING_DATASOURCE_PASSWORD"
+      #     valueFrom = "${aws_secretsmanager_secret.db.arn}:password::"
+      #   }
+      # ]
 
       logConfiguration = {
         logDriver = "awslogs"
@@ -146,7 +146,8 @@ resource "aws_ecs_service" "svc" {
 
   depends_on = [
     aws_lb_listener.http,
-    aws_lb_listener_rule.http_paths
+    aws_lb_listener_rule.http_paths,
+    aws_db_instance.writer,
   ]
 
   tags = local.tags

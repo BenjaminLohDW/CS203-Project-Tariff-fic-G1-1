@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 
-@Profile({"local", "test", "docker"}) // activate this when running with profile=local
+@Profile({"local", "test", "docker", "aws"}) // activate this when running with profile=local
 @Service
 public class TariffServiceImpl implements TariffService {
 
