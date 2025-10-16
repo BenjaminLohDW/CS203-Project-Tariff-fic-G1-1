@@ -9,16 +9,29 @@ spring:
     
         hikari:
             connection-timeout: 60000
-            maximum-pool-size: 10
+            maximum-pool-size: 5
             
     jpa:
         hibernate:
-        ddl-auto: validate
+            ddl-auto: validate
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.PostgreSQLDialect
+        show-sql: false  # Don't log SQL in production
         
     flyway:
         enabled: true
         baseline-on-migrate: true
         validate-on-migrate: false
+
+# Logging configuration
+logging:
+    level:
+        root: INFO
+        com.cs203g1t1.tariff: DEBUG
+        org.springframework.jdbc: DEBUG
+        org.hibernate.SQL: DEBUG
+        com.zaxxer.hikari: DEBUG
 
 # 🔥 AWS Service Discovery URLs
 country:
