@@ -24,7 +24,7 @@ public class ProductClient {
   private final URI lookupUri;
 
   public ProductClient(RestTemplate rest,
-                       @Value("${product.base-url}") String baseUrl,
+                       @Value("${product.baseUrl}") String baseUrl,
                        @Value("${product.lookup-path:/api/v1/hs-code/lookup}") String path) {
     this.rest = rest; // <-- built from slice-provided builder (mockable)
     this.lookupUri = UriComponentsBuilder.fromHttpUrl(baseUrl).path(path).build().toUri();

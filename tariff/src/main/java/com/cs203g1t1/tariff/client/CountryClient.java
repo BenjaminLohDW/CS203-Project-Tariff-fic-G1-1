@@ -15,7 +15,7 @@ public class CountryClient {
   private final String byNamePath;
 
   public CountryClient(RestTemplate rest,
-                       @Value("${country.base-url}") String baseUrl,
+                       @Value("${country.baseUrl}") String baseUrl,
                        @Value("${country.by-name-path:/api/countries/by-name}") String byNamePath) {
     this.rest = rest;
     this.baseUrl = baseUrl;

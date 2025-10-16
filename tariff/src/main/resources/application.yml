@@ -30,9 +30,9 @@ server:
 
 # Default to localhost (will be overridden by profiles)
 country:
-    base-url: ${COUNTRY_BASE_URL:http://localhost:5005}
-    by-name-path: /api/countries/by-name
+    baseUrl: ${COUNTRY_MS_BASE:http://localhost:5005}
+    bynNamePath: /api/countries/by-name
 
 product:
-    base-url: ${PRODUCT_BASE_URL:http://localhost:5002}
-    lookup-path: /api/v1/hs-code/lookup
+    baseUrl: ${PRODUCT_MS_BASE:http://localhost:5002}
+    lookupPath: /api/v1/hs-code/lookup

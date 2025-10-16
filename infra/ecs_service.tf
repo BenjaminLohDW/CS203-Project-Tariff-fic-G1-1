@@ -55,7 +55,7 @@ resource "aws_ecs_task_definition" "svc" {
 
       #----- DB configs ------
       environment = [
-        { name = "SPRING_PROFILES_ACTIVE", value = each.key =="tariff" ? "aws" : "" }, # set local/prod env for java services
+        { name = "SPRING_PROFILES_ACTIVE", value = each.key =="tariff" ? "aws" : "local" }, # set local/prod env for java services
         { name = "ENV",         value = "aws" }, # set local/prod env for python services
         { name = "DB_HOST",     value = var.enable_rds_proxy ? aws_db_proxy.this[0].endpoint : aws_db_instance.writer.address },
         { name = "DB_PORT",     value = tostring(var.db_port) },

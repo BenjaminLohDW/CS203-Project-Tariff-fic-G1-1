@@ -35,12 +35,17 @@ logging:
 
 # 🔥 AWS Service Discovery URLs
 country:
-    base-url: ${COUNTRY_BASE_URL:http://country.svc.local:5005}
-    by-name-path: /api/countries/by-name
+    baseUrl: ${COUNTRY_MS_BASE:http://country.svc.local:5005}
+    byNamePath: /api/countries/by-name
 
 product:
-    base-url: ${PRODUCT_BASE_URL:http://product.svc.local:5002}
-    lookup-path: /api/v1/hs-code/lookup
+    baseUrl: ${{PRODUCT_MS_BASE:http://product.svc.local:5002}
+    lookupPath: /api/v1/hs-code/lookup
 
 server:
     port: 5004
+
+logging:
+    level:
+        root: INFO
+        com.cs203g1t1.tariff: DEBUG
