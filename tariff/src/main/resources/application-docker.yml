@@ -22,7 +22,7 @@ country:
 product:
 # base-url: ${PRODUCT_MS_BASE:http://product:5002}
   baseUrl: http://product:5002
-  lookupPath: /api/v1/hs-code/lookup
+  lookupPath: /api/v1/hs-code/search
 
 server:
   port: 5004

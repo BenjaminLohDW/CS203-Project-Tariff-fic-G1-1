@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,8 +26,9 @@ import org.springframework.web.client.RestTemplate;
     ProductClient.class
 })
 @TestPropertySource(properties = {
-    "product.base-url=http://localhost:5002",
-    "product.lookup-path=/api/v1/hs-code/lookup"
+    // NOTE: property names align with ProductClient's @Value("${product.baseUrl}") etc.
+    "product.baseUrl=http://localhost:5002",
+    "product.lookup-path=/api/v1/hs-code/search"
 })
 class ProductClientTest {
 
@@ -54,19 +54,28 @@ class ProductClientTest {
     }
 
     @Test
-    void getHsCodeByProductName_success_returnsHsCode() {
-        String expectedUrl = "http://localhost:5002/api/v1/hs-code/lookup";
-        String responseJson =
-            "{\n" +
-            "  \"description\": \"Smartphones (NMB)\",\n" +
-            "  \"error_message\": null,\n" +
-            "  \"hs_code\": \"85171300\",\n" +
-            "  \"query\": \"smartphone\",\n" +
-            "  \"response_time_ms\": 24524,\n" +
-            "  \"success\": true,\n" +
-            "  \"suggestions\": [],\n" +
-            "  \"unit_of_measure\": \"NMB\"\n" +
-            "}";
+    void getHsCodeByProductName_success_returnsDotlessHsCode() {
+        String expectedUrl = "http://localhost:5002/api/v1/hs-code/search";
+        String responseJson = """
+            {
+              "query": "smartphone",
+              "results": [
+                {
+                  "chapter": "85",
+                  "chapter_value": "Electrical machinery and equipment and parts thereof;",
+                  "heading": "85.17",
+                  "heading_value": "Telephone sets, including smartphones and other telephones for",
+                  "rank": 1,
+                  "score": 0.5809,
+                  "scores_breakdown": { "chapter": 0.3983, "heading": 0.6020, "subheading": 0.6010 },
+                  "subheading": "8517.13",
+                  "subheading_value": "Smartphones"
+                }
+              ],
+              "search_timestamp": "2025-10-18T08:30:38.311379",
+              "total_results": 1
+            }
+            """;
 
         server.expect(requestTo(expectedUrl))
               .andExpect(method(HttpMethod.POST))
@@ -76,13 +85,14 @@ class ProductClientTest {
 
         String hs = productClient.getHsCodeByProductName("smartphone");
 
-        assertThat(hs).isEqualTo("85171300");
+        // Client should strip dots: "8517.13" -> "851713"
+        assertThat(hs).isEqualTo("851713");
         server.verify();
     }
 
     @Test
-    void getHsCodeByProductName_notFound_throws() {
-        String expectedUrl = "http://localhost:5002/api/v1/hs-code/lookup";
+    void getHsCodeByProductName_httpNotFound_throws() {
+        String expectedUrl = "http://localhost:5002/api/v1/hs-code/search";
 
         server.expect(requestTo(expectedUrl))
               .andExpect(method(HttpMethod.POST))
@@ -97,13 +107,46 @@ class ProductClientTest {
     }
 
     @Test
-    void getHsCodeByProductName_successFalse_throws() {
-        String expectedUrl = "http://localhost:5002/api/v1/hs-code/lookup";
-        String responseJson =
-            "{\n" +
-            "  \"success\": false,\n" +
-            "  \"error_message\": \"No results\"\n" +
-            "}";
+    void getHsCodeByProductName_emptyResults_throws() {
+        String expectedUrl = "http://localhost:5002/api/v1/hs-code/search";
+        String responseJson = """
+            {
+              "query": "nothing",
+              "results": [],
+              "search_timestamp": "2025-10-18T08:30:38.311379",
+              "total_results": 0
+            }
+            """;
+
+        server.expect(requestTo(expectedUrl))
+              .andExpect(method(HttpMethod.POST))
+              .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+              .andExpect(content().json("{\"query\":\"nothing\"}"))
+              .andRespond(withSuccess(responseJson, MediaType.APPLICATION_JSON));
+
+        assertThrows(RuntimeException.class,
+            () -> productClient.getHsCodeByProductName("nothing"));
+
+        server.verify();
+    }
+
+    @Test
+    void getHsCodeByProductName_missingSubheading_throws() {
+        String expectedUrl = "http://localhost:5002/api/v1/hs-code/search";
+        String responseJson = """
+            {
+              "query": "bad",
+              "results": [
+                {
+                  "rank": 1,
+                  "score": 0.1,
+                  "subheading": ""
+                }
+              ],
+              "search_timestamp": "2025-10-18T08:30:38.311379",
+              "total_results": 1
+            }
+            """;
 
         server.expect(requestTo(expectedUrl))
               .andExpect(method(HttpMethod.POST))
@@ -113,28 +156,6 @@ class ProductClientTest {
 
         assertThrows(RuntimeException.class,
             () -> productClient.getHsCodeByProductName("bad"));
-
-        server.verify();
-    }
-
-    @Test
-    void getHsCodeByProductName_missingHsCode_throws() {
-        String expectedUrl = "http://localhost:5002/api/v1/hs-code/lookup";
-        String responseJson =
-            "{\n" +
-            "  \"success\": true,\n" +
-            "  \"description\": \"something\",\n" +
-            "  \"query\": \"x\"\n" +
-            "}";
-
-        server.expect(requestTo(expectedUrl))
-              .andExpect(method(HttpMethod.POST))
-              .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-              .andExpect(content().json("{\"query\":\"x\"}"))
-              .andRespond(withSuccess(responseJson, MediaType.APPLICATION_JSON));
-
-        assertThrows(RuntimeException.class,
-            () -> productClient.getHsCodeByProductName("x"));
 
         server.verify();
     }
