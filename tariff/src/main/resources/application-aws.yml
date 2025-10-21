@@ -8,12 +8,14 @@ spring:
         password: ${DB_PASSWORD}
     
         hikari:
-            connection-timeout: 60000
+            connection-timeout: 30000
             maximum-pool-size: 5
-
+            minimum-idle: 2
+            idle-timeout: 300000
+            max-lifetime: 600000
             data-source-properties:
-            ssl: true
-            sslmode: require
+                ssl: true
+                sslmode: require
             
     jpa:
         hibernate:
@@ -28,14 +30,6 @@ spring:
         baseline-on-migrate: true
         validate-on-migrate: false
 
-# Logging configuration
-logging:
-    level:
-        root: INFO
-        com.cs203g1t1.tariff: DEBUG
-        org.springframework.jdbc: DEBUG
-        org.hibernate.SQL: DEBUG
-        com.zaxxer.hikari: DEBUG
 
 # 🔥 AWS Service Discovery URLs
 country:
@@ -53,3 +47,6 @@ logging:
     level:
         root: INFO
         com.cs203g1t1.tariff: DEBUG
+        org.springframework.jdbc: DEBUG
+        org.hibernate.SQL: DEBUG
+        com.zaxxer.hikari: DEBUG
