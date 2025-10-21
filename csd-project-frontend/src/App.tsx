@@ -245,9 +245,8 @@ function App() {
               tariffs = [tariff] // Wrap in array for consistent handling
             } else {
               console.log('No tariff found for this product and country combination')
-              setTariffData([])
-              setIsLoadingTariffs(false)
-              return []
+              // Don't return early - continue with empty tariffs array so agreements can still be applied
+              tariffs = []
             }
           } else {
             // Missing required data for by-names endpoint
