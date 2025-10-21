@@ -5,7 +5,8 @@ import { fetchCountries } from './lib/countryService'
 import { saveCalculation, getUserHistory, getHistoryTariffLines } from './lib/historyService'
 import ProductAutocomplete from './lib/ProductAutocomplete'
 import tariffService from './lib/tariffService'
-import { Country, ProductOption, TariffData, CalculationData } from './types'
+import agreementService from './lib/agreementService'
+import { Country, ProductOption, TariffData, CalculationData, Agreement } from './types'
 import './App.css'
 
 function App() {
@@ -47,6 +48,10 @@ function App() {
   // State for API tariff data
   const [tariffData, setTariffData] = useState<TariffData[]>([])
   const [isLoadingTariffs, setIsLoadingTariffs] = useState<boolean>(false)
+  
+  // State for agreements data
+  const [agreementsData, setAgreementsData] = useState<Agreement[]>([])
+  const [isLoadingAgreements, setIsLoadingAgreements] = useState<boolean>(false)
   
   // State for saved calculation history
   const [calculationHistory, setCalculationHistory] = useState<CalculationData[]>([])
@@ -345,6 +350,48 @@ function App() {
     return tariffData
   }
 
+  // Fetch agreements data from Agreement microservice
+  const fetchAgreementsData = async () => {
+    // Only fetch agreements if we have both countries and date
+    if (!selectedImportingCountry || !selectedExportingCountry) {
+      console.log('Skipping agreements fetch - missing country data')
+      return
+    }
+
+    setIsLoadingAgreements(true)
+    
+    try {
+      console.log('Fetching agreements for:', {
+        importer: selectedImportingCountry,
+        exporter: selectedExportingCountry,
+        date: date
+      })
+
+      const agreements = await agreementService.getActiveAgreements(
+        selectedImportingCountry,
+        selectedExportingCountry,
+        date
+      )
+      
+      console.log('Received agreements:', agreements)
+      setAgreementsData(agreements)
+      
+      if (agreements.length > 0) {
+        console.log(`Found ${agreements.length} active agreement(s)`)
+      } else {
+        console.log('No active agreements found for this country pair and date')
+      }
+    } catch (error) {
+      console.error('Failed to fetch agreements:', error)
+      console.warn('Agreements service may not be running or configured. Continuing without agreements data.')
+      // Don't show alert for agreements failure - it's optional data
+      // Just log the error and continue with empty agreements
+      setAgreementsData([])
+    } finally {
+      setIsLoadingAgreements(false)
+    }
+  }
+
   // Handle calculate button click
   const handleCalculate = async () => {
     // Clear previous results immediately when calculate is clicked
@@ -356,6 +403,7 @@ function App() {
     setCalculatedDate('')
     setCalculatedTariffRate('')
     setTariffData([])
+    setAgreementsData([])  // Clear previous agreements
     
     // Reset fields modified flag since we're recalculating
     setFieldsModified(false)
@@ -369,9 +417,12 @@ function App() {
     setCalculatedDate(date)
     setCalculatedTariffRate(tariffRate)
     
-    // Fetch tariff data from API (simulated)
+    // Fetch tariff data and agreements in parallel
     if (quantity && cost) {
-      await fetchTariffData()
+      await Promise.all([
+        fetchTariffData(),
+        fetchAgreementsData()
+      ])
     }
   }
 
@@ -941,6 +992,112 @@ function App() {
               <div className="flex items-center justify-center p-4 bg-blue-50 rounded-lg border border-blue-200 mb-4">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500 mr-2"></div>
                 <span className="text-blue-700 font-medium text-xs">Loading tariff data...</span>
+              </div>
+            )}
+
+            {/* Loading indicator for agreements */}
+            {isLoadingAgreements && (
+              <div className="flex items-center justify-center p-4 bg-purple-50 rounded-lg border border-purple-200 mb-4">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-500 mr-2"></div>
+                <span className="text-purple-700 font-medium text-xs">Loading agreements data...</span>
+              </div>
+            )}
+
+            {/* Applied Agreements Summary Table */}
+            {agreementsData.length > 0 && (
+              <div className="mb-4">
+                <div className="text-sm font-bold text-gray-800 mb-2 flex items-center">
+                  <span className="text-purple-500 mr-1">📋</span>
+                  Applied Agreements
+                </div>
+                <div className="bg-purple-50 rounded-lg border border-purple-200 overflow-hidden">
+                  <table className="w-full text-xs">
+                    <thead className="bg-purple-100">
+                      <tr>
+                        <th className="text-left p-2 font-semibold text-purple-800">Type</th>
+                        <th className="text-left p-2 font-semibold text-purple-800">Value</th>
+                        <th className="text-left p-2 font-semibold text-purple-800">Start Date</th>
+                        <th className="text-left p-2 font-semibold text-purple-800">Note</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {agreementsData.map((agreement, index) => (
+                        <tr key={agreement.id || index} className={index % 2 === 0 ? 'bg-white' : 'bg-purple-25'}>
+                          <td className="p-2 capitalize">
+                            <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+                              agreement.kind === 'override' ? 'bg-blue-100 text-blue-700' :
+                              agreement.kind === 'surcharge' ? 'bg-red-100 text-red-700' :
+                              'bg-green-100 text-green-700'
+                            }`}>
+                              {agreement.kind}
+                            </span>
+                          </td>
+                          <td className="p-2 font-semibold text-gray-700">
+                            {agreement.kind === 'multiplier' 
+                              ? `×${agreement.value}` 
+                              : `${(agreement.value * 100).toFixed(2)}%`
+                            }
+                          </td>
+                          <td className="p-2 text-gray-600">
+                            {new Date(agreement.start_date).toLocaleDateString('en-US', { 
+                              year: 'numeric', 
+                              month: 'short', 
+                              day: 'numeric' 
+                            })}
+                          </td>
+                          <td className="p-2 text-gray-600 italic">
+                            {agreement.note || 'No note provided'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* Applied Tariffs Summary Table */}
+            {tariffData.length > 0 && (
+              <div className="mb-4">
+                <div className="text-sm font-bold text-gray-800 mb-2 flex items-center">
+                  <span className="text-blue-500 mr-1">📊</span>
+                  Applied Tariffs
+                </div>
+                <div className="bg-blue-50 rounded-lg border border-blue-200 overflow-hidden">
+                  <table className="w-full text-xs">
+                    <thead className="bg-blue-100">
+                      <tr>
+                        <th className="text-left p-2 font-semibold text-blue-800">Description</th>
+                        <th className="text-left p-2 font-semibold text-blue-800">Type</th>
+                        <th className="text-left p-2 font-semibold text-blue-800">Rate</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {tariffData.map((tariff, index) => (
+                        <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-blue-25'}>
+                          <td className="p-2 text-gray-700">
+                            {tariff["Tariff Description"]}
+                          </td>
+                          <td className="p-2 capitalize">
+                            <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+                              tariff["Tariff Type"].toLowerCase() === 'ad_valorem' ? 'bg-green-100 text-green-700' :
+                              tariff["Tariff Type"].toLowerCase() === 'specific' ? 'bg-orange-100 text-orange-700' :
+                              'bg-purple-100 text-purple-700'
+                            }`}>
+                              {tariff["Tariff Type"]}
+                            </span>
+                          </td>
+                          <td className="p-2 font-semibold text-gray-700">
+                            {tariff["Tariff Type"].toLowerCase() === 'specific' 
+                              ? `$${Number(tariff["Tariff amount"]).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} per unit`
+                              : `${tariff["Tariff amount"]}%`
+                            }
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             )}
 

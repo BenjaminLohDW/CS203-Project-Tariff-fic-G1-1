@@ -61,3 +61,14 @@ export interface UserProfile {
   email?: string
   user_id?: string
 }
+
+export interface Agreement {
+  id: number
+  importerId: string
+  exporterId: string
+  start_date: string
+  end_date: string
+  kind: 'override' | 'surcharge' | 'multiplier'
+  value: number
+  note?: string
+}
