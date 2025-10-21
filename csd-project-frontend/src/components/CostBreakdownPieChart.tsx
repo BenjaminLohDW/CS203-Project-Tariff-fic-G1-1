@@ -162,7 +162,7 @@ export function CostBreakdownPieChart({
       <CardContent className="flex-1 pb-0">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square max-h-[300px]"
+          className="aspect-square w-full max-h-[500px]"
         >
           <PieChart>
             <ChartTooltip

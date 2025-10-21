@@ -15,6 +15,8 @@ function App() {
   const { userProfile, logOut, setUserProfile } = useAuth()
   // Ref for autoscroll to results section
   const resultsRef = useRef<HTMLDivElement>(null)
+  // Ref for autoscroll to pie chart section
+  const pieChartRef = useRef<HTMLDivElement>(null)
   
   // State for page navigation
   const [currentPage, setCurrentPage] = useState<string>('calculation')
@@ -423,6 +425,16 @@ function App() {
         fetchTariffData(),
         fetchAgreementsData()
       ])
+      
+      // Autoscroll to pie chart section after data is loaded
+      setTimeout(() => {
+        if (pieChartRef.current) {
+          pieChartRef.current.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          })
+        }
+      }, 300)
     }
   }
 
@@ -855,6 +867,41 @@ function App() {
               className="w-full p-3 text-base border-2 border-gray-300 rounded-lg bg-white text-gray-900 transition-colors hover:border-blue-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 placeholder-gray-500"
             />
           </div>
+
+          {/* Calculate Button */}
+          <div className="mt-4">
+            {/* Hint to recalculate when fields are modified */}
+            {fieldsModified && (
+              <div className="text-orange-500 text-xs font-medium flex items-center gap-1 mb-2">
+                <span className="text-sm">⚠️</span>
+                <span>Fields modified. Click Calculate to update.</span>
+              </div>
+            )}
+            
+            <button 
+              className="w-full bg-red-500 hover:bg-red-600 disabled:bg-gray-400 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 text-white font-bold py-3 px-6 text-base rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:translate-y-0 disabled:transform-none disabled:shadow-none uppercase tracking-wider"
+              onClick={handleCalculate}
+              disabled={
+                // Always require quantity and cost
+                !quantity || !cost || 
+                // Disable if countries are still loading
+                isLoadingCountries ||
+                // For manual tariff mode, require tariff rate
+                (isManualTariff && !tariffRate) ||
+                // For standard mode, require all fields and no validation errors
+                (!isManualTariff && (
+                  !selectedProduct || 
+                  !selectedImportingCountry || 
+                  !selectedExportingCountry || 
+                  !date ||
+                  dateValidationError !== '' || 
+                  countryValidationError !== ''
+                ))
+              }
+            >
+              {isLoadingCountries ? 'Loading...' : 'Calculate'}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -978,64 +1025,53 @@ function App() {
         )}
         </div>
       </div>
+      </div>
 
-        {/* Third Container - Calculation Results */}
-        <div className="bg-green-50 p-6 rounded-lg border border-green-200 flex-1">
-          <h3 className="text-lg font-semibold text-green-800 mb-4 flex items-center">
-            <span className="text-green-600 mr-2">🎯</span>
-            Calculation Results
+      {/* Third Container - Cost Breakdown & Results */}
+      {calculatedQuantity && calculatedCost && (
+        <div 
+          ref={pieChartRef}
+          className="mt-6 bg-gradient-to-br from-purple-50 to-blue-50 p-8 rounded-lg border-2 border-purple-200 shadow-xl"
+        >
+          <h3 className="text-2xl font-bold text-purple-900 mb-6 flex items-center justify-center">
+            <span className="text-purple-600 mr-3 text-3xl">📊</span>
+            Cost Breakdown & Calculation Results
           </h3>
-          <div className="text-left text-sm">
-            {/* Calculate Button */}
-            <div className="mb-4">
-              {/* Hint to recalculate when fields are modified */}
-              {fieldsModified && (
-                <div className="text-orange-500 text-xs font-medium flex items-center gap-1 mb-2">
-                  <span className="text-sm">⚠️</span>
-                  <span>Fields modified. Click Calculate to update.</span>
-                </div>
+
+          {/* Loading indicator for tariffs */}
+          {isLoadingTariffs && (
+            <div className="flex items-center justify-center p-4 bg-blue-50 rounded-lg border border-blue-200 mb-4">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500 mr-2"></div>
+              <span className="text-blue-700 font-medium text-xs">Loading tariff data...</span>
+            </div>
+          )}
+
+          {/* Loading indicator for agreements */}
+          {isLoadingAgreements && (
+            <div className="flex items-center justify-center p-4 bg-purple-50 rounded-lg border border-purple-200 mb-4">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-500 mr-2"></div>
+              <span className="text-purple-700 font-medium text-xs">Loading agreements data...</span>
+            </div>
+          )}
+
+          {/* Two-column layout: Pie chart on left, details on right */}
+          <div className="flex flex-col lg:flex-row gap-6 mb-8">
+            {/* Left Column: Pie Chart */}
+            <div className="lg:w-1/2 flex items-start justify-center">
+              {(tariffData.length > 0 || agreementsData.length > 0) && (
+                <CostBreakdownPieChart
+                  baseCost={Number(calculatedQuantity) * Number(calculatedCost)}
+                  quantity={Number(calculatedQuantity)}
+                  tariffData={tariffData}
+                  agreementsData={agreementsData}
+                  importerCountry={calculatedImportingCountry}
+                  exporterCountry={calculatedExportingCountry}
+                />
               )}
-              
-              <button 
-                className="w-full bg-red-500 hover:bg-red-600 disabled:bg-gray-400 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 text-white font-bold py-3 px-6 text-base rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:translate-y-0 disabled:transform-none disabled:shadow-none uppercase tracking-wider"
-                onClick={handleCalculate}
-                disabled={
-                  // Always require quantity and cost
-                  !quantity || !cost || 
-                  // Disable if countries are still loading
-                  isLoadingCountries ||
-                  // For manual tariff mode, require tariff rate
-                  (isManualTariff && !tariffRate) ||
-                  // For standard mode, require all fields and no validation errors
-                  (!isManualTariff && (
-                    !selectedProduct || 
-                    !selectedImportingCountry || 
-                    !selectedExportingCountry || 
-                    !date ||
-                    dateValidationError !== '' || 
-                    countryValidationError !== ''
-                  ))
-                }
-              >
-                {isLoadingCountries ? 'Loading...' : 'Calculate'}
-              </button>
             </div>
 
-            {/* Loading indicator for tariffs */}
-            {isLoadingTariffs && (
-              <div className="flex items-center justify-center p-4 bg-blue-50 rounded-lg border border-blue-200 mb-4">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500 mr-2"></div>
-                <span className="text-blue-700 font-medium text-xs">Loading tariff data...</span>
-              </div>
-            )}
-
-            {/* Loading indicator for agreements */}
-            {isLoadingAgreements && (
-              <div className="flex items-center justify-center p-4 bg-purple-50 rounded-lg border border-purple-200 mb-4">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-500 mr-2"></div>
-                <span className="text-purple-700 font-medium text-xs">Loading agreements data...</span>
-              </div>
-            )}
+            {/* Right Column: Calculation Details */}
+            <div className="lg:w-1/2 text-left text-sm">
 
             {/* Applied Agreements Summary Table */}
             {agreementsData.length > 0 && (
@@ -1087,20 +1123,6 @@ function App() {
                     </tbody>
                   </table>
                 </div>
-              </div>
-            )}
-
-            {/* Cost Breakdown Pie Chart */}
-            {calculatedQuantity && calculatedCost && (tariffData.length > 0 || agreementsData.length > 0) && (
-              <div className="mb-4">
-                <CostBreakdownPieChart
-                  baseCost={Number(calculatedQuantity) * Number(calculatedCost)}
-                  quantity={Number(calculatedQuantity)}
-                  tariffData={tariffData}
-                  agreementsData={agreementsData}
-                  importerCountry={calculatedImportingCountry}
-                  exporterCountry={calculatedExportingCountry}
-                />
               </div>
             )}
 
@@ -1358,9 +1380,10 @@ function App() {
                 Test Get History
               </button>
             </div>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   )
 
