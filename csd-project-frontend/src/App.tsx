@@ -216,24 +216,52 @@ function App() {
           // User entered HS code directly
           hsCode = selectedProduct.value
         } else {
-          // For now, we'll skip API call for product names and show a message
-          // In the future, you might want to call the product service to get HS codes
-          console.log('Selected product:', selectedProduct.label)
-          setTariffData([])
-          setIsLoadingTariffs(false)
-          alert('HS code lookup for product names is not yet implemented. Please use the HS code input mode.')
-          return []
+          // Product name is selected - use the by-names endpoint
+          console.log('Selected product name:', selectedProduct.label)
+          console.log('API-friendly product name:', selectedProduct.apiName || selectedProduct.label)
+          
+          // Check if we have all required data for the by-names endpoint
+          if (selectedImportingCountry && selectedExportingCountry && date) {
+            console.log('Fetching tariff by product and country names...')
+            
+            // Use apiName (single word) if available, otherwise fall back to full label
+            const productNameForApi = selectedProduct.apiName || selectedProduct.label
+            
+            // Call the by-names endpoint
+            const tariff = await tariffService.getEffectiveTariffByNames({
+              productName: productNameForApi,
+              importerCountryName: selectedImportingCountry,
+              exporterCountryName: selectedExportingCountry,
+              date: date
+            })
+            
+            if (tariff) {
+              console.log('Received tariff from by-names endpoint:', tariff)
+              tariffs = [tariff] // Wrap in array for consistent handling
+            } else {
+              console.log('No tariff found for this product and country combination')
+              setTariffData([])
+              setIsLoadingTariffs(false)
+              return []
+            }
+          } else {
+            // Missing required data for by-names endpoint
+            console.warn('Missing required fields for product name lookup')
+            setTariffData([])
+            setIsLoadingTariffs(false)
+            alert('Please select importing country, exporting country, and date to search by product name.')
+            return []
+          }
         }
       }
       
+      // Handle HS code lookup (when entered directly)
       if (hsCode) {
         // Call tariff service with HS code
         console.log('Fetching tariffs for HS code:', hsCode)
         
         if (selectedImportingCountry && selectedExportingCountry) {
-          // TODO: Backend team - Update tariff API to accept country names instead of ISO codes
-          // CURRENT ISSUE: Tariff API expects ISO codes (SG, CN) but frontend sends names (Singapore, China)
-          // WORKAROUND: Convert country names to ISO codes before API call
+          // Convert country names to ISO codes before API call
           const importerCode = getCountryCode(selectedImportingCountry)
           const exporterCode = getCountryCode(selectedExportingCountry)
           
@@ -255,11 +283,12 @@ function App() {
         }
         
         console.log('Received tariffs:', tariffs)
-        
-        // Transform API response to match existing UI format
+      }
+      
+      // Transform API response to match existing UI format (applies to both HS code and product name lookups)
+      if (tariffs.length > 0) {
         const transformedTariffs = tariffs.map(tariff => {
-          // TODO: Backend team - Consider returning country names in API response
-          // Current: API returns ISO codes (SG, CN) but UI shows full names
+          // Map ISO codes to country names for display
           const importerName = countries.find(c => c.code === tariff.importerId)?.name || tariff.importerId
           const exporterName = countries.find(c => c.code === tariff.exporterId)?.name || tariff.exporterId
           
@@ -291,13 +320,23 @@ function App() {
         
         setTariffData(transformedTariffs)
       } else {
-        // No valid HS code available
-        console.warn('No HS code available for tariff lookup')
+        // No tariffs found
+        console.warn('No tariffs found for the given criteria')
         setTariffData([])
       }
     } catch (error) {
       console.error('Failed to fetch tariff data:', error)
-      alert(`Failed to fetch tariff data: ${(error as any).message}`)
+      const errorMessage = (error as any).message || 'Unknown error'
+      
+      // Provide more helpful error messages
+      if (errorMessage.includes('500')) {
+        alert(`Failed to fetch tariff data: The server encountered an error.\n\nPossible causes:\n- Product "${selectedProduct?.label}" may not be found in the database\n- Product or Country microservices may not be running\n- Try using HS code input mode instead\n\nTechnical error: ${errorMessage}`)
+      } else if (errorMessage.includes('404')) {
+        alert(`No tariff data found for:\n- Product: ${selectedProduct?.label}\n- From: ${selectedExportingCountry}\n- To: ${selectedImportingCountry}\n- Date: ${date}\n\nTry a different product or country combination.`)
+      } else {
+        alert(`Failed to fetch tariff data: ${errorMessage}`)
+      }
+      
       setTariffData([])
     } finally {
       setIsLoadingTariffs(false)
@@ -692,11 +731,11 @@ function App() {
 
   // Render Calculation page
   const renderCalculationPage = () => (
-    <div className="text-center py-8 px-12 max-w-7xl mx-auto">
+    <div className="text-center py-8 px-4 max-w-[1800px] mx-auto">
       <h1 className="text-gray-800 mb-8 text-4xl font-bold">Trade Calculation</h1>
       
       {/* Three containers side by side */}
-      <div className="flex flex-col xl:flex-row gap-6 mb-10">
+      <div className="flex flex-col lg:flex-row gap-6 mb-10 items-start">
         {/* First Container - Quantity and Cost */}
         <div className="bg-blue-50 p-6 rounded-lg border border-blue-200 flex-1">
           <h3 className="text-lg font-semibold text-blue-800 mb-4 flex items-center">

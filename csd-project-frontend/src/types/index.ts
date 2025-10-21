@@ -13,6 +13,7 @@ export interface ProductOption {
   fullName?: string
   category?: string
   isHsCode?: boolean
+  apiName?: string  // Single-word API-friendly name (e.g., "smartphone" instead of "Smartphones and Mobile Devices")
 }
 
 export interface TariffData {

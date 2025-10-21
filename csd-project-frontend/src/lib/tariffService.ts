@@ -1,5 +1,5 @@
 // Tariff Service - API calls to the tariff microservice
-const TARIFF_BASE_URL = import.meta.env.VITE_TARIFF_API_URL || 'http://localhost:5006'
+const TARIFF_BASE_URL = import.meta.env.VITE_TARIFF_API_URL || '/api'
 
 /**
  * Tariff Service for connecting to the tariff microservice
@@ -107,18 +107,24 @@ class TariffService {
   }
 
   /**
-   * Get effective tariff by names (POST request)
-   * @param {any} request - Request object with hsCode, importerName, exporterName, date
+   * Get effective tariff by names (GET request with query params)
+   * @param {any} request - Request object with productName, importerCountryName, exporterCountryName, date
    * @returns {Promise<any|null>} Single tariff object or null
    */
   async getEffectiveTariffByNames(request: any): Promise<any | null> {
     try {
-      const response = await fetch(`${TARIFF_BASE_URL}/api/tariffs/effective/by-names`, {
-        method: 'POST',
+      const params = new URLSearchParams({
+        productName: request.productName,
+        importerCountryName: request.importerCountryName,
+        exporterCountryName: request.exporterCountryName,
+        date: request.date
+      })
+
+      const response = await fetch(`${TARIFF_BASE_URL}/api/tariffs/effective/by-names?${params}`, {
+        method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(request)
+        }
       })
 
       if (response.status === 404) {

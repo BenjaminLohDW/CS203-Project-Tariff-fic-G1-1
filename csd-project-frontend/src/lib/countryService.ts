@@ -1,7 +1,7 @@
 // Country Service - API calls to the country microservice
 import { Country } from '../types'
 
-const COUNTRY_API_URL = import.meta.env.VITE_COUNTRY_API_URL || 'http://localhost:5005'
+const COUNTRY_API_URL = import.meta.env.VITE_COUNTRY_API_URL || '/api'
 
 interface ApiCountry {
   country_id: number
@@ -20,7 +20,7 @@ interface ApiResponse {
  */
 export const fetchCountries = async (): Promise<Country[]> => {
   try {
-    const response = await fetch(`${COUNTRY_API_URL}/countries`)
+    const response = await fetch(`${COUNTRY_API_URL}/countries/all`)
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)

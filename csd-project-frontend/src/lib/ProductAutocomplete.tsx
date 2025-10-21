@@ -13,11 +13,11 @@ interface ProductAutocompleteProps {
 const ProductAutocomplete = ({ 
   value, 
   onChange, 
-  placeholder = "Enter HS Code (e.g., 8517120000)...",
+  placeholder = "Search and select a product...",
   disabled = false,
   className = ""
 }: ProductAutocompleteProps) => {
-  const [isHsCodeMode, setIsHsCodeMode] = useState(true) // Default to HS code mode
+  const [isHsCodeMode, setIsHsCodeMode] = useState(false) // Default to product search mode
   const [hsCodeValue, setHsCodeValue] = useState('')
   // Custom styles for React Select to match Tailwind design
   const customStyles = {
@@ -190,6 +190,36 @@ const ProductAutocomplete = ({
     return /^\d{4,10}$/.test(code)
   }
 
+  // Extract API-friendly name from product label
+  // Takes "Smartphones and Mobile Devices" and returns "smartphone"
+  const extractApiName = (label: string): string => {
+    if (!label) return ''
+    
+    // Get first word, remove special characters, convert to lowercase
+    const firstWord = label
+      .split(/\s+/)[0]  // Split by whitespace and get first word
+      .replace(/[^a-zA-Z0-9]/g, '')  // Remove special characters
+      .toLowerCase()
+    
+    return firstWord
+  }
+
+  // Handle product selection with API name extraction
+  const handleProductSelect = (selectedOption: any) => {
+    if (!selectedOption) {
+      onChange(null)
+      return
+    }
+
+    // Add apiName property for backend API calls
+    const enhancedOption = {
+      ...selectedOption,
+      apiName: extractApiName(selectedOption.label)
+    }
+
+    onChange(enhancedOption)
+  }
+
   return (
     <div className={className}>
       {/* Mode Toggle Button */}
@@ -265,7 +295,7 @@ const ProductAutocomplete = ({
       ) : (
         <Select
           value={value}
-          onChange={onChange}
+          onChange={handleProductSelect}
           options={groupedProducts}
           styles={customStyles}
           placeholder={placeholder}

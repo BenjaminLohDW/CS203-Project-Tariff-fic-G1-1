@@ -5,7 +5,7 @@
 import { UserProfile } from '../types'
 
 // const API_BASE = '/api'
-const USER_API_URL = import.meta.env.VITE_USER_API_URL || 'http://localhost:5001'
+const USER_API_URL = import.meta.env.VITE_USER_API_URL || '/api'
 
 
 /**

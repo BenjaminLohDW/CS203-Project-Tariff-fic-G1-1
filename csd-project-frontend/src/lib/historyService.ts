@@ -1,7 +1,7 @@
 // History Service - API calls to the history microservice
 import { CalculationData } from '../types'
 
-const HISTORY_API_URL = import.meta.env.VITE_HISTORY_API_URL || 'http://localhost:5003'
+const HISTORY_API_URL = import.meta.env.VITE_HISTORY_API_URL || '/api'
 
 
 
