@@ -64,7 +64,7 @@ else:
     DB_SSLMODE = 'disable'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?sslmode={DB_SSLMODE}"
+    f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?sslmode={DB_SSLMODE}&connect_timeout=10"
 )
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
@@ -718,6 +718,14 @@ def seed_country_rel_endpoint():
             "code" : 500,
             "error" : str(e)
         }), 500
+    
+
+with app.app_context():
+    try:
+        db.create_all()
+        print("✅ User service: Database tables created/verified")
+    except Exception as e:
+        print(f"⚠️ User service: Database table creation failed: {e}")
 
 
 if __name__ == '__main__':

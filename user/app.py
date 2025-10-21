@@ -18,7 +18,7 @@ ENV = os.getenv('ENV', 'local')
 user = os.getenv("DB_USER")
 pwd  = quote_plus(os.getenv("DB_PASSWORD", ""))  # URL-escape if needed
 host = os.getenv("DB_HOST", "localhost")
-port = os.getenv("DB_PORT", "5440")
+port = os.getenv("DB_PORT", "5432")
 dbname = os.getenv("DB_NAME", "default")
 
 if ENV == 'aws':
@@ -224,6 +224,14 @@ def delete_user(user_id):
         "code" : 204,
         "message": "deleted"
     }), 204
+
+with app.app_context():
+    try:
+        # Create all tables if they don't exist
+        db.create_all()
+        print("✅ Database tables created/verified")
+    except Exception as e:
+        print(f"⚠️ Database table creation failed: {e}")
 
     
 if __name__ == "__main__":

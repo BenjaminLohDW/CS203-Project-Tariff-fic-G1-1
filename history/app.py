@@ -18,7 +18,7 @@ ENV = os.getenv('ENV', 'local')
 user = os.getenv("DB_USER")
 pwd  = quote_plus(os.getenv("DB_PASSWORD", ""))  # URL-escape if needed
 host = os.getenv("DB_HOST", "localhost")
-port = os.getenv("DB_PORT", "5440")
+port = os.getenv("DB_PORT", "5432")
 dbname = os.getenv("DB_NAME", "default")
 
 if ENV == 'aws':
@@ -27,7 +27,7 @@ else:
     dbsslmode = 'disable'
 
 app.config["SQLALCHEMY_DATABASE_URI"] = (
-    f"postgresql+psycopg2://{user}:{pwd}@{host}:{port}/{dbname}?sslmode={dbsslmode}"
+    f"postgresql+psycopg2://{user}:{pwd}@{host}:{port}/{dbname}?sslmode={dbsslmode}&connect_timeout=10"
 )
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
@@ -334,6 +334,13 @@ def delete_history(history_id):
             "code": 500,
             "message": str(e)
         }), 500
+    
+with app.app_context():
+    try:
+        db.create_all()
+        print("✅ User service: Database tables created/verified")
+    except Exception as e:
+        print(f"⚠️ User service: Database table creation failed: {e}")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5003, debug=True)
