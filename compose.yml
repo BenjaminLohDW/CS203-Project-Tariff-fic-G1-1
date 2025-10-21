@@ -222,22 +222,22 @@ services:
       - DB_PORT=5432
 
     #------------------------ FORECAST #------------------------
-  forecast:
-    container_name: forecast
-    build:
-      context: ./forecast
-      dockerfile: Dockerfile
-    ports:
-      - "5007:5007"
-    depends_on:
-      db:
-        condition: service_healthy
-    env_file:
-      - ./forecast/.env
-    environment:
-      - FLASK_APP=app.py
-      - DB_HOST=db
-      - DB_PORT=5432
+  # forecast:
+  #   container_name: forecast
+  #   build:
+  #     context: ./forecast
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "5007:5007"
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   env_file:
+  #     - ./forecast/.env
+  #   environment:
+  #     - FLASK_APP=app.py
+  #     - DB_HOST=db
+  #     - DB_PORT=5432
       
   #------------------------ FRONTEND (COMMENTED OUT) ------------------------
   # TODO: Uncomment and configure for full containerization deployment
