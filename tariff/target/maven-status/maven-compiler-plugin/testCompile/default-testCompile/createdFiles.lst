@@ -1,9 +1,0 @@
-com\cs203g1t1\tariff\client\ProductClientTest.class
-com\cs203g1t1\tariff\controller\PingControllerTest.class
-com\cs203g1t1\tariff\controller\TariffControllerTest.class
-com\cs203g1t1\tariff\dto\EffectiveByNamesRequestTest.class
-com\cs203g1t1\tariff\client\ProductClientTest$TestConfig.class
-com\cs203g1t1\tariff\db\PostgresContainersIT.class
-com\cs203g1t1\tariff\repository\TariffRepositoryTest.class
-com\cs203g1t1\tariff\client\CountryClientTest$TestConfig.class
-com\cs203g1t1\tariff\client\CountryClientTest.class
