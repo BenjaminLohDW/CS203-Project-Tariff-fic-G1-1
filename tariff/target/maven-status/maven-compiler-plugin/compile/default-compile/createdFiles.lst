@@ -1,6 +1,5 @@
 com\cs203g1t1\tariff\client\ProductClient.class
 com\cs203g1t1\tariff\dto\EffectiveByNamesRequest.class
-com\cs203g1t1\tariff\client\ProductClient$Suggestion.class
 com\cs203g1t1\tariff\dto\TariffResponse.class
 com\cs203g1t1\tariff\service\TariffService.class
 com\cs203g1t1\tariff\dto\TariffCreateRequest.class
@@ -14,6 +13,5 @@ com\cs203g1t1\tariff\api\GlobalExceptionHandler.class
 com\cs203g1t1\tariff\domain\Tariff.class
 com\cs203g1t1\tariff\controller\TariffController.class
 com\cs203g1t1\tariff\repository\TariffRepository.class
-com\cs203g1t1\tariff\client\ProductClient$ProductLookupResponse.class
 com\cs203g1t1\tariff\controller\PingController.class
 com\cs203g1t1\tariff\domain\Tariff$TariffBuilder.class

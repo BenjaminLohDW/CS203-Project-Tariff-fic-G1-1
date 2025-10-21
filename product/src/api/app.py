@@ -631,7 +631,7 @@ def search_hs_codes():
             return jsonify({'error': 'Query cannot be empty'}), 400
         
         # Get optional parameters
-        top_k = data.get('top_k', 10)
+        top_k = data.get('top_k', 1)
         w_sub = data.get('w_sub', 0.7)
         w_head = data.get('w_head', 0.2)
         w_ch = data.get('w_ch', 0.1)
