@@ -476,7 +476,16 @@ function App() {
           rate: tariff["Tariff amount"],
           amount: result.tariffAmount
         }
-      }) : []
+      }) : [],
+      agreement_lines: agreementsData.length > 0 ? agreementsData.map(agreement => ({
+        kind: agreement.kind,
+        value_str: agreement.kind === 'multiplier' 
+          ? `×${agreement.value}` 
+          : `${(agreement.value * 100).toFixed(2)}%`,
+        start_date: agreement.start_date,
+        end_date: agreement.end_date,
+        note: agreement.note || ''
+      })) : []
     }
 
     // Debug user authentication
