@@ -13,6 +13,12 @@ spring:
     baseline-on-migrate: true  #(cloud deployment; ensures that db is set up)
     validate-on-migrate: false
 
+app:
+  security:
+    username: ${BASIC_USER:tariff_admin}
+    password: ${BASIC_PASS:tariff_admin}
+    roles: ${BASIC_ROLES:ADMIN}
+
 # external MS (point to real hosts later if you spin them up)
 country:
 # base-url: ${COUNTRY_MS_BASE:http://country:5005} # local ver

@@ -46,7 +46,7 @@ def resolve_country_code(name):
     Returns ISO2 code string, or None if not found.
     """
     try:
-        resp = requests.get(f"{COUNTRY_MS_URL}/api/countries/by-name?name={name}")
+        resp = requests.get(f"{COUNTRY_MS_URL}/countries/by-name?name={name}")
         if resp.status_code == 200:
             data = resp.json()
             # expected: {'data': {'code': 'SG', 'name': 'Singapore'}}

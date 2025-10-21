@@ -35,4 +35,10 @@ country:
 
 product:
     baseUrl: ${PRODUCT_MS_BASE:http://localhost:5002}
-    lookupPath: /api/v1/hs-code/lookup
+    lookupPath: /api/v1/hs-code/search
+
+app:
+  security:
+    username: ${BASIC_USER:tariff_admin}
+    password: ${BASIC_PASS:tariff_admin}
+    roles: ${BASIC_ROLES:ADMIN}
