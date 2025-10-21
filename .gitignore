@@ -87,6 +87,7 @@ crash.*.log
 
 # Maven build output
 # Ignore Maven build outputs and compiled classes (tariff microservice)
+/target/\n**/target/\n
 /tariff/target/
 **/target/
 *.class
