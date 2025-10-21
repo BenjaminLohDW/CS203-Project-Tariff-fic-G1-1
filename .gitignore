@@ -86,6 +86,8 @@ crash.*.log
 "@ | Out-File -Encoding utf8 .gitignore
 
 # Maven build output
+# Ignore Maven build outputs and compiled classes (tariff microservice)
+/target/\n**/target/\n
 /tariff/target/
 **/target/
 *.class

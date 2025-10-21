@@ -94,6 +94,35 @@ class HistoryTariffLine(db.Model):
             "amount_str": self.amount_str
         }
 
+
+class HistoryAgreementLine(db.Model):
+    __tablename__ = "history_agreement_line"
+
+    line_id      = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid4()))
+    history_id   = db.Column(db.String(36), db.ForeignKey("history.history_id", ondelete="CASCADE"), nullable=False, index=True)
+    line_order   = db.Column(db.Integer, nullable=False)               # 0,1,2,...
+    kind         = db.Column(db.String(32), nullable=False)            # "override" | "surcharge" | "multiplier"
+    value_str    = db.Column(db.String(64), nullable=False)            # "5.00%" or "×1.5"
+    start_date   = db.Column(db.String(32), nullable=False)            # "2025-01-01"
+    end_date     = db.Column(db.String(32), nullable=True)             # "2025-12-31"
+    note         = db.Column(db.String(512), nullable=True)            # "Promotional override during 2025"
+
+    __table_args__ = (
+        db.Index("ix_agreement_history_order", "history_id", "line_order"),
+    )
+    
+    def json(self):
+        return {
+            "line_id": self.line_id,
+            "history_id": self.history_id,
+            "line_order": self.line_order,
+            "kind": self.kind,
+            "value_str": self.value_str,
+            "start_date": self.start_date,
+            "end_date": self.end_date,
+            "note": self.note
+        }
+
 # ---- Healthcheck api for ALB ----
 # @app.route("/health", methods=["GET"])
 # def healthcheck():
@@ -155,17 +184,33 @@ def get_user_history(user_id):
 @app.route("/history/<string:history_id>", methods=["GET"])
 def get_specific_user_history(history_id):
     try:
+        # Get the history record first
+        history = History.query.filter_by(history_id=history_id).first()
+        if not history:
+            return jsonify({
+                "code": 404,
+                "message": "History record not found"
+            }), 404
+
+        # Get tariff lines (with pagination)
         page = max(int(request.args.get("page", 1)), 1)
         size = min(max(int(request.args.get("size", 20)), 1), 100)
-        q = HistoryTariffLine.query.filter_by(history_id=history_id)
-        items = q.paginate(page=page, per_page=size, error_out=False)
+        tariff_query = HistoryTariffLine.query.filter_by(history_id=history_id)
+        tariff_items = tariff_query.paginate(page=page, per_page=size, error_out=False)
+
+        # Get all agreement lines (usually small, no pagination needed)
+        agreement_lines = HistoryAgreementLine.query.filter_by(history_id=history_id).order_by(HistoryAgreementLine.line_order).all()
 
         return jsonify({
             "code": 200,
-            "page": items.page,
-            "size": items.per_page,
-            "total": items.total,
-            "data": [line.json() for line in items.items]
+            "page": tariff_items.page,
+            "size": tariff_items.per_page,
+            "total": tariff_items.total,
+            "data": {
+                "history": history.json(),
+                "tariff_lines": [line.json() for line in tariff_items.items],
+                "agreement_lines": [line.json() for line in agreement_lines]
+            }
         }), 200
     
     except Exception as e:
@@ -198,6 +243,7 @@ def save_calculation():
         db.session.add(history)
         db.session.flush()  # to get history.history_id before commit
 
+        # Save tariff lines
         for idx, line in enumerate(data["tariff_lines"]):
             # expected keys per line: description, type, rate, amount
             tariff_line = HistoryTariffLine(
@@ -210,13 +256,29 @@ def save_calculation():
             )
             db.session.add(tariff_line)
 
+        # Save agreement lines (optional field)
+        if "agreement_lines" in data and data["agreement_lines"]:
+            for idx, agreement in enumerate(data["agreement_lines"]):
+                # expected keys per agreement: kind, value_str, start_date, end_date (optional), note (optional)
+                agreement_line = HistoryAgreementLine(
+                    history_id  = history.history_id,
+                    line_order  = idx,
+                    kind        = agreement["kind"],
+                    value_str   = str(agreement["value_str"]),
+                    start_date  = agreement["start_date"],
+                    end_date    = agreement.get("end_date"),
+                    note        = agreement.get("note")
+                )
+                db.session.add(agreement_line)
+
         db.session.commit()
 
         return jsonify({
             "code": 201,
             "data": {
                 "history": history.json(),
-                "tariff_lines": [line.json() for line in history_tariff_lines(history.history_id)]
+                "tariff_lines": [line.json() for line in history_tariff_lines(history.history_id)],
+                "agreement_lines": [line.json() for line in history_agreement_lines(history.history_id)]
             },
             "message": "calculation history successfully saved"
         }), 201
@@ -230,6 +292,9 @@ def save_calculation():
 
 def history_tariff_lines(history_id):
     return HistoryTariffLine.query.filter_by(history_id=history_id).order_by(HistoryTariffLine.line_order).all()
+
+def history_agreement_lines(history_id):
+    return HistoryAgreementLine.query.filter_by(history_id=history_id).order_by(HistoryAgreementLine.line_order).all()
 
 
 @app.route("/history/<string:history_id>", methods=["DELETE"])
