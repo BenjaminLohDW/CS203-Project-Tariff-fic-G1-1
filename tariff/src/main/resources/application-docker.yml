@@ -10,19 +10,19 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
-    baseline-on-migrate: true  #(cloud deployment; ensures that db is set up)
+    baseline-on-migrate: true #(cloud deployment; ensures that db is set up)
     validate-on-migrate: false
 
 # external MS (point to real hosts later if you spin them up)
 country:
-# base-url: ${COUNTRY_MS_BASE:http://country:5005} # local ver
-  baseUrl:   http://country:5005 # prod ver
-  byNamePath: /api/countries/by-name
+  # base-url: ${COUNTRY_MS_BASE:http://country:5005} # local ver
+  baseUrl: http://country:5005 # prod ver
+  by-name-path: /countries/by-name
 
 product:
-# base-url: ${PRODUCT_MS_BASE:http://product:5002}
+  # base-url: ${PRODUCT_MS_BASE:http://product:5002}
   baseUrl: http://product:5002
-  lookupPath: /api/v1/hs-code/search
+  lookup-path: /api/v1/hs-code/search
 
 server:
   port: 5004
