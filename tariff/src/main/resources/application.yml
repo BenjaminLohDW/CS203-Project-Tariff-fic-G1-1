@@ -34,5 +34,11 @@ country:
   by-name-path: /countries/by-name
 
 product:
-  baseUrl: ${PRODUCT_MS_BASE:http://localhost:5002}
-  lookup-path: /api/v1/hs-code/search
+    baseUrl: ${PRODUCT_MS_BASE:http://localhost:5002}
+    lookupPath: /api/v1/hs-code/search
+
+app:
+  security:
+    username: ${BASIC_USER:tariff_admin}
+    password: ${BASIC_PASS:tariff_admin}
+    roles: ${BASIC_ROLES:ADMIN}
