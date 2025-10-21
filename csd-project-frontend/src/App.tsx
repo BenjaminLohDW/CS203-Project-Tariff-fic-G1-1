@@ -7,6 +7,7 @@ import ProductAutocomplete from './lib/ProductAutocomplete'
 import tariffService from './lib/tariffService'
 import agreementService from './lib/agreementService'
 import { Country, ProductOption, TariffData, CalculationData, Agreement } from './types'
+import { CostBreakdownPieChart } from './components/CostBreakdownPieChart'
 import './App.css'
 
 function App() {
@@ -1086,6 +1087,20 @@ function App() {
                     </tbody>
                   </table>
                 </div>
+              </div>
+            )}
+
+            {/* Cost Breakdown Pie Chart */}
+            {calculatedQuantity && calculatedCost && (tariffData.length > 0 || agreementsData.length > 0) && (
+              <div className="mb-4">
+                <CostBreakdownPieChart
+                  baseCost={Number(calculatedQuantity) * Number(calculatedCost)}
+                  quantity={Number(calculatedQuantity)}
+                  tariffData={tariffData}
+                  agreementsData={agreementsData}
+                  importerCountry={calculatedImportingCountry}
+                  exporterCountry={calculatedExportingCountry}
+                />
               </div>
             )}
 
