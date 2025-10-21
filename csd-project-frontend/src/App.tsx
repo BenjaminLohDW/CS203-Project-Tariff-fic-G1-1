@@ -443,6 +443,8 @@ function App() {
 
     // Create calculation data object
     const baseAmount = calculatedQuantity && calculatedCost ? (Number(calculatedQuantity) * Number(calculatedCost)) : 0
+    
+    // Calculate total tariffs
     const totalTariffs = calculatedQuantity && calculatedCost && tariffData.length > 0 ? 
       tariffData.reduce((sum, tariff) => {
         // Use the tariffService calculation method instead of the broken local one
@@ -453,7 +455,30 @@ function App() {
         )
         return sum + result.tariffAmount
       }, 0) : 0
-    const finalAmount = baseAmount + totalTariffs
+    
+    // Calculate final amount with agreements
+    let finalAmount = baseAmount + totalTariffs
+    
+    // Check if there's an override agreement
+    const overrideAgreement = agreementsData.find(a => a.kind === 'override')
+    
+    if (overrideAgreement) {
+      // Override: ignore tariffs, use only the override percentage
+      finalAmount = baseAmount + (baseAmount * overrideAgreement.value)
+    } else {
+      // Apply surcharge and multiplier agreements
+      let agreementAdjustments = 0
+      agreementsData.forEach(agreement => {
+        if (agreement.kind === 'surcharge') {
+          // Surcharge: add percentage of base amount
+          agreementAdjustments += baseAmount * agreement.value
+        } else if (agreement.kind === 'multiplier') {
+          // Multiplier: multiply tariffs
+          agreementAdjustments += totalTariffs * (agreement.value - 1)
+        }
+      })
+      finalAmount = baseAmount + totalTariffs + agreementAdjustments
+    }
 
     const calculationData = {
       user_id: userProfile?.user_id || 'anonymous',
@@ -1137,11 +1162,18 @@ function App() {
               <div className="mb-4">
                 <div className="text-sm font-bold text-gray-800 mb-2 flex items-center">
                   <span className="text-purple-500 mr-1">💰</span>
-                  Tariffs
+                  {(() => {
+                    // Check if there's an override agreement
+                    const hasOverride = agreementsData.some(a => a.kind === 'override')
+                    return hasOverride ? 'Tariffs (Overridden by Agreement)' : 'Tariffs'
+                  })()}
                 </div>
                 <div className="space-y-2">
                   {tariffData.map((tariff, index) => {
                     const baseAmount = Number(calculatedQuantity) * Number(calculatedCost)
+                    // Check if tariffs are overridden by agreement
+                    const hasOverride = agreementsData.some(a => a.kind === 'override')
+                    
                     // Use tariffService for proper calculation
                     const result = tariffService.calculateTariffAmount(
                       tariff.originalData, // Pass the original tariff object from API
@@ -1151,22 +1183,85 @@ function App() {
                     const tariffAmount = result.tariffAmount
                     
                     return (
-                      <div key={index} className="bg-purple-50 p-2 rounded border border-purple-200">
-                        <div className="font-semibold text-purple-700 text-xs mb-1">
+                      <div key={index} className={`p-2 rounded border ${
+                        hasOverride 
+                          ? 'bg-gray-100 border-gray-300 opacity-50' 
+                          : 'bg-purple-50 border-purple-200'
+                      }`}>
+                        <div className={`font-semibold text-xs mb-1 ${
+                          hasOverride ? 'text-gray-500 line-through' : 'text-purple-700'
+                        }`}>
                           {tariff["Tariff Description"]} 
                         </div>
                         <div className="flex items-center justify-between text-xs">
-                          <span className="text-gray-600">
+                          <span className={hasOverride ? 'text-gray-500' : 'text-gray-600'}>
                             ({tariff["Tariff Type"]}, {tariff["Tariff Type"].toLowerCase() === 'specific' ? `$${Number(tariff["Tariff amount"]).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} per unit` : `${tariff["Tariff amount"]}%`})
                           </span>
-                          <span className="text-red-600 font-bold">${tariffAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                          <span className={`font-bold ${
+                            hasOverride ? 'text-gray-500 line-through' : 'text-red-600'
+                          }`}>
+                            ${tariffAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </span>
                         </div>
                       </div>
                     )
                   })}
                 </div>
                 
-                {/* Total with all tariffs */}
+                {/* Agreement Adjustments */}
+                {agreementsData.length > 0 && (
+                  <div className="mt-3 space-y-2">
+                    <div className="text-sm font-bold text-gray-800 mb-2 flex items-center">
+                      <span className="text-purple-500 mr-1">📝</span>
+                      Agreement Adjustments
+                    </div>
+                    {agreementsData.map((agreement, index) => {
+                      const baseAmount = Number(calculatedQuantity) * Number(calculatedCost)
+                      let adjustmentAmount = 0
+                      let description = ''
+                      
+                      if (agreement.kind === 'override') {
+                        // Override: use agreement value instead of tariffs
+                        adjustmentAmount = baseAmount * agreement.value
+                        description = `Override tariff at ${(agreement.value * 100).toFixed(2)}%`
+                      } else if (agreement.kind === 'surcharge') {
+                        // Surcharge: add to existing tariffs
+                        adjustmentAmount = baseAmount * agreement.value
+                        description = `Additional surcharge of ${(agreement.value * 100).toFixed(2)}%`
+                      } else if (agreement.kind === 'multiplier') {
+                        // Multiplier: multiply existing tariffs
+                        const totalTariffs = tariffData.reduce((sum, tariff) => {
+                          const result = tariffService.calculateTariffAmount(
+                            tariff.originalData,
+                            baseAmount,
+                            Number(calculatedQuantity)
+                          )
+                          return sum + result.tariffAmount
+                        }, 0)
+                        adjustmentAmount = totalTariffs * (agreement.value - 1)
+                        description = `Multiply tariffs by ${agreement.value}×`
+                      }
+                      
+                      return (
+                        <div key={index} className="bg-indigo-50 p-2 rounded border border-indigo-200">
+                          <div className="font-semibold text-indigo-700 text-xs mb-1">
+                            {description}
+                          </div>
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="text-gray-600">
+                              ({agreement.kind})
+                            </span>
+                            <span className="text-indigo-600 font-bold">
+                              ${adjustmentAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                            </span>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+                
+                {/* Total with all tariffs and agreements */}
                 <div className="bg-gradient-to-r from-green-50 to-blue-50 p-3 rounded-lg border-2 border-green-300 mt-3">
                   <div className="text-sm font-bold text-gray-800 mb-1 flex items-center">
                     <span className="text-green-500 mr-1">🎯</span>
@@ -1174,21 +1269,49 @@ function App() {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-xs text-gray-700">
-                      Base + Tariffs = 
+                      Base + {(() => {
+                        const hasOverride = agreementsData.some(a => a.kind === 'override')
+                        if (hasOverride) return 'Agreement'
+                        if (agreementsData.length > 0) return 'Tariffs + Agreements'
+                        return 'Tariffs'
+                      })()} = 
                     </span>
                     <span className="text-green-600 font-bold text-lg">
                       ${(() => {
                         const baseAmount = Number(calculatedQuantity) * Number(calculatedCost)
+                        
+                        // Check if there's an override agreement
+                        const overrideAgreement = agreementsData.find(a => a.kind === 'override')
+                        
+                        if (overrideAgreement) {
+                          // If override exists, ignore all tariffs and use only the override
+                          const overrideAmount = baseAmount * overrideAgreement.value
+                          return (baseAmount + overrideAmount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                        }
+                        
+                        // Calculate total tariffs
                         const totalTariffs = tariffData.reduce((sum, tariff) => {
-                          // Use tariffService for proper calculation
                           const result = tariffService.calculateTariffAmount(
-                            tariff.originalData, // Pass the original tariff object from API
-                            baseAmount,          // Pass the goods value
-                            Number(calculatedQuantity)   // quantity for specific tariffs
+                            tariff.originalData,
+                            baseAmount,
+                            Number(calculatedQuantity)
                           )
                           return sum + result.tariffAmount
                         }, 0)
-                        return (baseAmount + totalTariffs).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                        
+                        // Apply other agreement types
+                        let agreementAdjustments = 0
+                        agreementsData.forEach(agreement => {
+                          if (agreement.kind === 'surcharge') {
+                            // Surcharge: add percentage of base amount
+                            agreementAdjustments += baseAmount * agreement.value
+                          } else if (agreement.kind === 'multiplier') {
+                            // Multiplier: multiply tariffs
+                            agreementAdjustments += totalTariffs * (agreement.value - 1)
+                          }
+                        })
+                        
+                        return (baseAmount + totalTariffs + agreementAdjustments).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
                       })()}
                     </span>
                   </div>
