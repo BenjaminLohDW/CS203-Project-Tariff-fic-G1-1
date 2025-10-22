@@ -383,6 +383,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "cloudtrail" {
   rule {
     id     = "expire-old-logs"
     status = "Enabled"
+    filter {}
     expiration {
       days = 90
     }

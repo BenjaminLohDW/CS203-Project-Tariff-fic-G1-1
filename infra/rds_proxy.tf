@@ -29,6 +29,7 @@ resource "aws_iam_role_policy_attachment" "rds_proxy_secrets" {
 resource "aws_secretsmanager_secret" "db" {
   name = "${local.name_prefix}/db/credentials"
   tags = local.tags
+  recovery_window_in_days = 0 
 }
 
 resource "aws_secretsmanager_secret_version" "db" {
