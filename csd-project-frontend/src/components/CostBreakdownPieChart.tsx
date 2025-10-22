@@ -38,6 +38,9 @@ export function CostBreakdownPieChart({
   const chartData = React.useMemo(() => {
     const data: Array<{ name: string; value: number; fill: string }> = []
     
+    // Check for override agreement first
+    const overrideAgreement = agreementsData.find(a => a.kind === 'override')
+    
     // Base cost
     data.push({
       name: "Base Cost",
@@ -45,28 +48,29 @@ export function CostBreakdownPieChart({
       fill: "var(--chart-1)"
     })
     
-    // Add each tariff
-    tariffData.forEach((tariff, index) => {
-      const result = tariffService.calculateTariffAmount(
-        tariff.originalData,
-        baseCost,
-        quantity
-      )
-      
-      if (result.tariffAmount > 0) {
-        const tariffName = tariff["Tariff Description"] || 
-                          `${tariff["Tariff Type"]} Tariff`
-        data.push({
-          name: tariffName,
-          value: result.tariffAmount,
-          fill: `var(--chart-${(index % 4) + 2})` // Use chart-2 through chart-5
-        })
-      }
-    })
+    // Only add tariffs if there's no override agreement
+    if (!overrideAgreement) {
+      // Add each tariff
+      tariffData.forEach((tariff, index) => {
+        const result = tariffService.calculateTariffAmount(
+          tariff.originalData,
+          baseCost,
+          quantity
+        )
+        
+        if (result.tariffAmount > 0) {
+          const tariffName = tariff["Tariff Description"] || 
+                            `${tariff["Tariff Type"]} Tariff`
+          data.push({
+            name: tariffName,
+            value: result.tariffAmount,
+            fill: `var(--chart-${(index % 4) + 2})` // Use chart-2 through chart-5
+          })
+        }
+      })
+    }
     
     // Add agreements
-    const overrideAgreement = agreementsData.find(a => a.kind === 'override')
-    
     if (overrideAgreement) {
       // Override: add only the override amount
       const overrideAmount = baseCost * overrideAgreement.value

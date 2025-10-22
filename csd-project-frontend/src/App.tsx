@@ -8,6 +8,7 @@ import tariffService from './lib/tariffService'
 import agreementService from './lib/agreementService'
 import { Country, ProductOption, TariffData, CalculationData, Agreement } from './types'
 import { CostBreakdownPieChart } from './components/CostBreakdownPieChart'
+import { Skeleton } from './components/ui/Skeleton'
 import './App.css'
 
 function App() {
@@ -257,7 +258,8 @@ function App() {
             setTariffData([])
             setIsLoadingTariffs(false)
             alert('Please select importing country, exporting country, and date to search by product name.')
-            return []
+            // Don't return - let the function continue to set empty tariff data
+            tariffs = []
           }
         }
       }
@@ -1038,26 +1040,52 @@ function App() {
             Cost Breakdown & Calculation Results
           </h3>
 
-          {/* Loading indicator for tariffs */}
-          {isLoadingTariffs && (
-            <div className="flex items-center justify-center p-4 bg-blue-50 rounded-lg border border-blue-200 mb-4">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500 mr-2"></div>
-              <span className="text-blue-700 font-medium text-xs">Loading tariff data...</span>
-            </div>
-          )}
+          {/* Show skeleton loading while data is being fetched */}
+          {(isLoadingTariffs || isLoadingAgreements) ? (
+            <div className="flex flex-col lg:flex-row gap-6 mb-8">
+              {/* Left Column: Pie Chart Skeleton */}
+              <div className="lg:w-1/2 flex items-start justify-center">
+                <div className="w-full max-w-md space-y-4">
+                  <Skeleton className="h-[400px] w-full rounded-lg" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-3/4 mx-auto" />
+                    <Skeleton className="h-3 w-1/2 mx-auto" />
+                  </div>
+                </div>
+              </div>
 
-          {/* Loading indicator for agreements */}
-          {isLoadingAgreements && (
-            <div className="flex items-center justify-center p-4 bg-purple-50 rounded-lg border border-purple-200 mb-4">
-              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-500 mr-2"></div>
-              <span className="text-purple-700 font-medium text-xs">Loading agreements data...</span>
+              {/* Right Column: Details Skeleton */}
+              <div className="lg:w-1/2 space-y-6">
+                {/* Agreements table skeleton */}
+                <div className="space-y-2">
+                  <Skeleton className="h-6 w-48" />
+                  <Skeleton className="h-32 w-full rounded-lg" />
+                </div>
+                
+                {/* Tariffs table skeleton */}
+                <div className="space-y-2">
+                  <Skeleton className="h-6 w-48" />
+                  <Skeleton className="h-32 w-full rounded-lg" />
+                </div>
+                
+                {/* Base cost skeleton */}
+                <div className="space-y-2">
+                  <Skeleton className="h-6 w-32" />
+                  <Skeleton className="h-16 w-full rounded-lg" />
+                </div>
+                
+                {/* Buttons skeleton */}
+                <div className="space-y-2 pt-3">
+                  <Skeleton className="h-10 w-full rounded-lg" />
+                  <Skeleton className="h-10 w-full rounded-lg" />
+                </div>
+              </div>
             </div>
-          )}
-
-          {/* Two-column layout: Pie chart on left, details on right */}
-          <div className="flex flex-col lg:flex-row gap-6 mb-8">
-            {/* Left Column: Pie Chart */}
-            <div className="lg:w-1/2 flex items-start justify-center">
+          ) : (
+            /* Two-column layout: Pie chart on left, details on right */
+            <div className="flex flex-col lg:flex-row gap-6 mb-8">
+              {/* Left Column: Pie Chart */}
+              <div className="lg:w-1/2 flex items-start justify-center">
               {(tariffData.length > 0 || agreementsData.length > 0) && (
                 <CostBreakdownPieChart
                   baseCost={Number(calculatedQuantity) * Number(calculatedCost)}
@@ -1084,15 +1112,18 @@ function App() {
                   <table className="w-full text-xs">
                     <thead className="bg-purple-100">
                       <tr>
+                        <th className="text-left p-2 font-semibold text-purple-800">Description</th>
                         <th className="text-left p-2 font-semibold text-purple-800">Type</th>
-                        <th className="text-left p-2 font-semibold text-purple-800">Value</th>
+                        <th className="text-left p-2 font-semibold text-purple-800">Rate</th>
                         <th className="text-left p-2 font-semibold text-purple-800">Start Date</th>
-                        <th className="text-left p-2 font-semibold text-purple-800">Note</th>
                       </tr>
                     </thead>
                     <tbody>
                       {agreementsData.map((agreement, index) => (
                         <tr key={agreement.id || index} className={index % 2 === 0 ? 'bg-white' : 'bg-purple-25'}>
+                          <td className="p-2 text-gray-600">
+                            {agreement.note || 'No note provided'}
+                          </td>
                           <td className="p-2 capitalize">
                             <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
                               agreement.kind === 'override' ? 'bg-blue-100 text-blue-700' :
@@ -1114,9 +1145,6 @@ function App() {
                               month: 'short', 
                               day: 'numeric' 
                             })}
-                          </td>
-                          <td className="p-2 text-gray-600 italic">
-                            {agreement.note || 'No note provided'}
                           </td>
                         </tr>
                       ))}
@@ -1227,7 +1255,7 @@ function App() {
                         <div className={`font-semibold text-xs mb-1 ${
                           hasOverride ? 'text-gray-500 line-through' : 'text-purple-700'
                         }`}>
-                          {tariff["Tariff Description"]} 
+                          {tariff["Tariff Description"]}
                         </div>
                         <div className="flex items-center justify-between text-xs">
                           <span className={hasOverride ? 'text-gray-500' : 'text-gray-600'}>
@@ -1243,15 +1271,17 @@ function App() {
                     )
                   })}
                 </div>
+              </div>
+            )}
                 
-                {/* Agreement Adjustments */}
-                {agreementsData.length > 0 && (
-                  <div className="mt-3 space-y-2">
-                    <div className="text-sm font-bold text-gray-800 mb-2 flex items-center">
-                      <span className="text-purple-500 mr-1">📝</span>
-                      Agreement Adjustments
-                    </div>
-                    {agreementsData.map((agreement, index) => {
+            {/* Agreement Adjustments - show when there are agreements */}
+            {agreementsData.length > 0 && calculatedQuantity && calculatedCost && (
+              <div className="mb-4">
+                <div className="text-sm font-bold text-gray-800 mb-2 flex items-center">
+                  <span className="text-purple-500 mr-1">📝</span>
+                  Agreement Adjustments
+                </div>
+                <div className="space-y-2">{agreementsData.map((agreement, index) => {
                       const baseAmount = Number(calculatedQuantity) * Number(calculatedCost)
                       let adjustmentAmount = 0
                       let description = ''
@@ -1294,9 +1324,13 @@ function App() {
                         </div>
                       )
                     })}
-                  </div>
-                )}
+                </div>
+              </div>
+            )}
                 
+            {/* Base Cost and Total Amount - always show when calculation is done */}
+            {calculatedQuantity && calculatedCost && (
+              <div>
                 {/* Total with all tariffs and agreements */}
                 <div className="bg-gradient-to-r from-green-50 to-blue-50 p-3 rounded-lg border-2 border-green-300 mt-3">
                   <div className="text-sm font-bold text-gray-800 mb-1 flex items-center">
@@ -1308,8 +1342,10 @@ function App() {
                       Base + {(() => {
                         const hasOverride = agreementsData.some(a => a.kind === 'override')
                         if (hasOverride) return 'Agreement'
-                        if (agreementsData.length > 0) return 'Tariffs + Agreements'
-                        return 'Tariffs'
+                        if (agreementsData.length > 0 && tariffData.length > 0) return 'Tariffs + Agreements'
+                        if (tariffData.length > 0) return 'Tariffs'
+                        if (agreementsData.length > 0) return 'Agreements'
+                        return 'No Adjustments'
                       })()} = 
                     </span>
                     <span className="text-green-600 font-bold text-lg">
@@ -1381,7 +1417,8 @@ function App() {
               </button>
             </div>
             </div>
-          </div>
+            </div>
+          )}
         </div>
       )}
     </div>
