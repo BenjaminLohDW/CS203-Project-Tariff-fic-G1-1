@@ -9,6 +9,7 @@ import agreementService from './lib/agreementService'
 import { Country, ProductOption, TariffData, CalculationData, Agreement } from './types'
 import { CostBreakdownPieChart } from './components/CostBreakdownPieChart'
 import { Skeleton } from './components/ui/Skeleton'
+import { Card, CardContent, CardHeader, CardTitle } from './components/ui/Card'
 import { Button } from './components/ui/Button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from './components/ui/Popover'
@@ -843,12 +844,14 @@ function App() {
       {/* Three containers side by side */}
       <div className="flex flex-col lg:flex-row gap-6 mb-10 items-start">
         {/* First Container - Quantity and Cost */}
-        <div className="bg-blue-50 p-6 rounded-lg border border-blue-200 flex-1">
-          <h3 className="text-lg font-semibold text-blue-800 mb-4 flex items-center">
-            <span className="text-blue-600 mr-2">📊</span>
-            Basic Information
-          </h3>
-          <div className="flex flex-col gap-4">
+        <Card className="flex-1 bg-blue-50 border-blue-200">
+          <CardHeader>
+            <CardTitle className="flex items-center text-lg text-blue-800">
+              <span className="text-blue-600 mr-2">📊</span>
+              Basic Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
           <div className="flex flex-col items-start text-left w-full">
             <label htmlFor="quantity">Quantity:</label>
             <input
@@ -911,17 +914,18 @@ function App() {
               {isLoadingCountries ? 'Loading...' : 'Calculate'}
             </button>
           </div>
-        </div>
-      </div>
+          </CardContent>
+        </Card>
 
       {/* Second Container - Other Fields */}
-      <div className="bg-purple-50 p-6 rounded-lg border border-purple-200 flex-1">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-purple-800 flex items-center">
-            <span className="text-purple-600 mr-2">⚙️</span>
-            Tariff Configuration
-          </h3>
-          <label className="flex items-center text-sm">
+      <Card className="flex-1 bg-purple-50 border-purple-200">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center text-lg text-purple-800">
+              <span className="text-purple-600 mr-2">⚙️</span>
+              Tariff Configuration
+            </CardTitle>
+            <label className="flex items-center text-sm">
             <input
               type="checkbox"
               checked={isManualTariff}
@@ -930,8 +934,9 @@ function App() {
             />
             Insert manually
           </label>
-        </div>
-        <div className="flex flex-col gap-4">
+          </div>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-4">
           {isManualTariff ? (
           // Manual tariff mode - only show tariff rate field
           <div className="flex flex-col items-start text-left w-full">
@@ -1088,8 +1093,8 @@ function App() {
             )}
           </>
         )}
-        </div>
-      </div>
+        </CardContent>
+      </Card>
       </div>
 
       {/* Third Container - Cost Breakdown & Results */}
