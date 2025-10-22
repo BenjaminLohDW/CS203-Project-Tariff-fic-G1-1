@@ -141,6 +141,26 @@ output "codestar_connection_arn" {
   value       = aws_codestarconnections_connection.github.arn
 }
 
+# ===== GUARDDUTY/WAF/CLOUDWATCH ======
+output "guardduty_detector_id" {
+  value       = var.enable_guardduty ? aws_guardduty_detector.main[0].id : null
+  description = "GuardDuty detector ID"
+}
+
+output "waf_web_acl_arn" {
+  value       = var.enable_waf ? aws_wafv2_web_acl.alb[0].arn : null
+  description = "WAF Web ACL ARN"
+}
+
+output "guardduty_sns_topic" {
+  value       = var.enable_guardduty ? aws_sns_topic.guardduty_alerts[0].arn : null
+  description = "SNS topic for GuardDuty alerts"
+}
+
+output "cloudtrail_bucket" {
+  value = var.enable_cloudtrail ? aws_s3_bucket.cloudtrail[0].id : null
+}
+
 # ===== SECRETS =====
 
 output "db_secret_arn" {
