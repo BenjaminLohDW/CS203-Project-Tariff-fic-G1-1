@@ -9,6 +9,11 @@ import agreementService from './lib/agreementService'
 import { Country, ProductOption, TariffData, CalculationData, Agreement } from './types'
 import { CostBreakdownPieChart } from './components/CostBreakdownPieChart'
 import { Skeleton } from './components/ui/Skeleton'
+import { Button } from './components/ui/Button'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './components/ui/command'
+import { Popover, PopoverContent, PopoverTrigger } from './components/ui/Popover'
+import { Check, ChevronsUpDown } from 'lucide-react'
+import { cn } from './lib/utils'
 import './App.css'
 
 function App() {
@@ -29,6 +34,10 @@ function App() {
   const [quantity, setQuantity] = useState<string>('')
   const [cost, setCost] = useState<string>('')
   const [date, setDate] = useState<string>('')
+  
+  // State for combobox open/close
+  const [importingCountryOpen, setImportingCountryOpen] = useState(false)
+  const [exportingCountryOpen, setExportingCountryOpen] = useState(false)
   
   // Initialize date to current date on component mount
   useEffect(() => {
@@ -115,9 +124,8 @@ function App() {
     }
   }
 
-  const handleImportingCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newImportingCountry = e.target.value
-    setSelectedImportingCountry(newImportingCountry)
+  const handleImportingCountryChange = (value: string) => {
+    setSelectedImportingCountry(value)
     
     // Mark fields as modified if there are calculated values
     if (calculatedProduct) {
@@ -125,16 +133,15 @@ function App() {
     }
     
     // Validate countries are different if both are selected
-    if (newImportingCountry && selectedExportingCountry && newImportingCountry === selectedExportingCountry) {
+    if (value && selectedExportingCountry && value === selectedExportingCountry) {
       setCountryValidationError('Importing and exporting countries cannot be the same')
     } else {
       setCountryValidationError('')
     }
   }
 
-  const handleExportingCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newExportingCountry = e.target.value
-    setSelectedExportingCountry(newExportingCountry)
+  const handleExportingCountryChange = (value: string) => {
+    setSelectedExportingCountry(value)
     
     // Mark fields as modified if there are calculated values
     if (calculatedProduct) {
@@ -142,7 +149,7 @@ function App() {
     }
     
     // Validate countries are different if both are selected
-    if (selectedImportingCountry && newExportingCountry && selectedImportingCountry === newExportingCountry) {
+    if (selectedImportingCountry && value && selectedImportingCountry === value) {
       setCountryValidationError('Importing and exporting countries cannot be the same')
     } else {
       setCountryValidationError('')
@@ -957,42 +964,98 @@ function App() {
 
             <div className="flex flex-col items-start text-left w-full">
               <label htmlFor="importing-country">Importing Country:</label>
-              <select 
-                id="importing-country" 
-                value={selectedImportingCountry} 
-                onChange={handleImportingCountryChange}
-                className="w-full p-3 text-base border-2 border-gray-300 rounded-lg bg-white text-gray-900 transition-colors hover:border-blue-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 cursor-pointer"
-                disabled={isLoadingCountries}
-              >
-                <option value="">
-                  {isLoadingCountries ? 'Loading countries...' : 'Select importing country...'}
-                </option>
-                {!isLoadingCountries && countries.map(country => (
-                  <option key={country.id} value={country.name}>
-                    {country.name}
-                  </option>
-                ))}
-              </select>
+              <Popover open={importingCountryOpen} onOpenChange={setImportingCountryOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={importingCountryOpen}
+                    className="w-full justify-between"
+                    disabled={isLoadingCountries}
+                  >
+                    {selectedImportingCountry
+                      ? countries.find((country) => country.name === selectedImportingCountry)?.name
+                      : (isLoadingCountries ? 'Loading countries...' : 'Select importing country...')}
+                    <ChevronsUpDown className="opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0" align="start">
+                  <Command>
+                    <CommandInput placeholder="Search country..." className="h-9" />
+                    <CommandList>
+                      <CommandEmpty>No country found.</CommandEmpty>
+                      <CommandGroup>
+                        {!isLoadingCountries && countries.map((country) => (
+                          <CommandItem
+                            key={country.id}
+                            value={country.name}
+                            onSelect={(currentValue) => {
+                              handleImportingCountryChange(currentValue === selectedImportingCountry ? "" : currentValue)
+                              setImportingCountryOpen(false)
+                            }}
+                          >
+                            {country.name}
+                            <Check
+                              className={cn(
+                                "ml-auto",
+                                selectedImportingCountry === country.name ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </div>
 
             <div className="flex flex-col items-start text-left w-full">
               <label htmlFor="exporting-country">Exporting Country:</label>
-              <select 
-                id="exporting-country" 
-                value={selectedExportingCountry} 
-                onChange={handleExportingCountryChange}
-                className="w-full p-3 text-base border-2 border-gray-300 rounded-lg bg-white text-gray-900 transition-colors hover:border-blue-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 cursor-pointer"
-                disabled={isLoadingCountries}
-              >
-                <option value="">
-                  {isLoadingCountries ? 'Loading countries...' : 'Select exporting country...'}
-                </option>
-                {!isLoadingCountries && countries.map(country => (
-                  <option key={country.id} value={country.name}>
-                    {country.name}
-                  </option>
-                ))}
-              </select>
+              <Popover open={exportingCountryOpen} onOpenChange={setExportingCountryOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={exportingCountryOpen}
+                    className="w-full justify-between"
+                    disabled={isLoadingCountries}
+                  >
+                    {selectedExportingCountry
+                      ? countries.find((country) => country.name === selectedExportingCountry)?.name
+                      : (isLoadingCountries ? 'Loading countries...' : 'Select exporting country...')}
+                    <ChevronsUpDown className="opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0" align="start">
+                  <Command>
+                    <CommandInput placeholder="Search country..." className="h-9" />
+                    <CommandList>
+                      <CommandEmpty>No country found.</CommandEmpty>
+                      <CommandGroup>
+                        {!isLoadingCountries && countries.map((country) => (
+                          <CommandItem
+                            key={country.id}
+                            value={country.name}
+                            onSelect={(currentValue) => {
+                              handleExportingCountryChange(currentValue === selectedExportingCountry ? "" : currentValue)
+                              setExportingCountryOpen(false)
+                            }}
+                          >
+                            {country.name}
+                            <Check
+                              className={cn(
+                                "ml-auto",
+                                selectedExportingCountry === country.name ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </div>
             
             {/* Country validation error message */}
