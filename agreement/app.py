@@ -32,9 +32,19 @@ app = Flask(__name__)
 CORS(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?sslmode={DB_SSLMODE}"
+    f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?sslmode={DB_SSLMODE}&connect_timeout=10"
 )
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    'pool_pre_ping': True,        # Verify connections before using
+    'pool_recycle': 300,          # Recycle connections after 5 min
+    'pool_size': 5,               # Small pool (proxy does pooling)
+    'max_overflow': 2,
+    'connect_args': {
+        'connect_timeout': 10,
+        'sslmode': DB_SSLMODE,    # ✅ Pass sslmode to psycopg2
+    }
+}
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db, version_table='agreement_alembic_version')
@@ -375,6 +385,13 @@ swagger_template = {
 }
 
 swagger = Swagger(app, config=swagger_config, template=swagger_template)
+
+with app.app_context():
+    try:
+        db.create_all()
+        print("✅ User service: Database tables created/verified")
+    except Exception as e:
+        print(f"⚠️ User service: Database table creation failed: {e}")
 
 # ============================================================
 # Run

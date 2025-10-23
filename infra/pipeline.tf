@@ -76,7 +76,7 @@ resource "aws_iam_role_policy_attachment" "codebuild_s3" {
 }
 
 
-# ================= 2. CodeBuild Project: actul packaging of images into services =================
+# ================= 2. CodeBuild Project: actual packaging of images into services =================
 resource "aws_codebuild_project" "build" {
   for_each = toset(var.services)
   name         = "${local.name_prefix}-build-${each.value}"
@@ -86,6 +86,7 @@ resource "aws_codebuild_project" "build" {
     type = "CODEPIPELINE"
   }
 
+  # defined the build stages in buildspec.yml
   source {
     type = "CODEPIPELINE"
     buildspec = "buildspec.yml"  # Add this line - specify the path to your buildspec

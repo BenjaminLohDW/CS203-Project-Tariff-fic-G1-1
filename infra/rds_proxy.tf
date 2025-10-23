@@ -4,6 +4,7 @@
 
 # IAM role for RDS Proxy to read Secrets Manager
 resource "aws_iam_role" "rds_proxy" {
+  count              = var.enable_rds_proxy ? 1 : 0 
   name               = "${local.name_prefix}-rds-proxy-role"
   assume_role_policy = data.aws_iam_policy_document.rds_proxy_assume.json
   tags               = local.tags
@@ -20,7 +21,7 @@ data "aws_iam_policy_document" "rds_proxy_assume" {
 }
 
 resource "aws_iam_role_policy_attachment" "rds_proxy_secrets" {
-  role       = aws_iam_role.rds_proxy.name
+  role       = aws_iam_role.rds_proxy[0].name
   policy_arn = "arn:aws:iam::aws:policy/SecretsManagerReadWrite"
 }
 
@@ -28,6 +29,7 @@ resource "aws_iam_role_policy_attachment" "rds_proxy_secrets" {
 resource "aws_secretsmanager_secret" "db" {
   name = "${local.name_prefix}/db/credentials"
   tags = local.tags
+  recovery_window_in_days = 0 
 }
 
 resource "aws_secretsmanager_secret_version" "db" {
@@ -37,6 +39,7 @@ resource "aws_secretsmanager_secret_version" "db" {
 
 # Security group for proxy (ECS -> Proxy ; Proxy -> RDS)
 resource "aws_security_group" "rds_proxy" {
+  count       = var.enable_rds_proxy ? 1 : 0 
   name        = "${local.name_prefix}-rds-proxy-sg"
   description = "RDS Proxy"
   vpc_id      = module.vpc.vpc_id
@@ -45,7 +48,8 @@ resource "aws_security_group" "rds_proxy" {
 
 # ECS can hit proxy:5432
 resource "aws_vpc_security_group_ingress_rule" "proxy_from_ecs" {
-  security_group_id            = aws_security_group.rds_proxy.id
+  count                        = var.enable_rds_proxy ? 1 : 0 
+  security_group_id            = aws_security_group.rds_proxy[0].id
   referenced_security_group_id = aws_security_group.ecs.id
   ip_protocol                  = "tcp"
   from_port                    = 5432
@@ -54,7 +58,8 @@ resource "aws_vpc_security_group_ingress_rule" "proxy_from_ecs" {
 
 # Proxy can hit DB:5432
 resource "aws_vpc_security_group_egress_rule" "proxy_to_rds" {
-  security_group_id = aws_security_group.rds_proxy.id
+  count             = var.enable_rds_proxy ? 1 : 0 
+  security_group_id = aws_security_group.rds_proxy[0].id
   ip_protocol       = "tcp"
   to_port           = 5432
   from_port         = 5432
@@ -66,10 +71,10 @@ resource "aws_db_proxy" "this" {
   count                     = var.enable_rds_proxy ? 1 : 0
   name                      = "${local.name_prefix}-pg-proxy"
   engine_family             = "POSTGRESQL"
-  role_arn                  = aws_iam_role.rds_proxy.arn
+  role_arn                  = aws_iam_role.rds_proxy[0].arn
   vpc_subnet_ids            = module.vpc.database_subnets
-  vpc_security_group_ids    = [aws_security_group.rds_proxy.id]
-  require_tls               = false
+  vpc_security_group_ids    = [aws_security_group.rds_proxy[0].id]
+  require_tls               = true
   idle_client_timeout       = 1800
   debug_logging             = false
   auth {
@@ -83,6 +88,13 @@ resource "aws_db_proxy" "this" {
 resource "aws_db_proxy_default_target_group" "this" {
   count       = var.enable_rds_proxy ? 1 : 0
   db_proxy_name = aws_db_proxy.this[0].name
+
+  connection_pool_config {
+    max_connections_percent      = 100
+    max_idle_connections_percent = 50
+    connection_borrow_timeout    = 120
+  }
+
 }
 
 resource "aws_db_proxy_target" "writer" {

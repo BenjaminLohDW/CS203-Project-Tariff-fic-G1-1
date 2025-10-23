@@ -1,4 +1,4 @@
-# Configure via `tofu init -backend-config` flags or hardcode here.
+# initialise the tofu project
 
 terraform {
   backend "local" {

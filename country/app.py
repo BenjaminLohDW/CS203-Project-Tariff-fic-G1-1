@@ -64,9 +64,19 @@ else:
     DB_SSLMODE = 'disable'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = (
-    f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?sslmode={DB_SSLMODE}"
+    f"postgresql+psycopg2://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?sslmode={DB_SSLMODE}&connect_timeout=10"
 )
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    'pool_pre_ping': True,        # Verify connections before using
+    'pool_recycle': 300,          # Recycle connections after 5 min
+    'pool_size': 5,               # Small pool (proxy does pooling)
+    'max_overflow': 2,
+    'connect_args': {
+        'connect_timeout': 10,
+        'sslmode': DB_SSLMODE,    # ✅ Pass sslmode to psycopg2
+    }
+}
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db, version_table='country_alembic_version')
@@ -708,6 +718,14 @@ def seed_country_rel_endpoint():
             "code" : 500,
             "error" : str(e)
         }), 500
+    
+
+with app.app_context():
+    try:
+        db.create_all()
+        print("✅ User service: Database tables created/verified")
+    except Exception as e:
+        print(f"⚠️ User service: Database table creation failed: {e}")
 
 
 if __name__ == '__main__':

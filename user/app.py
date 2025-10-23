@@ -18,7 +18,7 @@ ENV = os.getenv('ENV', 'local')
 user = os.getenv("DB_USER")
 pwd  = quote_plus(os.getenv("DB_PASSWORD", ""))  # URL-escape if needed
 host = os.getenv("DB_HOST", "localhost")
-port = os.getenv("DB_PORT", "5440")
+port = os.getenv("DB_PORT", "5432")
 dbname = os.getenv("DB_NAME", "default")
 
 if ENV == 'aws':
@@ -27,8 +27,20 @@ else:
     dbsslmode = 'disable'
 
 app.config["SQLALCHEMY_DATABASE_URI"] = (
-    f"postgresql+psycopg2://{user}:{pwd}@{host}:{port}/{dbname}?sslmode={dbsslmode}"
+    f"postgresql+psycopg2://{user}:{pwd}@{host}:{port}/{dbname}?sslmode={dbsslmode}&connect_timeout=10"
 )
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+    'pool_pre_ping': True,        # Verify connections before using
+    'pool_recycle': 300,          # Recycle connections after 5 min
+    'pool_size': 5,               # Small pool (proxy does pooling)
+    'max_overflow': 2,
+    'connect_args': {
+        'connect_timeout': 10,
+        'sslmode': dbsslmode,    
+    }
+}
+
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db, version_table="user_alembic_version")
@@ -212,6 +224,14 @@ def delete_user(user_id):
         "code" : 204,
         "message": "deleted"
     }), 204
+
+with app.app_context():
+    try:
+        # Create all tables if they don't exist
+        db.create_all()
+        print("✅ Database tables created/verified")
+    except Exception as e:
+        print(f"⚠️ Database table creation failed: {e}")
 
     
 if __name__ == "__main__":

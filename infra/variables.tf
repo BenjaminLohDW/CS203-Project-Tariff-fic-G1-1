@@ -263,3 +263,42 @@ variable "frontend_acm_arn" {
   type        = string
   default     = ""
 }
+
+# ===== ROUTE53 CONFIDURATIONS ======
+# variable "domain_name" {
+#   description = "custome domain name"
+#   type = string
+#   default = ""
+# }
+
+# custom dmain name
+# variable "create_route53" {
+#   description = "Whether to create Route53 hosted zone"
+#   type        = bool
+#   default     = false  # Set to true when you have a domain
+# }
+
+
+# ===== GUARDUTY/SECURITY CONFIGURATIONS =======
+variable "enable_guardduty" {
+  description = "value"
+  type = bool
+  default = true
+}
+
+variable "enable_waf" {
+  description = "Enable AWS WAF for ALB protection"
+  type        = bool
+  default     = true
+}
+
+variable "enable_cloudtrail" {
+  type    = bool
+  default = true
+}
+
+variable "alert_email" {
+  description = "Email for security alerts"
+  type        = string
+  default     = "your-email@example.com"
+}

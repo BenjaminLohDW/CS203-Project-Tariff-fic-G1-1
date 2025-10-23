@@ -7,6 +7,14 @@ import ProductAutocomplete from './lib/ProductAutocomplete'
 import tariffService from './lib/tariffService'
 import agreementService from './lib/agreementService'
 import { Country, ProductOption, TariffData, CalculationData, Agreement } from './types'
+import { CostBreakdownPieChart } from './components/CostBreakdownPieChart'
+import { Skeleton } from './components/ui/Skeleton'
+import { Card, CardContent, CardHeader, CardTitle } from './components/ui/Card'
+import { Button } from './components/ui/Button'
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './components/ui/command'
+import { Popover, PopoverContent, PopoverTrigger } from './components/ui/Popover'
+import { Check, ChevronsUpDown } from 'lucide-react'
+import { cn } from './lib/utils'
 import './App.css'
 
 function App() {
@@ -14,6 +22,8 @@ function App() {
   const { userProfile, logOut, setUserProfile } = useAuth()
   // Ref for autoscroll to results section
   const resultsRef = useRef<HTMLDivElement>(null)
+  // Ref for autoscroll to pie chart section
+  const pieChartRef = useRef<HTMLDivElement>(null)
   
   // State for page navigation
   const [currentPage, setCurrentPage] = useState<string>('calculation')
@@ -25,6 +35,10 @@ function App() {
   const [quantity, setQuantity] = useState<string>('')
   const [cost, setCost] = useState<string>('')
   const [date, setDate] = useState<string>('')
+  
+  // State for combobox open/close
+  const [importingCountryOpen, setImportingCountryOpen] = useState(false)
+  const [exportingCountryOpen, setExportingCountryOpen] = useState(false)
   
   // Initialize date to current date on component mount
   useEffect(() => {
@@ -111,9 +125,8 @@ function App() {
     }
   }
 
-  const handleImportingCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newImportingCountry = e.target.value
-    setSelectedImportingCountry(newImportingCountry)
+  const handleImportingCountryChange = (value: string) => {
+    setSelectedImportingCountry(value)
     
     // Mark fields as modified if there are calculated values
     if (calculatedProduct) {
@@ -121,16 +134,15 @@ function App() {
     }
     
     // Validate countries are different if both are selected
-    if (newImportingCountry && selectedExportingCountry && newImportingCountry === selectedExportingCountry) {
+    if (value && selectedExportingCountry && value === selectedExportingCountry) {
       setCountryValidationError('Importing and exporting countries cannot be the same')
     } else {
       setCountryValidationError('')
     }
   }
 
-  const handleExportingCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newExportingCountry = e.target.value
-    setSelectedExportingCountry(newExportingCountry)
+  const handleExportingCountryChange = (value: string) => {
+    setSelectedExportingCountry(value)
     
     // Mark fields as modified if there are calculated values
     if (calculatedProduct) {
@@ -138,7 +150,7 @@ function App() {
     }
     
     // Validate countries are different if both are selected
-    if (selectedImportingCountry && newExportingCountry && selectedImportingCountry === newExportingCountry) {
+    if (selectedImportingCountry && value && selectedImportingCountry === value) {
       setCountryValidationError('Importing and exporting countries cannot be the same')
     } else {
       setCountryValidationError('')
@@ -245,9 +257,8 @@ function App() {
               tariffs = [tariff] // Wrap in array for consistent handling
             } else {
               console.log('No tariff found for this product and country combination')
-              setTariffData([])
-              setIsLoadingTariffs(false)
-              return []
+              // Don't return early - continue with empty tariffs array so agreements can still be applied
+              tariffs = []
             }
           } else {
             // Missing required data for by-names endpoint
@@ -255,7 +266,8 @@ function App() {
             setTariffData([])
             setIsLoadingTariffs(false)
             alert('Please select importing country, exporting country, and date to search by product name.')
-            return []
+            // Don't return - let the function continue to set empty tariff data
+            tariffs = []
           }
         }
       }
@@ -423,6 +435,16 @@ function App() {
         fetchTariffData(),
         fetchAgreementsData()
       ])
+      
+      // Autoscroll to pie chart section after data is loaded
+      setTimeout(() => {
+        if (pieChartRef.current) {
+          pieChartRef.current.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+          })
+        }
+      }, 300)
     }
   }
 
@@ -822,12 +844,14 @@ function App() {
       {/* Three containers side by side */}
       <div className="flex flex-col lg:flex-row gap-6 mb-10 items-start">
         {/* First Container - Quantity and Cost */}
-        <div className="bg-blue-50 p-6 rounded-lg border border-blue-200 flex-1">
-          <h3 className="text-lg font-semibold text-blue-800 mb-4 flex items-center">
-            <span className="text-blue-600 mr-2">📊</span>
-            Basic Information
-          </h3>
-          <div className="flex flex-col gap-4">
+        <Card className="flex-1 bg-blue-50 border-blue-200">
+          <CardHeader>
+            <CardTitle className="flex items-center text-lg text-blue-800">
+              <span className="text-blue-600 mr-2">📊</span>
+              Basic Information
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
           <div className="flex flex-col items-start text-left w-full">
             <label htmlFor="quantity">Quantity:</label>
             <input
@@ -855,17 +879,53 @@ function App() {
               className="w-full p-3 text-base border-2 border-gray-300 rounded-lg bg-white text-gray-900 transition-colors hover:border-blue-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 placeholder-gray-500"
             />
           </div>
-        </div>
-      </div>
+
+          {/* Calculate Button */}
+          <div className="mt-4">
+            {/* Hint to recalculate when fields are modified */}
+            {fieldsModified && (
+              <div className="text-orange-500 text-xs font-medium flex items-center gap-1 mb-2">
+                <span className="text-sm">⚠️</span>
+                <span>Fields modified. Click Calculate to update.</span>
+              </div>
+            )}
+            
+            <button 
+              className="w-full bg-red-500 hover:bg-red-600 disabled:bg-gray-400 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 text-white font-bold py-3 px-6 text-base rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:translate-y-0 disabled:transform-none disabled:shadow-none uppercase tracking-wider"
+              onClick={handleCalculate}
+              disabled={
+                // Always require quantity and cost
+                !quantity || !cost || 
+                // Disable if countries are still loading
+                isLoadingCountries ||
+                // For manual tariff mode, require tariff rate
+                (isManualTariff && !tariffRate) ||
+                // For standard mode, require all fields and no validation errors
+                (!isManualTariff && (
+                  !selectedProduct || 
+                  !selectedImportingCountry || 
+                  !selectedExportingCountry || 
+                  !date ||
+                  dateValidationError !== '' || 
+                  countryValidationError !== ''
+                ))
+              }
+            >
+              {isLoadingCountries ? 'Loading...' : 'Calculate'}
+            </button>
+          </div>
+          </CardContent>
+        </Card>
 
       {/* Second Container - Other Fields */}
-      <div className="bg-purple-50 p-6 rounded-lg border border-purple-200 flex-1">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-purple-800 flex items-center">
-            <span className="text-purple-600 mr-2">⚙️</span>
-            Tariff Configuration
-          </h3>
-          <label className="flex items-center text-sm">
+      <Card className="flex-1 bg-purple-50 border-purple-200">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="flex items-center text-lg text-purple-800">
+              <span className="text-purple-600 mr-2">⚙️</span>
+              Tariff Configuration
+            </CardTitle>
+            <label className="flex items-center text-sm">
             <input
               type="checkbox"
               checked={isManualTariff}
@@ -874,8 +934,9 @@ function App() {
             />
             Insert manually
           </label>
-        </div>
-        <div className="flex flex-col gap-4">
+          </div>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-4">
           {isManualTariff ? (
           // Manual tariff mode - only show tariff rate field
           <div className="flex flex-col items-start text-left w-full">
@@ -908,42 +969,98 @@ function App() {
 
             <div className="flex flex-col items-start text-left w-full">
               <label htmlFor="importing-country">Importing Country:</label>
-              <select 
-                id="importing-country" 
-                value={selectedImportingCountry} 
-                onChange={handleImportingCountryChange}
-                className="w-full p-3 text-base border-2 border-gray-300 rounded-lg bg-white text-gray-900 transition-colors hover:border-blue-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 cursor-pointer"
-                disabled={isLoadingCountries}
-              >
-                <option value="">
-                  {isLoadingCountries ? 'Loading countries...' : 'Select importing country...'}
-                </option>
-                {!isLoadingCountries && countries.map(country => (
-                  <option key={country.id} value={country.name}>
-                    {country.name}
-                  </option>
-                ))}
-              </select>
+              <Popover open={importingCountryOpen} onOpenChange={setImportingCountryOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={importingCountryOpen}
+                    className="w-full justify-between"
+                    disabled={isLoadingCountries}
+                  >
+                    {selectedImportingCountry
+                      ? countries.find((country) => country.name === selectedImportingCountry)?.name
+                      : (isLoadingCountries ? 'Loading countries...' : 'Select importing country...')}
+                    <ChevronsUpDown className="opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0" align="start">
+                  <Command>
+                    <CommandInput placeholder="Search country..." className="h-9" />
+                    <CommandList>
+                      <CommandEmpty>No country found.</CommandEmpty>
+                      <CommandGroup>
+                        {!isLoadingCountries && countries.map((country) => (
+                          <CommandItem
+                            key={country.id}
+                            value={country.name}
+                            onSelect={(currentValue) => {
+                              handleImportingCountryChange(currentValue === selectedImportingCountry ? "" : currentValue)
+                              setImportingCountryOpen(false)
+                            }}
+                          >
+                            {country.name}
+                            <Check
+                              className={cn(
+                                "ml-auto",
+                                selectedImportingCountry === country.name ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </div>
 
             <div className="flex flex-col items-start text-left w-full">
               <label htmlFor="exporting-country">Exporting Country:</label>
-              <select 
-                id="exporting-country" 
-                value={selectedExportingCountry} 
-                onChange={handleExportingCountryChange}
-                className="w-full p-3 text-base border-2 border-gray-300 rounded-lg bg-white text-gray-900 transition-colors hover:border-blue-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 cursor-pointer"
-                disabled={isLoadingCountries}
-              >
-                <option value="">
-                  {isLoadingCountries ? 'Loading countries...' : 'Select exporting country...'}
-                </option>
-                {!isLoadingCountries && countries.map(country => (
-                  <option key={country.id} value={country.name}>
-                    {country.name}
-                  </option>
-                ))}
-              </select>
+              <Popover open={exportingCountryOpen} onOpenChange={setExportingCountryOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={exportingCountryOpen}
+                    className="w-full justify-between"
+                    disabled={isLoadingCountries}
+                  >
+                    {selectedExportingCountry
+                      ? countries.find((country) => country.name === selectedExportingCountry)?.name
+                      : (isLoadingCountries ? 'Loading countries...' : 'Select exporting country...')}
+                    <ChevronsUpDown className="opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0" align="start">
+                  <Command>
+                    <CommandInput placeholder="Search country..." className="h-9" />
+                    <CommandList>
+                      <CommandEmpty>No country found.</CommandEmpty>
+                      <CommandGroup>
+                        {!isLoadingCountries && countries.map((country) => (
+                          <CommandItem
+                            key={country.id}
+                            value={country.name}
+                            onSelect={(currentValue) => {
+                              handleExportingCountryChange(currentValue === selectedExportingCountry ? "" : currentValue)
+                              setExportingCountryOpen(false)
+                            }}
+                          >
+                            {country.name}
+                            <Check
+                              className={cn(
+                                "ml-auto",
+                                selectedExportingCountry === country.name ? "opacity-100" : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </div>
             
             {/* Country validation error message */}
@@ -976,66 +1093,81 @@ function App() {
             )}
           </>
         )}
-        </div>
+        </CardContent>
+      </Card>
       </div>
 
-        {/* Third Container - Calculation Results */}
-        <div className="bg-green-50 p-6 rounded-lg border border-green-200 flex-1">
-          <h3 className="text-lg font-semibold text-green-800 mb-4 flex items-center">
-            <span className="text-green-600 mr-2">🎯</span>
-            Calculation Results
+      {/* Third Container - Cost Breakdown & Results */}
+      {calculatedQuantity && calculatedCost && (
+        <div 
+          ref={pieChartRef}
+          className="mt-6 bg-gradient-to-br from-purple-50 to-blue-50 p-8 rounded-lg border-2 border-purple-200 shadow-xl"
+        >
+          <h3 className="text-2xl font-bold text-purple-900 mb-6 flex items-center justify-center">
+            <span className="text-purple-600 mr-3 text-3xl">📊</span>
+            Cost Breakdown & Calculation Results
           </h3>
-          <div className="text-left text-sm">
-            {/* Calculate Button */}
-            <div className="mb-4">
-              {/* Hint to recalculate when fields are modified */}
-              {fieldsModified && (
-                <div className="text-orange-500 text-xs font-medium flex items-center gap-1 mb-2">
-                  <span className="text-sm">⚠️</span>
-                  <span>Fields modified. Click Calculate to update.</span>
+
+          {/* Show skeleton loading while data is being fetched */}
+          {(isLoadingTariffs || isLoadingAgreements) ? (
+            <div className="flex flex-col lg:flex-row gap-6 mb-8">
+              {/* Left Column: Pie Chart Skeleton */}
+              <div className="lg:w-1/2 flex items-start justify-center">
+                <div className="w-full max-w-md space-y-4">
+                  <Skeleton className="h-[400px] w-full rounded-lg" />
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-3/4 mx-auto" />
+                    <Skeleton className="h-3 w-1/2 mx-auto" />
+                  </div>
                 </div>
+              </div>
+
+              {/* Right Column: Details Skeleton */}
+              <div className="lg:w-1/2 space-y-6">
+                {/* Agreements table skeleton */}
+                <div className="space-y-2">
+                  <Skeleton className="h-6 w-48" />
+                  <Skeleton className="h-32 w-full rounded-lg" />
+                </div>
+                
+                {/* Tariffs table skeleton */}
+                <div className="space-y-2">
+                  <Skeleton className="h-6 w-48" />
+                  <Skeleton className="h-32 w-full rounded-lg" />
+                </div>
+                
+                {/* Base cost skeleton */}
+                <div className="space-y-2">
+                  <Skeleton className="h-6 w-32" />
+                  <Skeleton className="h-16 w-full rounded-lg" />
+                </div>
+                
+                {/* Buttons skeleton */}
+                <div className="space-y-2 pt-3">
+                  <Skeleton className="h-10 w-full rounded-lg" />
+                  <Skeleton className="h-10 w-full rounded-lg" />
+                </div>
+              </div>
+            </div>
+          ) : (
+            /* Two-column layout: Pie chart on left, details on right */
+            <div className="flex flex-col lg:flex-row gap-6 mb-8">
+              {/* Left Column: Pie Chart */}
+              <div className="lg:w-1/2 flex items-start justify-center">
+              {(tariffData.length > 0 || agreementsData.length > 0) && (
+                <CostBreakdownPieChart
+                  baseCost={Number(calculatedQuantity) * Number(calculatedCost)}
+                  quantity={Number(calculatedQuantity)}
+                  tariffData={tariffData}
+                  agreementsData={agreementsData}
+                  importerCountry={calculatedImportingCountry}
+                  exporterCountry={calculatedExportingCountry}
+                />
               )}
-              
-              <button 
-                className="w-full bg-red-500 hover:bg-red-600 disabled:bg-gray-400 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 text-white font-bold py-3 px-6 text-base rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:translate-y-0 disabled:transform-none disabled:shadow-none uppercase tracking-wider"
-                onClick={handleCalculate}
-                disabled={
-                  // Always require quantity and cost
-                  !quantity || !cost || 
-                  // Disable if countries are still loading
-                  isLoadingCountries ||
-                  // For manual tariff mode, require tariff rate
-                  (isManualTariff && !tariffRate) ||
-                  // For standard mode, require all fields and no validation errors
-                  (!isManualTariff && (
-                    !selectedProduct || 
-                    !selectedImportingCountry || 
-                    !selectedExportingCountry || 
-                    !date ||
-                    dateValidationError !== '' || 
-                    countryValidationError !== ''
-                  ))
-                }
-              >
-                {isLoadingCountries ? 'Loading...' : 'Calculate'}
-              </button>
             </div>
 
-            {/* Loading indicator for tariffs */}
-            {isLoadingTariffs && (
-              <div className="flex items-center justify-center p-4 bg-blue-50 rounded-lg border border-blue-200 mb-4">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500 mr-2"></div>
-                <span className="text-blue-700 font-medium text-xs">Loading tariff data...</span>
-              </div>
-            )}
-
-            {/* Loading indicator for agreements */}
-            {isLoadingAgreements && (
-              <div className="flex items-center justify-center p-4 bg-purple-50 rounded-lg border border-purple-200 mb-4">
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-500 mr-2"></div>
-                <span className="text-purple-700 font-medium text-xs">Loading agreements data...</span>
-              </div>
-            )}
+            {/* Right Column: Calculation Details */}
+            <div className="lg:w-1/2 text-left text-sm">
 
             {/* Applied Agreements Summary Table */}
             {agreementsData.length > 0 && (
@@ -1048,15 +1180,18 @@ function App() {
                   <table className="w-full text-xs">
                     <thead className="bg-purple-100">
                       <tr>
+                        <th className="text-left p-2 font-semibold text-purple-800">Description</th>
                         <th className="text-left p-2 font-semibold text-purple-800">Type</th>
-                        <th className="text-left p-2 font-semibold text-purple-800">Value</th>
+                        <th className="text-left p-2 font-semibold text-purple-800">Rate</th>
                         <th className="text-left p-2 font-semibold text-purple-800">Start Date</th>
-                        <th className="text-left p-2 font-semibold text-purple-800">Note</th>
                       </tr>
                     </thead>
                     <tbody>
                       {agreementsData.map((agreement, index) => (
                         <tr key={agreement.id || index} className={index % 2 === 0 ? 'bg-white' : 'bg-purple-25'}>
+                          <td className="p-2 text-gray-600">
+                            {agreement.note || 'No note provided'}
+                          </td>
                           <td className="p-2 capitalize">
                             <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
                               agreement.kind === 'override' ? 'bg-blue-100 text-blue-700' :
@@ -1078,9 +1213,6 @@ function App() {
                               month: 'short', 
                               day: 'numeric' 
                             })}
-                          </td>
-                          <td className="p-2 text-gray-600 italic">
-                            {agreement.note || 'No note provided'}
                           </td>
                         </tr>
                       ))}
@@ -1191,7 +1323,7 @@ function App() {
                         <div className={`font-semibold text-xs mb-1 ${
                           hasOverride ? 'text-gray-500 line-through' : 'text-purple-700'
                         }`}>
-                          {tariff["Tariff Description"]} 
+                          {tariff["Tariff Description"]}
                         </div>
                         <div className="flex items-center justify-between text-xs">
                           <span className={hasOverride ? 'text-gray-500' : 'text-gray-600'}>
@@ -1207,15 +1339,17 @@ function App() {
                     )
                   })}
                 </div>
+              </div>
+            )}
                 
-                {/* Agreement Adjustments */}
-                {agreementsData.length > 0 && (
-                  <div className="mt-3 space-y-2">
-                    <div className="text-sm font-bold text-gray-800 mb-2 flex items-center">
-                      <span className="text-purple-500 mr-1">📝</span>
-                      Agreement Adjustments
-                    </div>
-                    {agreementsData.map((agreement, index) => {
+            {/* Agreement Adjustments - show when there are agreements */}
+            {agreementsData.length > 0 && calculatedQuantity && calculatedCost && (
+              <div className="mb-4">
+                <div className="text-sm font-bold text-gray-800 mb-2 flex items-center">
+                  <span className="text-purple-500 mr-1">📝</span>
+                  Agreement Adjustments
+                </div>
+                <div className="space-y-2">{agreementsData.map((agreement, index) => {
                       const baseAmount = Number(calculatedQuantity) * Number(calculatedCost)
                       let adjustmentAmount = 0
                       let description = ''
@@ -1258,9 +1392,13 @@ function App() {
                         </div>
                       )
                     })}
-                  </div>
-                )}
+                </div>
+              </div>
+            )}
                 
+            {/* Base Cost and Total Amount - always show when calculation is done */}
+            {calculatedQuantity && calculatedCost && (
+              <div>
                 {/* Total with all tariffs and agreements */}
                 <div className="bg-gradient-to-r from-green-50 to-blue-50 p-3 rounded-lg border-2 border-green-300 mt-3">
                   <div className="text-sm font-bold text-gray-800 mb-1 flex items-center">
@@ -1272,8 +1410,10 @@ function App() {
                       Base + {(() => {
                         const hasOverride = agreementsData.some(a => a.kind === 'override')
                         if (hasOverride) return 'Agreement'
-                        if (agreementsData.length > 0) return 'Tariffs + Agreements'
-                        return 'Tariffs'
+                        if (agreementsData.length > 0 && tariffData.length > 0) return 'Tariffs + Agreements'
+                        if (tariffData.length > 0) return 'Tariffs'
+                        if (agreementsData.length > 0) return 'Agreements'
+                        return 'No Adjustments'
                       })()} = 
                     </span>
                     <span className="text-green-600 font-bold text-lg">
@@ -1344,9 +1484,11 @@ function App() {
                 Test Get History
               </button>
             </div>
-          </div>
+            </div>
+            </div>
+          )}
         </div>
-      </div>
+      )}
     </div>
   )
 

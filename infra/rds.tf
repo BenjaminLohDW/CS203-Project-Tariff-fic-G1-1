@@ -25,6 +25,18 @@ resource "aws_vpc_security_group_egress_rule" "rds_all" {
 }
 
 
+# Allow RDS Proxy -> RDS (if proxy is enabled)
+resource "aws_vpc_security_group_ingress_rule" "rds_from_proxy" {
+  count                        = var.enable_rds_proxy ? 1 : 0
+  security_group_id            = aws_security_group.rds.id
+  referenced_security_group_id = aws_security_group.rds_proxy[0].id
+  ip_protocol                  = "tcp"
+  from_port                    = 5432
+  to_port                      = 5432
+  description                  = "Allow RDS Proxy to connect to RDS"
+}
+
+
 # Subnet group in your database subnets
 resource "aws_db_subnet_group" "this" {
   name       = "${local.name_prefix}-db-subnets"
