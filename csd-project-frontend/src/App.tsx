@@ -6,7 +6,7 @@ import { saveCalculation, getUserHistory, getHistoryTariffLines } from './lib/hi
 import ProductAutocomplete from './lib/ProductAutocomplete'
 import tariffService from './lib/tariffService'
 import agreementService from './lib/agreementService'
-import { Country, ProductOption, TariffData, CalculationData, Agreement } from './types'
+import { Country, ProductOption, TariffData, CalculationData, Agreement, ComparisonResult } from './types'
 import { CostBreakdownPieChart } from './components/CostBreakdownPieChart'
 import { Skeleton } from './components/ui/Skeleton'
 import { Card, CardContent, CardHeader, CardTitle } from './components/ui/Card'
@@ -88,6 +88,13 @@ function App() {
   // State for detailed tariff view modal
   const [selectedHistoryDetail, setSelectedHistoryDetail] = useState<CalculationData | null>(null)
   const [loadingTariffDetails, setLoadingTariffDetails] = useState(false)
+
+  // Test comparison state
+  const [testComparisonResults, setTestComparisonResults] = useState<ComparisonResult[] | null>(null)
+  const [isTestingComparison, setIsTestingComparison] = useState(false)
+
+  // State for showing detailed calculation card
+  const [showDetailedCard, setShowDetailedCard] = useState(false)
 
   // Fetch countries from API on component mount
   useEffect(() => {
@@ -234,12 +241,8 @@ function App() {
           hsCode = selectedProduct.value
         } else {
           // Product name is selected - use the by-names endpoint
-          console.log('Selected product name:', selectedProduct.label)
-          console.log('API-friendly product name:', selectedProduct.apiName || selectedProduct.label)
-          
           // Check if we have all required data for the by-names endpoint
           if (selectedImportingCountry && selectedExportingCountry && date) {
-            console.log('Fetching tariff by product and country names...')
             
             // Use apiName (single word) if available, otherwise fall back to full label
             const productNameForApi = selectedProduct.apiName || selectedProduct.label
@@ -253,16 +256,13 @@ function App() {
             })
             
             if (tariff) {
-              console.log('Received tariff from by-names endpoint:', tariff)
               tariffs = [tariff] // Wrap in array for consistent handling
             } else {
-              console.log('No tariff found for this product and country combination')
               // Don't return early - continue with empty tariffs array so agreements can still be applied
               tariffs = []
             }
           } else {
             // Missing required data for by-names endpoint
-            console.warn('Missing required fields for product name lookup')
             setTariffData([])
             setIsLoadingTariffs(false)
             alert('Please select importing country, exporting country, and date to search by product name.')
@@ -275,8 +275,6 @@ function App() {
       // Handle HS code lookup (when entered directly)
       if (hsCode) {
         // Call tariff service with HS code
-        console.log('Fetching tariffs for HS code:', hsCode)
-        
         if (selectedImportingCountry && selectedExportingCountry) {
           // Convert country names to ISO codes before API call
           const importerCode = getCountryCode(selectedImportingCountry)
@@ -285,8 +283,6 @@ function App() {
           if (!importerCode || !exporterCode) {
             throw new Error(`Could not find country codes for: ${selectedImportingCountry} -> ${selectedExportingCountry}`)
           }
-          
-          console.log(`Mapping countries: ${selectedImportingCountry} -> ${importerCode}, ${selectedExportingCountry} -> ${exporterCode}`)
           
           // Get specific tariffs for the country combination using ISO codes
           tariffs = await tariffService.getTariffsByCombo(
@@ -298,8 +294,6 @@ function App() {
           // Get all tariffs for this HS code
           tariffs = await tariffService.getTariffsByHsCode(hsCode)
         }
-        
-        console.log('Received tariffs:', tariffs)
       }
       
       // Transform API response to match existing UI format (applies to both HS code and product name lookups)
@@ -338,7 +332,6 @@ function App() {
         setTariffData(transformedTariffs)
       } else {
         // No tariffs found
-        console.warn('No tariffs found for the given criteria')
         setTariffData([])
       }
     } catch (error) {
@@ -366,41 +359,195 @@ function App() {
   const fetchAgreementsData = async () => {
     // Only fetch agreements if we have both countries and date
     if (!selectedImportingCountry || !selectedExportingCountry) {
-      console.log('Skipping agreements fetch - missing country data')
       return
     }
 
     setIsLoadingAgreements(true)
     
     try {
-      console.log('Fetching agreements for:', {
-        importer: selectedImportingCountry,
-        exporter: selectedExportingCountry,
-        date: date
-      })
-
       const agreements = await agreementService.getActiveAgreements(
         selectedImportingCountry,
         selectedExportingCountry,
         date
       )
       
-      console.log('Received agreements:', agreements)
       setAgreementsData(agreements)
-      
-      if (agreements.length > 0) {
-        console.log(`Found ${agreements.length} active agreement(s)`)
-      } else {
-        console.log('No active agreements found for this country pair and date')
-      }
     } catch (error) {
       console.error('Failed to fetch agreements:', error)
-      console.warn('Agreements service may not be running or configured. Continuing without agreements data.')
       // Don't show alert for agreements failure - it's optional data
       // Just log the error and continue with empty agreements
       setAgreementsData([])
     } finally {
       setIsLoadingAgreements(false)
+    }
+  }
+
+  /**
+   * Feature 1: Backend data fetching function for multi-country comparison
+   * Fetches tariffs per country pair and all agreements, then calculates totals
+   * 
+   * @param importerCountry - Single importing country name
+   * @param exporterCountries - Array of exporting country names to compare
+   * @param product - Product option object with HS code
+   * @param quantity - Quantity of goods
+   * @param goodsValue - Cost/value of goods
+   * @param date - Date for tariff/agreement lookup (YYYY-MM-DD)
+   * @returns Array of comparison results sorted by final total (ascending)
+   */
+  const fetchComparisonData = async (
+    importerCountry: string,
+    exporterCountries: string[],
+    product: ProductOption,
+    quantity: number,
+    goodsValue: number,
+    date: string
+  ): Promise<ComparisonResult[]> => {
+    try {
+      // Step 1: Get product HS code (only if not already provided)
+      let hsCode = ''
+      if (product.isHsCode) {
+        hsCode = product.value
+      }
+
+      // Step 2: Fetch ALL agreements once (filter by importer, will filter by exporter per country)
+      const allAgreements = await agreementService.getAllAgreements(importerCountry, undefined, date)
+
+      // Step 3: Get country codes for API calls
+      const importerCode = getCountryCode(importerCountry)
+      if (!importerCode) {
+        throw new Error(`Could not find country code for importer: ${importerCountry}`)
+      }
+
+      const exporterCodes = exporterCountries.map(name => ({
+        name,
+        code: getCountryCode(name)
+      }))
+
+      // Step 4: Process each exporter country
+      const results: ComparisonResult[] = []
+
+      for (const exporter of exporterCodes) {
+        if (!exporter.code) {
+          continue
+        }
+
+        // Fetch tariffs for this specific country pair
+        let countryTariffs: any[] = []
+        
+        if (hsCode) {
+          // If we have HS code, use getTariffsByCombo with country codes
+          try {
+            countryTariffs = await tariffService.getTariffsByCombo(hsCode, importerCode, exporter.code)
+          } catch (error) {
+            countryTariffs = []
+          }
+        } else {
+          // If product name, use getEffectiveTariffByNames with country names
+          try {
+            const tariffResult = await tariffService.getEffectiveTariffByNames({
+              productName: product.apiName || product.value,
+              importerCountryName: importerCountry,  // Use country name, not code
+              exporterCountryName: exporter.name,    // Use country name, not code
+              date: date
+            })
+            
+            // getEffectiveTariffByNames returns a single object, not array
+            countryTariffs = tariffResult ? [tariffResult] : []
+            
+            // Extract HS code from first result for future reference
+            if (!hsCode && countryTariffs.length > 0 && countryTariffs[0].hs_code) {
+              hsCode = countryTariffs[0].hs_code
+            }
+          } catch (error) {
+            countryTariffs = []
+          }
+        }
+
+        // Filter agreements for this country pair
+        const countryAgreements = allAgreements.filter(agreement =>
+          agreement.exporterId === exporter.code
+        )
+
+        // Calculate base cost
+        const baseCost = goodsValue * quantity
+
+        // Check for override agreement first
+        const overrideAgreement = countryAgreements.find(a => a.kind === 'override')
+        const hasOverride = !!overrideAgreement
+
+        // Calculate total tariff amount (skip if override exists)
+        let totalTariffAmount = 0
+        let effectiveTariffRate = 0
+
+        if (!hasOverride && countryTariffs.length > 0) {
+          // Calculate tariff amounts for each tariff type
+          for (const tariff of countryTariffs) {
+            const result = tariffService.calculateTariffAmount(tariff, goodsValue, quantity)
+            const amount = typeof result === 'number' ? result : result.tariffAmount
+            totalTariffAmount += amount
+          }
+          effectiveTariffRate = (totalTariffAmount / baseCost) * 100
+        }
+
+        // Calculate agreement adjustments
+        let adjustedTariffAmount = totalTariffAmount
+        let totalAgreementAdjustment = 0
+
+        if (countryAgreements.length > 0) {
+          // Apply agreements in sequence
+          countryAgreements.forEach(agreement => {
+            const beforeAdjustment = adjustedTariffAmount
+
+            switch (agreement.kind) {
+              case 'override':
+                adjustedTariffAmount = agreement.value
+                break
+              case 'surcharge':
+                adjustedTariffAmount += agreement.value
+                break
+              case 'multiplier':
+                adjustedTariffAmount *= agreement.value
+                break
+            }
+
+            totalAgreementAdjustment += (adjustedTariffAmount - beforeAdjustment)
+          })
+        }
+
+        // Calculate final total
+        const finalTotal = baseCost + adjustedTariffAmount
+
+        // Convert tariffs to TariffData format for display
+        const formattedTariffs: TariffData[] = countryTariffs.map(tariff => ({
+          id: tariff.id?.toString() || '',
+          'Tariff Type': tariff.type || 'Unknown',
+          'Tariff amount': tariff.rate || 0,
+          'Tariff Description': tariff.description || '',
+          originalData: tariff
+        }))
+
+        // Add result
+        results.push({
+          exporterCountry: exporter.name,
+          tariffs: formattedTariffs,
+          agreements: countryAgreements,
+          baseCost,
+          totalTariffAmount,
+          adjustedTariffAmount,
+          totalAgreementAdjustment,
+          finalTotal,
+          effectiveTariffRate,
+          hasOverride
+        })
+      }
+
+      // Step 5: Sort by final total (ascending - cheapest first)
+      results.sort((a, b) => a.finalTotal - b.finalTotal)
+
+      return results
+
+    } catch (error) {
+      throw error
     }
   }
 
@@ -419,6 +566,9 @@ function App() {
     
     // Reset fields modified flag since we're recalculating
     setFieldsModified(false)
+    
+    // Hide detailed card on new calculation (summary row will appear)
+    setShowDetailedCard(false)
     
     // Set basic calculated values
     setCalculatedProduct(selectedProduct?.label || '')
@@ -445,6 +595,36 @@ function App() {
           })
         }
       }, 300)
+    }
+  }
+
+  // Test comparison function
+  const handleTestComparison = async () => {
+    setIsTestingComparison(true)
+    setTestComparisonResults(null)
+    
+    try {
+      const testProduct: ProductOption = {
+        value: 'smartphone',
+        label: 'Smartphone',
+        apiName: 'smartphone',
+        isHsCode: false
+      }
+      
+      const results = await fetchComparisonData(
+        'United States',
+        ['China', 'South Korea'],
+        testProduct,
+        100,
+        500,
+        '2025-10-23'
+      )
+      
+      setTestComparisonResults(results)
+    } catch (error) {
+      alert(`Test failed: ${(error as Error).message}`)
+    } finally {
+      setIsTestingComparison(false)
     }
   }
 
@@ -535,18 +715,9 @@ function App() {
       })) : []
     }
 
-    // Debug user authentication
-    console.log('User Profile:', userProfile)
-    console.log('User ID being saved:', calculationData.user_id)
-
     try {
       // Save to history microservice
       const response = await saveCalculation(calculationData as any)
-      
-      // Log the response for debugging
-      console.log('History save response:', response)
-      console.log('Response history object:', response?.history)
-      console.log('History ID:', response?.history?.history_id)
       
       // Also add to local state for immediate UI update
       const localHistoryEntry: CalculationData = {
@@ -588,26 +759,11 @@ function App() {
     }
   }
 
-  // Test function to debug user history retrieval
-  const testGetUserHistory = async () => {
-    const userId = userProfile?.user_id || 'anonymous'
-    console.log('Testing getUserHistory with userId:', userId)
-    
-    try {
-      const history = await getUserHistory(userId)
-      console.log('User history retrieved:', history)
-      alert(`Found ${history.total || 0} history records for user: ${userId}`)
-    } catch (error) {
-      console.error('Error getting user history:', error)
-      alert(`Failed to get history for user: ${userId}. Error: ${(error as any).message}`)
-    }
-  }
 
   // Load user's calculation history from the API (only basic info, no tariff lines)
   const loadUserHistory = async () => {
     const userId = userProfile?.user_id
     if (!userId || userId === 'anonymous') {
-      console.log('No valid user ID, skipping history load')
       return
     }
 
@@ -615,7 +771,6 @@ function App() {
     setHistoryError('')
     
     try {
-      console.log('Loading history for user:', userId)
       const response = await getUserHistory(userId)
       
       if (response.code === 200 && response.data) {
@@ -641,11 +796,9 @@ function App() {
         }))
         
         setCalculationHistory(transformedHistory)
-        console.log('History loaded successfully:', transformedHistory.length, 'records (tariff details will load on-demand)')
       } else {
         // No history found
         setCalculationHistory([])
-        console.log('No history found for user')
       }
     } catch (error) {
       console.error('Failed to load user history:', error)
@@ -675,15 +828,12 @@ function App() {
     try {
       // Check if tariff details are already loaded and cached
       if (historyItem.tariffLinesLoaded && historyItem.tariffs) {
-        console.log('Using cached tariff details')
         setSelectedHistoryDetail({
           ...historyItem,
           tariffs: historyItem.tariffs
         })
         return
       }
-      
-      console.log('Loading tariff details for history ID:', historyItem.id)
       
       // Fetch tariff lines from the history microservice
       const tariffResponse = await getHistoryTariffLines(historyItem.id)
@@ -695,8 +845,6 @@ function App() {
           rate: line.rate_str || '0%',
           amount: line.amount_str || '$0.00'
         }))
-        
-        console.log('Loaded tariff details:', tariffLines.length, 'lines')
         
         // Create detailed view object
         const detailedInfo = {
@@ -736,8 +884,6 @@ function App() {
     try {
       // Load tariff lines if not already loaded
       if (!calculationData.tariffLinesLoaded && calculationData.id) {
-        console.log('Loading tariff details for history:', calculationData.id)
-        
         try {
           const tariffResponse = await getHistoryTariffLines(calculationData.id.toString())
           
@@ -761,11 +907,8 @@ function App() {
                   : item
               )
             )
-            
-            console.log('Tariff details loaded successfully:', tariffLines.length, 'lines')
           }
         } catch (error) {
-          console.warn('Failed to load tariff details:', error)
           // Continue with restoration even if tariff details fail to load
         }
       }
@@ -840,6 +983,50 @@ function App() {
   const renderCalculationPage = () => (
     <div className="text-center py-8 px-4 max-w-[1800px] mx-auto">
       <h1 className="text-gray-800 mb-8 text-4xl font-bold">Trade Calculation</h1>
+      
+      {/* Test Comparison Results */}
+      {testComparisonResults && (
+        <Card className="mb-6 bg-green-50 border-green-300">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between text-lg text-green-800">
+              <span>🧪 Test Comparison Results</span>
+              <button onClick={() => setTestComparisonResults(null)} className="text-sm text-red-600 hover:text-red-800 underline">
+                Clear
+              </button>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-green-100">
+                    <th className="border border-green-300 px-4 py-2">Rank</th>
+                    <th className="border border-green-300 px-4 py-2">Exporter</th>
+                    <th className="border border-green-300 px-4 py-2">Base Cost</th>
+                    <th className="border border-green-300 px-4 py-2">Tariff</th>
+                    <th className="border border-green-300 px-4 py-2">Adjusted</th>
+                    <th className="border border-green-300 px-4 py-2">Final Total</th>
+                    <th className="border border-green-300 px-4 py-2">Rate</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {testComparisonResults.map((result, index) => (
+                    <tr key={result.exporterCountry} className={`${index === 0 ? 'bg-yellow-50 font-semibold' : 'bg-white'} hover:bg-green-50`}>
+                      <td className="border border-green-300 px-4 py-2 text-center">{index === 0 ? '🏆' : index + 1}</td>
+                      <td className="border border-green-300 px-4 py-2">{result.exporterCountry}</td>
+                      <td className="border border-green-300 px-4 py-2 text-right">${result.baseCost.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                      <td className="border border-green-300 px-4 py-2 text-right">${result.totalTariffAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                      <td className="border border-green-300 px-4 py-2 text-right">${result.adjustedTariffAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                      <td className={`border border-green-300 px-4 py-2 text-right font-bold ${index === 0 ? 'text-green-700' : ''}`}>${result.finalTotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                      <td className="border border-green-300 px-4 py-2 text-right">{result.effectiveTariffRate.toFixed(2)}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+      )}
       
       {/* Three containers side by side */}
       <div className="flex flex-col lg:flex-row gap-6 mb-10 items-start">
@@ -1099,14 +1286,72 @@ function App() {
 
       {/* Third Container - Cost Breakdown & Results */}
       {calculatedQuantity && calculatedCost && (
-        <div 
-          ref={pieChartRef}
-          className="mt-6 bg-gradient-to-br from-purple-50 to-blue-50 p-8 rounded-lg border-2 border-purple-200 shadow-xl"
-        >
-          <h3 className="text-2xl font-bold text-purple-900 mb-6 flex items-center justify-center">
-            <span className="text-purple-600 mr-3 text-3xl">📊</span>
-            Cost Breakdown & Calculation Results
-          </h3>
+        <>
+          {/* Summary Row (appears first, always visible) */}
+          <div 
+            className="mt-6 bg-gradient-to-r from-blue-50 to-purple-50 p-4 rounded-lg border-2 border-blue-300 shadow-md cursor-pointer hover:shadow-lg hover:border-blue-400 transition-all duration-300"
+            onClick={() => setShowDetailedCard(!showDetailedCard)}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-6 flex-1">
+                <div className="text-center">
+                  <div className="text-xs text-gray-600 font-semibold">From → To</div>
+                  <div className="text-sm font-bold text-gray-800">
+                    {calculatedExportingCountry} → {calculatedImportingCountry}
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xs text-gray-600 font-semibold">Product</div>
+                  <div className="text-sm font-bold text-gray-800">{calculatedProduct}</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xs text-gray-600 font-semibold">Base Cost</div>
+                  <div className="text-sm font-bold text-gray-800">
+                    ${(Number(calculatedQuantity) * Number(calculatedCost)).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xs text-gray-600 font-semibold">Tariffs</div>
+                  <div className="text-sm font-bold text-blue-600">{tariffData.length}</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xs text-gray-600 font-semibold">Agreements</div>
+                  <div className="text-sm font-bold text-purple-600">{agreementsData.length}</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xs text-gray-600 font-semibold">Final Total</div>
+                  <div className="text-lg font-bold text-green-700">
+                    ${(() => {
+                      const baseCost = Number(calculatedQuantity) * Number(calculatedCost)
+                      let totalTariff = 0
+                      tariffData.forEach(tariff => {
+                        const amount = parseFloat(String(tariff["Tariff amount"] || 0))
+                        totalTariff += amount
+                      })
+                      return (baseCost + totalTariff).toLocaleString('en-US', { minimumFractionDigits: 2 })
+                    })()}
+                  </div>
+                </div>
+              </div>
+              <div className="text-2xl text-blue-600">
+                {showDetailedCard ? '▲' : '▼'}
+              </div>
+            </div>
+            <div className="text-center mt-2 text-xs text-gray-500 italic">
+              Click to {showDetailedCard ? 'hide' : 'view'} detailed breakdown
+            </div>
+          </div>
+
+          {/* Detailed Card (hidden by default, shows when summary row is clicked) */}
+          {showDetailedCard && (
+            <div 
+              ref={pieChartRef}
+              className="mt-4 bg-gradient-to-br from-purple-50 to-blue-50 p-8 rounded-lg border-2 border-purple-200 shadow-xl"
+            >
+              <h3 className="text-2xl font-bold text-purple-900 mb-6 flex items-center justify-center">
+                <span className="text-purple-600 mr-3 text-3xl">📊</span>
+                Cost Breakdown & Calculation Results
+              </h3>
 
           {/* Show skeleton loading while data is being fetched */}
           {(isLoadingTariffs || isLoadingAgreements) ? (
@@ -1475,20 +1720,14 @@ function App() {
               >
                 Save Calculation
               </button>
-              
-              {/* Test Get History Button */}
-              <button 
-                className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 text-sm rounded-lg transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0"
-                onClick={testGetUserHistory}
-              >
-                Test Get History
-              </button>
             </div>
             </div>
             </div>
           )}
         </div>
       )}
+      </>
+    )}
     </div>
   )
 
@@ -1643,6 +1882,12 @@ function App() {
               onClick={showHistory}
             >
               History
+            </button>
+            <button 
+              className="bg-green-500 hover:bg-green-600 text-white border-none py-2 px-4 text-sm cursor-pointer rounded-md transition-all duration-300 font-medium"
+              onClick={handleTestComparison}
+            >
+              Test Comparison
             </button>
             {/* User info and Logout */}
             <div className="hidden sm:flex items-center gap-3 pl-4 ml-2 border-l border-slate-600">

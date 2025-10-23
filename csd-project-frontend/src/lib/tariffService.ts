@@ -1,5 +1,13 @@
 // Tariff Service - API calls to the tariff microservice
-const TARIFF_BASE_URL = import.meta.env.VITE_TARIFF_API_URL || '/api'
+const TARIFF_BASE_URL = import.meta.env.VITE_TARIFF_API_URL || 'http://localhost:5004'
+const TARIFF_USERNAME = import.meta.env.VITE_TARIFF_USERNAME || 'tariff_admin'
+const TARIFF_PASSWORD = import.meta.env.VITE_TARIFF_PASSWORD || 'tariff_admin'
+
+// Create Basic Auth header
+const getBasicAuthHeader = () => {
+  const credentials = btoa(`${TARIFF_USERNAME}:${TARIFF_PASSWORD}`)
+  return `Basic ${credentials}`
+}
 
 /**
  * Tariff Service for connecting to the tariff microservice
@@ -13,10 +21,11 @@ class TariffService {
    */
   async getTariffsByHsCode(hsCode: string): Promise<any[]> {
     try {
-      const response = await fetch(`${TARIFF_BASE_URL}/api/tariffs/by-hs/${encodeURIComponent(hsCode)}`, {
+      const response = await fetch(`${TARIFF_BASE_URL}/api/tariffs/hs-code/${encodeURIComponent(hsCode)}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': getBasicAuthHeader()
         },
       })
 
@@ -47,10 +56,11 @@ class TariffService {
         exporter: exporter
       })
 
-      const response = await fetch(`${TARIFF_BASE_URL}/api/tariffs?${params}`, {
+      const response = await fetch(`${TARIFF_BASE_URL}/api/tariffs/combo?${params}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': getBasicAuthHeader()
         },
       })
 
@@ -87,6 +97,7 @@ class TariffService {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': getBasicAuthHeader()
         },
       })
 
@@ -124,6 +135,7 @@ class TariffService {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': getBasicAuthHeader()
         }
       })
 

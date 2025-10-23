@@ -72,3 +72,16 @@ export interface Agreement {
   value: number
   note?: string
 }
+
+export interface ComparisonResult {
+  exporterCountry: string
+  tariffs: TariffData[]
+  agreements: Agreement[]
+  baseCost: number
+  totalTariffAmount: number
+  adjustedTariffAmount: number
+  totalAgreementAdjustment: number
+  finalTotal: number
+  effectiveTariffRate: number
+  hasOverride: boolean
+}
