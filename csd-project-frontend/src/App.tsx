@@ -40,6 +40,12 @@ function App() {
   const [importingCountryOpen, setImportingCountryOpen] = useState(false)
   const [exportingCountryOpen, setExportingCountryOpen] = useState(false)
   
+  // State for multi-exporter comparison mode
+  const [isComparisonMode, setIsComparisonMode] = useState(false)
+  const [exportingCountries, setExportingCountries] = useState<string[]>(['']) // Array of exporter countries
+  const [comparisonResults, setComparisonResults] = useState<ComparisonResult[] | null>(null)
+  const [isLoadingComparison, setIsLoadingComparison] = useState(false)
+  
   // Initialize date to current date on component mount
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0] // Format: YYYY-MM-DD
@@ -553,6 +559,61 @@ function App() {
 
   // Handle calculate button click
   const handleCalculate = async () => {
+    // Check if we're in comparison mode
+    if (isComparisonMode) {
+      // Validate that we have at least 2 exporters
+      const validExporters = exportingCountries.filter(country => country.trim() !== '')
+      
+      if (validExporters.length < 2) {
+        alert('Please select at least 2 exporting countries for comparison.')
+        return
+      }
+      
+      // Validate other required fields
+      if (!selectedImportingCountry || !selectedProduct || !quantity || !cost || !date) {
+        alert('Please fill in all required fields.')
+        return
+      }
+      
+      // Clear previous comparison results
+      setComparisonResults(null)
+      setIsLoadingComparison(true)
+      
+      try {
+        if (!selectedProduct) {
+          throw new Error('Product is not selected')
+        }
+        
+        const results = await fetchComparisonData(
+          selectedImportingCountry,
+          validExporters,
+          selectedProduct,
+          Number(quantity),
+          Number(cost),
+          date
+        )
+        
+        setComparisonResults(results)
+        
+        // Scroll to results
+        setTimeout(() => {
+          if (pieChartRef.current) {
+            pieChartRef.current.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            })
+          }
+        }, 300)
+      } catch (error) {
+        alert(`Comparison failed: ${(error as Error).message}`)
+      } finally {
+        setIsLoadingComparison(false)
+      }
+      
+      return
+    }
+    
+    // Regular single-exporter calculation mode
     // Clear previous results immediately when calculate is clicked
     setCalculatedProduct('')
     setCalculatedImportingCountry('')
@@ -595,6 +656,40 @@ function App() {
           })
         }
       }, 300)
+    }
+  }
+
+  // Handle adding a new exporter field
+  const handleAddExporter = () => {
+    setExportingCountries([...exportingCountries, ''])
+  }
+
+  // Handle removing an exporter field
+  const handleRemoveExporter = (index: number) => {
+    if (exportingCountries.length > 1) {
+      const newExporters = exportingCountries.filter((_, i) => i !== index)
+      setExportingCountries(newExporters)
+    }
+  }
+
+  // Handle updating an exporter at a specific index
+  const handleExporterChange = (index: number, value: string) => {
+    const newExporters = [...exportingCountries]
+    newExporters[index] = value
+    setExportingCountries(newExporters)
+  }
+
+  // Toggle comparison mode
+  const handleToggleComparisonMode = (enabled: boolean) => {
+    setIsComparisonMode(enabled)
+    if (enabled) {
+      // Initialize with one empty exporter field
+      setExportingCountries([''])
+      setSelectedExportingCountry('') // Clear single exporter
+    } else {
+      // Clear comparison data
+      setExportingCountries([''])
+      setComparisonResults(null)
     }
   }
 
@@ -1028,6 +1123,91 @@ function App() {
         </Card>
       )}
       
+      {/* Production Comparison Results */}
+      {comparisonResults && comparisonResults.length > 0 && (
+        <Card className="mb-6 bg-blue-50 border-blue-300">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between text-lg text-blue-800">
+              <span>📊 Multi-Exporter Comparison Results</span>
+              <button onClick={() => setComparisonResults(null)} className="text-sm text-red-600 hover:text-red-800 underline">
+                Clear
+              </button>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="bg-blue-100">
+                    <th className="border border-blue-300 px-4 py-2">Rank</th>
+                    <th className="border border-blue-300 px-4 py-2">Exporter</th>
+                    <th className="border border-blue-300 px-4 py-2">Base Cost</th>
+                    <th className="border border-blue-300 px-4 py-2">Tariffs</th>
+                    <th className="border border-blue-300 px-4 py-2">Agreements</th>
+                    <th className="border border-blue-300 px-4 py-2">Final Total</th>
+                    <th className="border border-blue-300 px-4 py-2">Effective Rate</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {comparisonResults.map((result, index) => (
+                    <tr key={result.exporterCountry} className={`${index === 0 ? 'bg-yellow-50 font-semibold' : 'bg-white'} hover:bg-blue-50`}>
+                      <td className="border border-blue-300 px-4 py-2 text-center">
+                        {index === 0 ? '🏆 1' : index + 1}
+                      </td>
+                      <td className="border border-blue-300 px-4 py-2 font-medium">{result.exporterCountry}</td>
+                      <td className="border border-blue-300 px-4 py-2 text-right">
+                        ${result.baseCost.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                      </td>
+                      <td className="border border-blue-300 px-4 py-2 text-right">
+                        ${result.totalTariffAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                      </td>
+                      <td className="border border-blue-300 px-4 py-2 text-right">
+                        ${result.adjustedTariffAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                      </td>
+                      <td className={`border border-blue-300 px-4 py-2 text-right font-bold ${index === 0 ? 'text-green-700 text-lg' : ''}`}>
+                        ${result.finalTotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                      </td>
+                      <td className="border border-blue-300 px-4 py-2 text-right">
+                        {result.effectiveTariffRate.toFixed(2)}%
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              
+              {/* Summary statistics */}
+              <div className="mt-4 p-4 bg-blue-100 rounded-lg">
+                <h3 className="font-semibold text-blue-900 mb-2">💡 Comparison Summary</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                  <div>
+                    <span className="font-medium">Best Option:</span> {comparisonResults[0].exporterCountry}
+                  </div>
+                  <div>
+                    <span className="font-medium">Savings vs Worst:</span> $
+                    {(comparisonResults[comparisonResults.length - 1].finalTotal - comparisonResults[0].finalTotal).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                  </div>
+                  <div>
+                    <span className="font-medium">Options Compared:</span> {comparisonResults.length}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
+      {/* Loading indicator for comparison */}
+      {isLoadingComparison && (
+        <Card className="mb-6 bg-gray-50 border-gray-300">
+          <CardContent className="py-8">
+            <div className="flex items-center justify-center gap-3">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              <span className="text-lg text-gray-700">Comparing exporters...</span>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
       {/* Three containers side by side */}
       <div className="flex flex-col lg:flex-row gap-6 mb-10 items-start">
         {/* First Container - Quantity and Cost */}
@@ -1091,7 +1271,9 @@ function App() {
                 (!isManualTariff && (
                   !selectedProduct || 
                   !selectedImportingCountry || 
-                  !selectedExportingCountry || 
+                  // In comparison mode, require at least one exporter in the array
+                  // In single mode, require selectedExportingCountry
+                  (isComparisonMode ? exportingCountries.filter(e => e.trim() !== '').length === 0 : !selectedExportingCountry) ||
                   !date ||
                   dateValidationError !== '' || 
                   countryValidationError !== ''
@@ -1202,53 +1384,143 @@ function App() {
               </Popover>
             </div>
 
-            <div className="flex flex-col items-start text-left w-full">
-              <label htmlFor="exporting-country">Exporting Country:</label>
-              <Popover open={exportingCountryOpen} onOpenChange={setExportingCountryOpen}>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={exportingCountryOpen}
-                    className="w-full justify-between"
-                    disabled={isLoadingCountries}
-                  >
-                    {selectedExportingCountry
-                      ? countries.find((country) => country.name === selectedExportingCountry)?.name
-                      : (isLoadingCountries ? 'Loading countries...' : 'Select exporting country...')}
-                    <ChevronsUpDown className="opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-full p-0" align="start">
-                  <Command>
-                    <CommandInput placeholder="Search country..." className="h-9" />
-                    <CommandList>
-                      <CommandEmpty>No country found.</CommandEmpty>
-                      <CommandGroup>
-                        {!isLoadingCountries && countries.map((country) => (
-                          <CommandItem
-                            key={country.id}
-                            value={country.name}
-                            onSelect={(currentValue) => {
-                              handleExportingCountryChange(currentValue === selectedExportingCountry ? "" : currentValue)
-                              setExportingCountryOpen(false)
-                            }}
-                          >
-                            {country.name}
-                            <Check
-                              className={cn(
-                                "ml-auto",
-                                selectedExportingCountry === country.name ? "opacity-100" : "opacity-0"
-                              )}
-                            />
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
+            {/* Comparison Mode Toggle */}
+            <div className="flex items-center gap-2 w-full my-2">
+              <input
+                type="checkbox"
+                id="comparison-mode"
+                checked={isComparisonMode}
+                onChange={(e) => handleToggleComparisonMode(e.target.checked)}
+                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
+              />
+              <label htmlFor="comparison-mode" className="text-sm font-medium cursor-pointer">
+                Compare multiple exporters
+              </label>
             </div>
+
+            {/* Exporting Country Section - Conditional rendering based on comparison mode */}
+            {!isComparisonMode ? (
+              // Single exporter mode
+              <div className="flex flex-col items-start text-left w-full">
+                <label htmlFor="exporting-country">Exporting Country:</label>
+                <Popover open={exportingCountryOpen} onOpenChange={setExportingCountryOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={exportingCountryOpen}
+                      className="w-full justify-between"
+                      disabled={isLoadingCountries}
+                    >
+                      {selectedExportingCountry
+                        ? countries.find((country) => country.name === selectedExportingCountry)?.name
+                        : (isLoadingCountries ? 'Loading countries...' : 'Select exporting country...')}
+                      <ChevronsUpDown className="opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0" align="start">
+                    <Command>
+                      <CommandInput placeholder="Search country..." className="h-9" />
+                      <CommandList>
+                        <CommandEmpty>No country found.</CommandEmpty>
+                        <CommandGroup>
+                          {!isLoadingCountries && countries.map((country) => (
+                            <CommandItem
+                              key={country.id}
+                              value={country.name}
+                              onSelect={(currentValue) => {
+                                handleExportingCountryChange(currentValue === selectedExportingCountry ? "" : currentValue)
+                                setExportingCountryOpen(false)
+                              }}
+                            >
+                              {country.name}
+                              <Check
+                                className={cn(
+                                  "ml-auto",
+                                  selectedExportingCountry === country.name ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </div>
+            ) : (
+              // Multiple exporters mode
+              <div className="flex flex-col items-start text-left w-full gap-2">
+                <label>Exporting Countries to Compare:</label>
+                {exportingCountries.map((exporter, index) => (
+                  <div key={index} className="flex items-center gap-2 w-full">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          className="flex-1 justify-between"
+                          disabled={isLoadingCountries}
+                        >
+                          {exporter
+                            ? countries.find((country) => country.name === exporter)?.name
+                            : (isLoadingCountries ? 'Loading...' : `Select exporter ${index + 1}...`)}
+                          <ChevronsUpDown className="opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-full p-0" align="start">
+                        <Command>
+                          <CommandInput placeholder="Search country..." className="h-9" />
+                          <CommandList>
+                            <CommandEmpty>No country found.</CommandEmpty>
+                            <CommandGroup>
+                              {!isLoadingCountries && countries.map((country) => (
+                                <CommandItem
+                                  key={country.id}
+                                  value={country.name}
+                                  onSelect={(currentValue) => {
+                                    handleExporterChange(index, currentValue)
+                                  }}
+                                >
+                                  {country.name}
+                                  <Check
+                                    className={cn(
+                                      "ml-auto",
+                                      exporter === country.name ? "opacity-100" : "opacity-0"
+                                    )}
+                                  />
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                    
+                    {/* Remove button - only show if more than 1 exporter */}
+                    {exportingCountries.length > 1 && (
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handleRemoveExporter(index)}
+                        className="h-10 w-10 text-red-500 hover:text-red-700 hover:bg-red-50"
+                      >
+                        ✕
+                      </Button>
+                    )}
+                  </div>
+                ))}
+                
+                {/* Add exporter button */}
+                <Button
+                  variant="outline"
+                  onClick={handleAddExporter}
+                  className="w-full border-dashed border-2 hover:border-blue-500 hover:bg-blue-50"
+                >
+                  + Add Another Exporter
+                </Button>
+              </div>
+            )}
             
             {/* Country validation error message */}
             {countryValidationError && (
@@ -1884,10 +2156,11 @@ function App() {
               History
             </button>
             <button 
-              className="bg-green-500 hover:bg-green-600 text-white border-none py-2 px-4 text-sm cursor-pointer rounded-md transition-all duration-300 font-medium"
+              className="bg-green-500 hover:bg-green-600 text-white border-none py-2 px-4 text-sm cursor-pointer rounded-md transition-all duration-300 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
               onClick={handleTestComparison}
+              disabled={isTestingComparison}
             >
-              Test Comparison
+              {isTestingComparison ? 'Testing...' : 'Test Comparison'}
             </button>
             {/* User info and Logout */}
             <div className="hidden sm:flex items-center gap-3 pl-4 ml-2 border-l border-slate-600">
