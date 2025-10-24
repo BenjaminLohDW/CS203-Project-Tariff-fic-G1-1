@@ -1,74 +1,75 @@
 Country microservice
 
-This is a small Flask microservice that exposes country data from a Postgres database.
+This is a small Flask microservice that exposes country data from a Postgres database. Schema and initial data are managed exclusively via Alembic migrations.
 
 ## API Documentation
 
-**Swagger UI:** Access interactive API documentation at `http://localhost:5005/docs/` when the service is running.
+**Swagger UI:** Access interactive API documentation at `http://localhost:5005/api/v1/docs/` when the service is running (Swagger is configured at `/api/v1/docs/`).
 
-Endpoints:
-- GET /api/countries -> list countries
-- POST /api/countries/seed -> seed countries from CSV (optional JSON body: {"csv_path": "/path/to/file.csv"})
-
-Additional endpoints (added in code):
-- GET /api/countries/<id> -> return the full country object for the given numeric id
-- GET /api/countries/by-name?name=<name> -> return the full country object for the given name (case-insensitive exact match)
-- GET /api/country-relation/current?a=<country_code>&b=<country_code> -> get relationship weight between two countries
-- POST /api/country/relations/ -> seed country relations from CSV
+Endpoints (actual paths exposed by the running service)
+- GET / -> Root information + link to docs
+- GET /health -> Health check
+- GET /countries/all -> List all countries
+- GET /countries/<int:country_id> -> Return the full country object for the given numeric id
+- GET /countries/by-name?name=<name> -> Return the full country object for the given name (case-insensitive exact match)
+- GET /countries/relation/current?a=<country_code>&b=<country_code> -> Get relationship weight between two countries
 
 Environment:
 The service reads DB connection details from `.env` in this folder using python-dotenv. Example keys:
 
 DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME
 
-Optional:
-COUNTRY_SEED_CSV - path to a CSV file to seed on startup
+## Quick summary
+- Data provisioning: migration-only. All schema and seed data are applied by Alembic migrations.
+- CSV assets used by migrations: `countries_full.csv` and `country_relations_all.csv` (copied into the image by the `Dockerfile`).
+- Seeding migration: `migrations/versions/a9e4b3c2d1f0_seed_country_data.py`.
 
-App host/port and auto-seed:
-- The app runs on 0.0.0.0:5005 by default in development (see `app.py`).
-- **Auto-seeding is currently disabled** (commented out in `app.py` lines 288-305).
-- Auto-seeding is intended for production deployment - **remember to uncomment for production use**.
-- When enabled, the app auto-seeds both countries and relations if tables are empty on startup.
-- **Note**: If auto-seeding is enabled for production, consider removing the manual seeding endpoints (`POST /api/countries/seed` and `POST /api/country/relations/`) as they become redundant.
+## Running locally (development)
 
-Run (development):
+1) Create a virtualenv and install dependencies:
 
-**Option 1: With Swagger Documentation (Recommended)**
-1. Create a virtualenv and install deps:
-   python -m venv .venv; .\.venv\Scripts\activate; pip install -r requirements.txt
+```powershell
+python -m venv .venv
+.\.venv\Scripts\activate
+pip install -r requirements.txt
+```
 
-2. Ensure Postgres is reachable with credentials from `.env`.
+2) Configure `.env` with Postgres connection details (keys used in the project: `DB_USER`, `DB_PASSWORD`, `DB_HOST`, `DB_PORT`, `DB_NAME`).
 
-3. Run database migrations:
-   set FLASK_APP=app_swagger.py
-   flask db upgrade
+3) Apply migrations to create schema and seed data:
 
-4. Start the Swagger-enabled service:
-   python app_swagger.py
+```powershell
+set FLASK_APP=app.py
+flask db upgrade
+```
 
-5. Access Swagger UI at: http://localhost:5005/docs/
+4) Start the service:
 
-**Option 2: Standard Flask (No Swagger)**
-1. Create a virtualenv and install deps:
-   python -m venv .venv; .\.venv\Scripts\activate; pip install -r requirements.txt
+```powershell
+python app.py
+```
 
-2. Ensure Postgres is reachable with credentials from `.env`.
+## Docker / Docker Compose
 
-3. Run migrations (if using flask-migrate) or simply start for quick testing:
-   # If you use Flask-Migrate / Alembic (recommended):
-   #   set FLASK_APP=app.py
-   #   flask db upgrade
-   # Or for quick testing you can start the app directly:
-   python app.py
+- The `Dockerfile` copies repository files (including the CSVs) into the image with `COPY . .`.
+- The project `compose.yml` runs a one-shot migration container (e.g. `country-migrate`) that executes `flask db upgrade`; this applies schema changes and seeds.
 
-4. To seed using the full CSV shipped with this folder:
-   curl -X POST -H "Content-Type: application/json" -d "{\"csv_path\": \"/app/country/countries_full.csv\"}" http://localhost:5005/api/countries/seed
+To run the full stack from the project root (integration test):
 
-Docker / docker-compose (optional):
-- The repository includes a `country/Dockerfile` and a `compose.yml` in the project root. The service exposes port 5005 inside the container and compose maps it to host port 5005 by default.
-- Quick start (from project root):
-   docker compose -f compose.yml up -d --build country
+```powershell
+docker compose down -v --remove-orphans
+docker compose build --no-cache
+docker compose up --build -d
+```
 
-Notes about the by-name endpoint:
-- `GET /api/countries/by-name?name=` performs a case-insensitive exact match using SQL `ILIKE`. That means you should pass the full country name (URL-encoded if it contains spaces). For example: `?name=United%20States`.
-- If you want partial / substring matching, the endpoint can be changed to use `ILIKE '%%name%%'` instead; tell me if you prefer that.
+## Notes & troubleshooting
+
+- BOM in CSV header: some CSV editors produce a UTF-8 BOM on the first header cell (example: `\ufeffcountry_a`). The migration normalizes headers to handle this; prefer saving CSVs as UTF-8 without BOM to avoid surprises.
+- Date formats: `effective_date` values in `country_relations_all.csv` may be `MM/DD/YYYY` (Windows-style) or `YYYY-MM-DD` (ISO). The migration accepts common formats and skips rows with unparseable dates.
+- If relations are not present after `flask db upgrade`, confirm the CSV files are present in the container image at `/app/` and check `country-migrate` logs (`docker compose logs country-migrate`).
+
+## Development checklist for maintainers
+
+- Keep `countries_full.csv` and `country_relations_all.csv` inside the `country/` folder and commit changes when you intend the migration to seed new data.
+- Run `flask db upgrade` as part of your deployment or CI pipeline to apply schema and seed changes.
+- For very large datasets, consider moving CSVs to object storage and implement a dedicated import job instead of shipping huge files in the image.

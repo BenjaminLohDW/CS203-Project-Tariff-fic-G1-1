@@ -150,21 +150,6 @@ services:
     command: ["flask", "db", "upgrade"]
     restart: "no"
 
-  country-seeding:
-    build: ./country
-    env_file:
-      - ./country/.env
-    environment:
-      FLASK_APP: app.py
-      DB_HOST: db
-      DB_PORT: "5432"
-    depends_on:
-      db:
-        condition: service_healthy
-      country-migrate:
-        condition: service_completed_successfully
-    command: ["flask", "seed"]
-    restart: "no"
 
   country:
     container_name: country
@@ -177,8 +162,6 @@ services:
       db:
         condition: service_healthy
       country-migrate:
-        condition: service_completed_successfully
-      country-seeding:
         condition: service_completed_successfully
     env_file:
       - ./country/.env
