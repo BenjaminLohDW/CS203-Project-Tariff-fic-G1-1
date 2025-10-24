@@ -2155,13 +2155,6 @@ function App() {
             >
               History
             </button>
-            <button 
-              className="bg-green-500 hover:bg-green-600 text-white border-none py-2 px-4 text-sm cursor-pointer rounded-md transition-all duration-300 font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-              onClick={handleTestComparison}
-              disabled={isTestingComparison}
-            >
-              {isTestingComparison ? 'Testing...' : 'Test Comparison'}
-            </button>
             {/* User info and Logout */}
             <div className="hidden sm:flex items-center gap-3 pl-4 ml-2 border-l border-slate-600">
               {userProfile && (
