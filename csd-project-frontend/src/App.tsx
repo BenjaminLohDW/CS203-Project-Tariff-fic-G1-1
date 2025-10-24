@@ -17,7 +17,15 @@ import { Check, ChevronsUpDown } from 'lucide-react'
 import { cn } from './lib/utils'
 import './App.css'
 
-function App() {
+interface AppProps {
+  onManagementClick?: () => void
+  managementContent?: React.ReactNode
+  showManagement?: boolean
+  onCalculationClick?: () => void
+  onHistoryClick?: () => void
+}
+
+function App({ onManagementClick, managementContent, showManagement = false, onCalculationClick, onHistoryClick }: AppProps = {}) {
   const navigate = useNavigate()
   const { userProfile, logOut, setUserProfile } = useAuth()
   // Ref for autoscroll to results section
@@ -2143,15 +2151,30 @@ function App() {
             <h2 className="text-gray-100 m-0 text-2xl font-bold">Tariff-fic</h2>
           </div>
           <div className="flex items-center gap-4">
+            {/* Management button - only show if onManagementClick prop is provided (admin mode) */}
+            {onManagementClick && (
+              <button 
+                className={`${showManagement ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-transparent text-gray-300 hover:bg-slate-600 hover:text-gray-100'} border-none py-3 px-6 text-base cursor-pointer rounded-md transition-all duration-300 font-medium`}
+                onClick={onManagementClick}
+              >
+                Management
+              </button>
+            )}
             <button 
-              className={`${currentPage === 'calculation' ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-transparent text-gray-300 hover:bg-slate-600 hover:text-gray-100'} border-none py-3 px-6 text-base cursor-pointer rounded-md transition-all duration-300 font-medium`}
-              onClick={showCalculation}
+              className={`${currentPage === 'calculation' && !showManagement ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-transparent text-gray-300 hover:bg-slate-600 hover:text-gray-100'} border-none py-3 px-6 text-base cursor-pointer rounded-md transition-all duration-300 font-medium`}
+              onClick={() => {
+                showCalculation()
+                if (onCalculationClick) onCalculationClick()
+              }}
             >
               Calculation
             </button>
             <button 
-              className={`${currentPage === 'history' ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-transparent text-gray-300 hover:bg-slate-600 hover:text-gray-100'} border-none py-3 px-6 text-base cursor-pointer rounded-md transition-all duration-300 font-medium`}
-              onClick={showHistory}
+              className={`${currentPage === 'history' && !showManagement ? 'bg-blue-500 text-white hover:bg-blue-600' : 'bg-transparent text-gray-300 hover:bg-slate-600 hover:text-gray-100'} border-none py-3 px-6 text-base cursor-pointer rounded-md transition-all duration-300 font-medium`}
+              onClick={() => {
+                showHistory()
+                if (onHistoryClick) onHistoryClick()
+              }}
             >
               History
             </button>
@@ -2181,7 +2204,7 @@ function App() {
 
       {/* Main Content */}
       <div className="w-full min-h-[calc(100vh-80px)] px-8">
-        {currentPage === 'calculation' ? renderCalculationPage() : renderHistoryPage()}
+        {showManagement && managementContent ? managementContent : (currentPage === 'calculation' ? renderCalculationPage() : renderHistoryPage())}
       </div>
       
       {/* Detailed Tariff Modal */}

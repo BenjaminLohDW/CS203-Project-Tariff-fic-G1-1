@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState, useRef, type ReactNode } from 'react'
 import { useLocation, Navigate } from 'react-router-dom'
 import { onAuthChange, signIn, signUp, logOut, resetPassword } from './auth'
-import { createUser } from './userService'
+import { createUser, getUserProfile } from './userService'
 import { UserProfile } from '../types'
 
 interface User {
@@ -43,6 +43,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return null
     }
   })
+  const isInitialLoad = useRef(true) // Flag to prevent role check during initial load
 
   useEffect(() => {
     const unsub = onAuthChange((u: User | null) => {
@@ -58,6 +59,56 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       else localStorage.removeItem('userProfile')
     } catch {}
   }, [userProfile])
+
+  // Periodically check if user role has changed on the server
+  useEffect(() => {
+    if (!user || !userProfile) return
+
+    // Skip role check for 5 seconds after profile is loaded (during login)
+    if (isInitialLoad.current) {
+      isInitialLoad.current = false
+      const timer = setTimeout(() => {
+        // After 5 seconds, role checks can proceed normally
+      }, 5000)
+      return () => clearTimeout(timer)
+    }
+
+    const checkRoleChange = async () => {
+      try {
+        const freshProfile = await getUserProfile(user.uid)
+        
+        // If role has changed, update profile and force logout/re-login
+        if (freshProfile.role !== userProfile.role) {
+          console.log(`Role changed from ${userProfile.role} to ${freshProfile.role}. Logging out...`)
+          
+          // Update localStorage with new role before logout
+          setUserProfile(freshProfile)
+          
+          alert(`Your role has been updated to "${freshProfile.role}". Please login again.`)
+          await logOut()
+          window.location.href = '/'
+        }
+      } catch (error) {
+        console.error('Failed to check role change:', error)
+      }
+    }
+
+    // Check role every 30 seconds
+    const interval = setInterval(checkRoleChange, 30000)
+
+    // Also check on window focus
+    const onFocus = () => {
+      if (!isInitialLoad.current) {
+        checkRoleChange()
+      }
+    }
+    window.addEventListener('focus', onFocus)
+
+    return () => {
+      clearInterval(interval)
+      window.removeEventListener('focus', onFocus)
+    }
+  }, [user, userProfile, logOut])
 
   // Auto-create user in microservice after Firebase authentication
   const retryTimer = useRef(null)
@@ -77,13 +128,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return
         }
 
-        console.log('Creating user in microservice:', userData)
-        const createdUser = await createUser(userData)
+        console.log('Creating/fetching user from microservice:', userData)
+        
+        // Try to create user (will return existing user if already exists)
+        let createdUser: UserProfile
+        try {
+          createdUser = await createUser(userData)
+        } catch (error: any) {
+          // If creation fails, try to fetch existing user
+          if (error.message?.includes('already exists') || error.message?.includes('409')) {
+            console.log('User exists, fetching profile...')
+            createdUser = await getUserProfile(user.uid)
+          } else {
+            throw error
+          }
+        }
+        
         setUserProfile(createdUser)
-        console.log('User successfully created in microservice:', createdUser)
+        console.log('✅ User profile loaded from microservice:', createdUser)
+        console.log('📝 Role:', createdUser.role)
         
       } catch (error) {
-        console.error('Failed to create user in microservice:', error)
+        console.error('Failed to create/fetch user in microservice:', error)
         // Set a basic profile so the app can still function
         setUserProfile({
           user_id: user.uid,

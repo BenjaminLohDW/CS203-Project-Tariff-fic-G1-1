@@ -5,7 +5,8 @@ import styles from './Login.module.css'
 
 export default function Login() {
   const navigate = useNavigate()
-  const { signIn, user, logOut, setUserProfile } = useAuth()
+  const { signIn, user, userProfile, logOut, setUserProfile } = useAuth()
+  
   // If a signed-in user lands on the login page (e.g., via Back), force logout
   useEffect(() => {
     let mounted = true
@@ -20,6 +21,26 @@ export default function Login() {
     })()
     return () => { mounted = false }
   }, [])
+  
+  // Redirect to appropriate page based on user role after login
+  useEffect(() => {
+    if (user && userProfile) {
+      console.log('🔍 Login redirect check:', { 
+        user: user.email, 
+        role: userProfile.role,
+        userProfile 
+      })
+      
+      // Check if user is admin
+      if (userProfile.role === 'admin') {
+        console.log('✅ Redirecting to /admin')
+        navigate('/admin')
+      } else {
+        console.log('✅ Redirecting to /app')
+        navigate('/app')
+      }
+    }
+  }, [user, userProfile, navigate])
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
@@ -62,9 +83,9 @@ export default function Login() {
 
     try {
       setLoading(true)
-  // Firebase email/password sign-in
-  await signIn(email, password)
-  navigate('/app')
+      // Firebase email/password sign-in
+      await signIn(email, password)
+      // Navigation will be handled by the useEffect hook that watches userProfile
     } catch (err: any) {
       const code = err?.code || ''
       let msg = 'Login failed. Please try again.'

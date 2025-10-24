@@ -225,6 +225,46 @@ def delete_user(user_id):
         "message": "deleted"
     }), 204
 
+
+@app.route("/user/<string:user_id>/promote-admin", methods=["POST"])
+def promote_to_admin(user_id):
+    """
+    Promote a user to admin role.
+    This endpoint should ideally be protected by admin-only authentication in production.
+    """
+    try:
+        user = User.query.filter_by(user_id=user_id).first()
+        if not user:
+            return jsonify({
+                "code": 404,
+                "error": "User not found"
+            }), 404
+        
+        # Update role to admin
+        user.role = "admin"
+        
+        try:
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({
+                "code": 500,
+                "error": "Failed to update user role",
+                "message": str(e)
+            }), 500
+
+        return jsonify({
+            "code": 200,
+            "data": user.json(),
+            "message": "User successfully promoted to admin"
+        }), 200
+    
+    except Exception as e:
+        return jsonify({
+            "code": 500,
+            "message": str(e)
+        }), 500
+
 with app.app_context():
     try:
         # Only auto-create tables when explicitly enabled. Alembic should be
