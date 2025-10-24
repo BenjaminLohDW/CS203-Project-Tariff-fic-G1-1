@@ -337,10 +337,13 @@ def delete_history(history_id):
     
 with app.app_context():
     try:
-        db.create_all()
-        print("✅ User service: Database tables created/verified")
+        if os.getenv("AUTO_CREATE_DB") == "1":
+            db.create_all()
+            print("✅ History service: Database tables created/verified (AUTO_CREATE_DB=1)")
+        else:
+            print("ℹ️ History service: Skipping db.create_all(); use Alembic migrations (set AUTO_CREATE_DB=1 to enable)")
     except Exception as e:
-        print(f"⚠️ User service: Database table creation failed: {e}")
+        print(f"⚠️ History service: Database table creation check failed: {e}")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5003, debug=True)

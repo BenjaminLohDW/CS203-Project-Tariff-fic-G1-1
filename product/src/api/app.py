@@ -30,7 +30,7 @@ logging.basicConfig(
 app = Flask(__name__)
 CORS(app)
 
-# Initialize HS Search Engine (lazy initialization)
+# Initialize HS Search Engine eagerly at startup to avoid timeout on first request
 search_engine = None
 
 def get_search_engine():
@@ -45,6 +45,15 @@ def get_search_engine():
             # Don't fail the entire app if search engine fails
             logging.warning("Search endpoints will be unavailable")
     return search_engine
+
+# Pre-initialize the search engine at startup
+logging.info("🚀 Pre-loading AI search engine at startup...")
+try:
+    get_search_engine()
+    logging.info("✅ AI search engine loaded successfully")
+except Exception as e:
+    logging.error(f"❌ Failed to pre-load search engine: {e}")
+    logging.warning("Search endpoints may experience delays on first use")
 
 # Swagger configuration
 swagger_config = {

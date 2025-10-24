@@ -13,8 +13,8 @@ public class HttpClientsConfig {
   @Bean
   public RestTemplate restTemplate(RestTemplateBuilder b) {
     return b
-        .setConnectTimeout(Duration.ofSeconds(5)) //changed from 2000 seconds; see how it performs, if not change it back
-        .setReadTimeout(Duration.ofSeconds(30)) // from 15000 
+        .setConnectTimeout(Duration.ofSeconds(10))
+        .setReadTimeout(Duration.ofSeconds(120)) // Increased to 120s to allow AI model loading on first request
         .build();
   }
 }

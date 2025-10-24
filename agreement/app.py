@@ -387,11 +387,14 @@ swagger_template = {
 swagger = Swagger(app, config=swagger_config, template=swagger_template)
 
 with app.app_context():
-    try:
-        db.create_all()
-        print("✅ User service: Database tables created/verified")
-    except Exception as e:
-        print(f"⚠️ User service: Database table creation failed: {e}")
+  try:
+    if os.getenv("AUTO_CREATE_DB") == "1":
+      db.create_all()
+      print("✅ Agreement service: Database tables created/verified (AUTO_CREATE_DB=1)")
+    else:
+      print("ℹ️ Agreement service: Skipping db.create_all(); use Alembic migrations (set AUTO_CREATE_DB=1 to enable)")
+  except Exception as e:
+    print(f"⚠️ Agreement service: Database table creation check failed: {e}")
 
 # ============================================================
 # Run
