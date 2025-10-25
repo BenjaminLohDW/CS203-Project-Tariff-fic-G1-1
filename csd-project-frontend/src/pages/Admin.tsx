@@ -25,6 +25,7 @@ function Admin() {
   const [loadingTariffs, setLoadingTariffs] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage] = useState(10) // Show 10 tariffs per page
+  const [tariffSearchQuery, setTariffSearchQuery] = useState('')
   const [tariffForm, setTariffForm] = useState<TariffCreateRequest>({
     hsCode: '',
     importerId: '',
@@ -43,6 +44,7 @@ function Admin() {
   const [agreements, setAgreements] = useState<AgreementResponse[]>([])
   const [loadingAgreements, setLoadingAgreements] = useState(false)
   const [agreementPage, setAgreementPage] = useState(1)
+  const [agreementSearchQuery, setAgreementSearchQuery] = useState('')
   const [agreementForm, setAgreementForm] = useState<AgreementCreateRequest>({
     importerName: '',
     exporterName: '',
@@ -57,6 +59,7 @@ function Admin() {
   const [countries, setCountries] = useState<Country[]>([])
   const [loadingCountries, setLoadingCountries] = useState(false)
   const [countryPage, setCountryPage] = useState(1)
+  const [countrySearchQuery, setCountrySearchQuery] = useState('')
   
   // Popover state for country dropdowns in Agreement form
   const [importerCountryOpen, setImporterCountryOpen] = useState(false)
@@ -173,35 +176,71 @@ function Admin() {
     }
   }
 
-  // Pagination calculations for Tariffs
+  // Filter functions
+  const filteredTariffs = tariffs.filter(tariff => {
+    if (!tariffSearchQuery.trim()) return true
+    const query = tariffSearchQuery.toLowerCase()
+    return (
+      tariff.hsCode.toLowerCase().includes(query) ||
+      tariff.importerId.toLowerCase().includes(query) ||
+      tariff.exporterId.toLowerCase().includes(query) ||
+      tariff.tariffType.toLowerCase().includes(query) ||
+      tariff.id.toString().includes(query)
+    )
+  })
+
+  const filteredAgreements = agreements.filter(agreement => {
+    if (!agreementSearchQuery.trim()) return true
+    const query = agreementSearchQuery.toLowerCase()
+    return (
+      agreement.id.toString().includes(query) ||
+      (agreement.importerId && agreement.importerId.toLowerCase().includes(query)) ||
+      (agreement.exporterId && agreement.exporterId.toLowerCase().includes(query)) ||
+      agreement.kind.toLowerCase().includes(query) ||
+      (agreement.note && agreement.note.toLowerCase().includes(query))
+    )
+  })
+
+  const filteredCountries = countries.filter(country => {
+    if (!countrySearchQuery.trim()) return true
+    const query = countrySearchQuery.toLowerCase()
+    return (
+      country.name.toLowerCase().includes(query) ||
+      country.code.toLowerCase().includes(query) ||
+      country.country_id.toString().includes(query)
+    )
+  })
+
+  // Pagination calculations for Tariffs (using filtered data)
   const indexOfLastItem = currentPage * itemsPerPage
   const indexOfFirstItem = indexOfLastItem - itemsPerPage
-  const currentTariffs = tariffs.slice(indexOfFirstItem, indexOfLastItem)
-  const totalPages = Math.ceil(tariffs.length / itemsPerPage)
+  const currentTariffs = filteredTariffs.slice(indexOfFirstItem, indexOfLastItem)
+  const totalPages = Math.ceil(filteredTariffs.length / itemsPerPage)
 
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber)
   }
 
-  // Pagination calculations for Agreements
+  // Pagination calculations for Agreements (using filtered data)
   const agreementIndexOfLast = agreementPage * itemsPerPage
   const agreementIndexOfFirst = agreementIndexOfLast - itemsPerPage
-  const currentAgreements = agreements.slice(agreementIndexOfFirst, agreementIndexOfLast)
-  const agreementTotalPages = Math.ceil(agreements.length / itemsPerPage)
+  const currentAgreements = filteredAgreements.slice(agreementIndexOfFirst, agreementIndexOfLast)
+  const agreementTotalPages = Math.ceil(filteredAgreements.length / itemsPerPage)
 
   const handleAgreementPageChange = (pageNumber: number) => {
     setAgreementPage(pageNumber)
   }
 
-  // Pagination calculations for Countries
+  // Pagination calculations for Countries (using filtered data)
   const countryIndexOfLast = countryPage * itemsPerPage
   const countryIndexOfFirst = countryIndexOfLast - itemsPerPage
-  const currentCountries = countries.slice(countryIndexOfFirst, countryIndexOfLast)
-  const countryTotalPages = Math.ceil(countries.length / itemsPerPage)
+  const currentCountries = filteredCountries.slice(countryIndexOfFirst, countryIndexOfLast)
+  const countryTotalPages = Math.ceil(filteredCountries.length / itemsPerPage)
 
   const handleCountryPageChange = (pageNumber: number) => {
     setCountryPage(pageNumber)
   }
+
 
   // Render Management page
   const renderManagement = () => (
@@ -386,9 +425,23 @@ function Admin() {
           {/* Tariffs Table */}
           <Card>
             <CardHeader>
-              <CardTitle>All Tariffs ({tariffs.length} total)</CardTitle>
+              <CardTitle>All Tariffs ({tariffs.length} total, {filteredTariffs.length} shown)</CardTitle>
             </CardHeader>
             <CardContent>
+              {/* Search Bar */}
+              <div className="mb-4">
+                <Input
+                  type="text"
+                  placeholder="🔍 Search by ID, HS Code, Importer, Exporter, or Type..."
+                  value={tariffSearchQuery}
+                  onChange={(e) => {
+                    setTariffSearchQuery(e.target.value)
+                    setCurrentPage(1) // Reset to first page when searching
+                  }}
+                  className="w-full"
+                />
+              </div>
+              
               {loadingTariffs ? (
                 <p className="text-center py-4">Loading tariffs...</p>
               ) : (
@@ -641,9 +694,23 @@ function Admin() {
           {/* Agreements Table */}
           <Card>
             <CardHeader>
-              <CardTitle>All Agreements ({agreements.length} total)</CardTitle>
+              <CardTitle>All Agreements ({agreements.length} total, {filteredAgreements.length} shown)</CardTitle>
             </CardHeader>
             <CardContent>
+              {/* Search Bar */}
+              <div className="mb-4">
+                <Input
+                  type="text"
+                  placeholder="🔍 Search by ID, Importer, Exporter, Type, or Note..."
+                  value={agreementSearchQuery}
+                  onChange={(e) => {
+                    setAgreementSearchQuery(e.target.value)
+                    setAgreementPage(1) // Reset to first page when searching
+                  }}
+                  className="w-full"
+                />
+              </div>
+              
               {loadingAgreements ? (
                 <p className="text-center py-4">Loading agreements...</p>
               ) : (
@@ -723,9 +790,23 @@ function Admin() {
           {/* Countries Table (Read-only) */}
           <Card>
             <CardHeader>
-              <CardTitle>🌍 All Countries ({countries.length} total)</CardTitle>
+              <CardTitle>🌍 All Countries ({countries.length} total, {filteredCountries.length} shown)</CardTitle>
             </CardHeader>
             <CardContent>
+              {/* Search Bar */}
+              <div className="mb-4">
+                <Input
+                  type="text"
+                  placeholder="🔍 Search by ID, Country Name, or Code..."
+                  value={countrySearchQuery}
+                  onChange={(e) => {
+                    setCountrySearchQuery(e.target.value)
+                    setCountryPage(1) // Reset to first page when searching
+                  }}
+                  className="w-full"
+                />
+              </div>
+              
               {loadingCountries ? (
                 <p className="text-center py-4">Loading countries...</p>
               ) : (
