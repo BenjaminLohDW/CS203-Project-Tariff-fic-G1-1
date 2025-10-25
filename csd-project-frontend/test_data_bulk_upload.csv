@@ -1,0 +1,11 @@
+hsCode,importerId,exporterId,tariffType,tariffRate,specificAmt,specificUnit,effectiveDate,expiryDate
+010121,US,CN,Ad Valorem,0.155,,,2024-01-01,2034-01-01
+020110,US,MX,Specific,,5.50,USD/kg,2024-01-01,2034-01-01
+030111,US,CA,Compound,0.10,2.25,USD/kg,2024-01-01,2034-01-01
+040110,SG,MY,Ad Valorem,0.075,,,2024-01-01,2034-01-01
+050100,SG,TH,Specific,,3.00,USD/ton,2024-01-01,2034-01-01
+060110,US,JP,Ad Valorem,0.125,,,2024-01-01,2034-01-01
+070110,US,KR,Compound,0.08,1.50,USD/kg,2024-01-01,2034-01-01
+080111,SG,ID,Specific,,4.25,USD/kg,2024-01-01,2034-01-01
+090121,US,VN,Ad Valorem,0.095,,,2024-01-01,2034-01-01
+100111,SG,AU,Compound,0.12,2.75,USD/ton,2024-01-01,2034-01-01

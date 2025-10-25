@@ -19,3 +19,45 @@ export const resetPassword = (email: string) => {
   
   return sendPasswordResetEmail(auth, email)
 }
+
+/**
+ * Get Firebase ID Token (JWT) for authenticated user
+ * This token can be sent to backend APIs for authentication
+ * @returns Promise<string> - Firebase JWT token
+ */
+export const getIdToken = async (): Promise<string | null> => {
+  if (!auth?.currentUser) return null
+  
+  try {
+    // Get fresh ID token (Firebase handles expiration automatically)
+    const token = await auth.currentUser.getIdToken(false) // false = use cached if valid
+    return token
+  } catch (error) {
+    console.error('Error getting ID token:', error)
+    return null
+  }
+}
+
+/**
+ * Force refresh the Firebase ID Token
+ * Useful when token might be expired or stale
+ */
+export const refreshIdToken = async (): Promise<string | null> => {
+  if (!auth?.currentUser) return null
+  
+  try {
+    const token = await auth.currentUser.getIdToken(true) // true = force refresh
+    return token
+  } catch (error) {
+    console.error('Error refreshing ID token:', error)
+    return null
+  }
+}
+
+/**
+ * Get current authenticated user
+ */
+export const getCurrentUser = (): User | null => {
+  return auth?.currentUser || null
+}
+

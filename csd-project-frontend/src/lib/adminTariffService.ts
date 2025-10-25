@@ -1,7 +1,12 @@
 /**
  * Admin Tariff Service
  * Handles admin operations for tariff management
+ * 
+ * Authentication: Currently using Basic Auth (tariff_admin:tariff_admin)
+ * TODO: Switch to Firebase JWT after backend implements JWT verification
  */
+
+// import { getIdToken } from './auth' // Uncomment when backend supports JWT
 
 export interface TariffCreateRequest {
   hsCode: string;
@@ -32,6 +37,19 @@ export interface TariffResponse {
   endDate: string;
 }
 
+export interface CsvUploadError {
+  row: number;
+  error: string;
+  data: string;
+}
+
+export interface CsvUploadResult {
+  successful: number;
+  updated: number;
+  failed: number;
+  errors?: CsvUploadError[];
+}
+
 class AdminTariffService {
   private static instance: AdminTariffService;
   private baseUrl: string;
@@ -48,16 +66,44 @@ class AdminTariffService {
   }
 
   /**
-   * Get Basic Auth header for tariff service
+   * Get authentication header
+   * 
+   * TODO: Currently using Basic Auth because backend doesn't verify JWT yet.
+   * Once backend JWT verification is implemented, switch to Firebase JWT tokens.
    */
-  private getAuthHeader(): HeadersInit {
+  private async getAuthHeader(): Promise<HeadersInit> {
+    // TEMPORARY: Use Basic Auth until backend implements JWT verification
+    // The backend currently only accepts: tariff_admin:tariff_admin
     const username = 'tariff_admin';
     const password = 'tariff_admin';
     const credentials = btoa(`${username}:${password}`);
+    
     return {
       'Authorization': `Basic ${credentials}`,
       'Content-Type': 'application/json',
     };
+    
+    /* 
+    // FUTURE: Enable this code after backend implements Firebase JWT verification
+    try {
+      const token = await getIdToken()
+      if (token) {
+        return {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to get Firebase JWT token:', error)
+    }
+    
+    // Fallback to Basic Auth if no JWT available
+    const credentials = btoa('tariff_admin:tariff_admin')
+    return {
+      'Authorization': `Basic ${credentials}`,
+      'Content-Type': 'application/json',
+    }
+    */
   }
 
   /**
@@ -65,9 +111,10 @@ class AdminTariffService {
    */
   async createTariff(tariff: TariffCreateRequest): Promise<TariffResponse> {
     try {
+      const headers = await this.getAuthHeader()
       const response = await fetch(`${this.baseUrl}/api/tariffs`, {
         method: 'POST',
-        headers: this.getAuthHeader(),
+        headers,
         body: JSON.stringify(tariff),
       });
 
@@ -88,9 +135,10 @@ class AdminTariffService {
    */
   async getAllTariffs(): Promise<TariffResponse[]> {
     try {
+      const headers = await this.getAuthHeader()
       const response = await fetch(`${this.baseUrl}/api/tariffs/all`, {
         method: 'GET',
-        headers: this.getAuthHeader(),
+        headers,
       });
 
       if (!response.ok) {
@@ -117,6 +165,329 @@ class AdminTariffService {
     //   body: JSON.stringify(tariff),
     // });
     // return await response.json();
+  }
+
+  /**
+   * Bulk upload tariffs from CSV file (Frontend-only implementation)
+   * Uses existing create API with robust error handling, retry logic, and duplicate detection
+   * 
+   * @param file CSV file with columns: hsCode, importerId, exporterId, tariffType, tariffRate, specificAmt, specificUnit, startDate, endDate
+   * @param onProgress Optional callback for progress updates (current, total)
+   * @returns Upload result with counts of successful, updated, and failed entries
+   */
+  async bulkUploadTariffs(
+    file: File, 
+    onProgress?: (current: number, total: number) => void
+  ): Promise<CsvUploadResult> {
+    try {
+      // Step 1: Parse CSV
+      const rows = await this.parseCsvFile(file);
+      
+      // Security: Limit maximum number of rows to prevent DoS
+      const MAX_ROWS = 1000;
+      if (rows.length > MAX_ROWS) {
+        return {
+          successful: 0,
+          updated: 0,
+          failed: rows.length,
+          errors: [{
+            row: 0,
+            error: `Security: Maximum ${MAX_ROWS} rows allowed. File contains ${rows.length} rows.`,
+            data: 'File rejected'
+          }]
+        };
+      }
+      
+      // Step 2: Validate all rows before starting
+      const validationErrors = this.validateCsvRows(rows);
+      if (validationErrors.length > 0) {
+        return {
+          successful: 0,
+          updated: 0,
+          failed: validationErrors.length,
+          errors: validationErrors,
+        };
+      }
+      
+      // Step 3: Fetch existing tariffs to detect duplicates
+      const existingTariffs = await this.getAllTariffs();
+      const existingMap = this.buildTariffMap(existingTariffs);
+      
+      // Step 4: Process rows with concurrency control
+      const results = await this.processRowsWithConcurrency(
+        rows, 
+        existingMap, 
+        onProgress
+      );
+      
+      return results;
+    } catch (error) {
+      console.error('Error during bulk upload:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Parse CSV file into array of tariff objects
+   */
+  private async parseCsvFile(file: File): Promise<TariffCreateRequest[]> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      
+      reader.onload = (event) => {
+        try {
+          const text = event.target?.result as string;
+          const lines = text.split('\n').filter(line => line.trim());
+          
+          if (lines.length < 2) {
+            throw new Error('CSV file is empty or has no data rows');
+          }
+          
+          // Parse header
+          const headers = lines[0].split(',').map(h => h.trim());
+          
+          // Parse data rows
+          const tariffs: TariffCreateRequest[] = [];
+          for (let i = 1; i < lines.length; i++) {
+            const values = this.parseCsvLine(lines[i]);
+            const tariff = this.csvRowToTariff(headers, values);
+            if (tariff) tariffs.push(tariff);
+          }
+          
+          resolve(tariffs);
+        } catch (error) {
+          reject(error);
+        }
+      };
+      
+      reader.onerror = () => reject(new Error('Failed to read file'));
+      reader.readAsText(file);
+    });
+  }
+
+  /**
+   * Parse CSV line handling quoted fields with commas
+   */
+  private parseCsvLine(line: string): string[] {
+    const result: string[] = [];
+    let current = '';
+    let inQuotes = false;
+    
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      
+      if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === ',' && !inQuotes) {
+        result.push(current.trim());
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    result.push(current.trim());
+    
+    return result;
+  }
+
+  /**
+   * Sanitize string input to prevent injection attacks
+   */
+  private sanitizeInput(input: string): string {
+    if (!input) return '';
+    // Remove null bytes, control characters, and trim
+    return input.replace(/\0/g, '').replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '').trim();
+  }
+
+  /**
+   * Convert CSV row to TariffCreateRequest
+   */
+  private csvRowToTariff(
+    headers: string[], 
+    values: string[]
+  ): TariffCreateRequest | null {
+    const obj: Record<string, string> = {};
+    headers.forEach((header, idx) => {
+      // Security: Sanitize input values
+      obj[header] = this.sanitizeInput(values[idx] || '');
+    });
+    
+    // Security: Validate and sanitize HS code (alphanumeric only)
+    const hsCode = obj.hsCode?.replace(/[^0-9A-Za-z.]/g, '') || '';
+    
+    // Security: Validate country codes (2-char alpha only)
+    const importerId = obj.importerId?.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 2) || '';
+    const exporterId = obj.exporterId?.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 2) || '';
+    
+    // Security: Validate tariff type (whitelist only)
+    const validTypes = ['Ad Valorem', 'Specific', 'Compound'];
+    const tariffType = validTypes.includes(obj.tariffType) ? obj.tariffType as 'Ad Valorem' | 'Specific' | 'Compound' : 'Ad Valorem';
+    
+    // Security: Sanitize unit (alphanumeric, /, - only)
+    const specificUnit = obj.specificUnit?.replace(/[^A-Za-z0-9\/-]/g, '') || null;
+    
+    return {
+      hsCode,
+      importerId,
+      exporterId,
+      tariffType,
+      tariffRate: obj.tariffRate ? parseFloat(obj.tariffRate) : null,
+      specificAmt: obj.specificAmt ? parseFloat(obj.specificAmt) : null,
+      specificUnit,
+      minTariffAmt: obj.minTariffAmt ? parseFloat(obj.minTariffAmt) : null,
+      maxTariffAmt: obj.maxTariffAmt ? parseFloat(obj.maxTariffAmt) : null,
+      startDate: obj.startDate || obj.effectiveDate || '',
+      endDate: obj.endDate || obj.expiryDate || '',
+    };
+  }
+
+  /**
+   * Validate all CSV rows before processing
+   */
+  private validateCsvRows(rows: TariffCreateRequest[]): CsvUploadError[] {
+    const errors: CsvUploadError[] = [];
+    
+    rows.forEach((row, idx) => {
+      const rowNum = idx + 2; // +2 for header and 0-index
+      const rowErrors: string[] = [];
+      
+      // Required fields
+      if (!row.hsCode) rowErrors.push('hsCode is required');
+      if (!row.importerId) rowErrors.push('importerId is required');
+      if (!row.exporterId) rowErrors.push('exporterId is required');
+      if (!row.tariffType) rowErrors.push('tariffType is required');
+      if (!row.startDate) rowErrors.push('startDate is required');
+      if (!row.endDate) rowErrors.push('endDate is required');
+      
+      // Tariff type validation
+      if (row.tariffType && !['Ad Valorem', 'Specific', 'Compound'].includes(row.tariffType)) {
+        rowErrors.push(`Invalid tariffType: "${row.tariffType}". Must be: Ad Valorem, Specific, or Compound`);
+      }
+      
+      // Type-specific validation
+      if (row.tariffType === 'Ad Valorem' || row.tariffType === 'Compound') {
+        if (!row.tariffRate && row.tariffRate !== 0) {
+          rowErrors.push('tariffRate is required for Ad Valorem and Compound tariffs');
+        }
+      }
+      
+      if (row.tariffType === 'Specific' || row.tariffType === 'Compound') {
+        if (!row.specificAmt && row.specificAmt !== 0) {
+          rowErrors.push('specificAmt is required for Specific and Compound tariffs');
+        }
+        if (!row.specificUnit) {
+          rowErrors.push('specificUnit is required for Specific and Compound tariffs');
+        }
+      }
+      
+      // Date validation
+      if (row.startDate && !this.isValidDate(row.startDate)) {
+        rowErrors.push(`Invalid startDate format: "${row.startDate}". Use YYYY-MM-DD`);
+      }
+      if (row.endDate && !this.isValidDate(row.endDate)) {
+        rowErrors.push(`Invalid endDate format: "${row.endDate}". Use YYYY-MM-DD`);
+      }
+      
+      if (rowErrors.length > 0) {
+        errors.push({
+          row: rowNum,
+          error: rowErrors.join('; '),
+          data: JSON.stringify(row),
+        });
+      }
+    });
+    
+    return errors;
+  }
+
+  /**
+   * Validate date format (YYYY-MM-DD)
+   */
+  private isValidDate(dateStr: string): boolean {
+    const regex = /^\d{4}-\d{2}-\d{2}$/;
+    if (!regex.test(dateStr)) return false;
+    
+    const date = new Date(dateStr);
+    return date instanceof Date && !isNaN(date.getTime());
+  }
+
+  /**
+   * Build map of existing tariffs for duplicate detection
+   * Key: hsCode|importerId|exporterId|startDate
+   */
+  private buildTariffMap(tariffs: TariffResponse[]): Map<string, TariffResponse> {
+    const map = new Map<string, TariffResponse>();
+    tariffs.forEach(tariff => {
+      const key = `${tariff.hsCode}|${tariff.importerId}|${tariff.exporterId}|${tariff.startDate}`;
+      map.set(key, tariff);
+    });
+    return map;
+  }
+
+  /**
+   * Process rows with concurrency control and retry logic
+   */
+  private async processRowsWithConcurrency(
+    rows: TariffCreateRequest[],
+    existingMap: Map<string, TariffResponse>,
+    onProgress?: (current: number, total: number) => void
+  ): Promise<CsvUploadResult> {
+    const CONCURRENCY = 5; // Process 5 rows at a time
+    const MAX_RETRIES = 3;
+    
+    let successful = 0;
+    let updated = 0;
+    let failed = 0;
+    const errors: CsvUploadError[] = [];
+    
+    // Process in batches
+    for (let i = 0; i < rows.length; i += CONCURRENCY) {
+      const batch = rows.slice(i, i + CONCURRENCY);
+      
+      const batchPromises = batch.map(async (row, batchIdx) => {
+        const rowNum = i + batchIdx + 2; // +2 for header and 0-index
+        const key = `${row.hsCode}|${row.importerId}|${row.exporterId}|${row.startDate}`;
+        const isDuplicate = existingMap.has(key);
+        
+        // Skip duplicates since backend doesn't have UPDATE endpoint
+        if (isDuplicate) {
+          updated++; // Count as "skipped duplicate"
+          return; // Don't create duplicate
+        }
+        
+        // Try to create new tariff with retries
+        for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+          try {
+            await this.createTariff(row);
+            successful++;
+            return; // Success, exit retry loop
+          } catch (error) {
+            // If last attempt, record error
+            if (attempt === MAX_RETRIES - 1) {
+              failed++;
+              errors.push({
+                row: rowNum,
+                error: error instanceof Error ? error.message : String(error),
+                data: JSON.stringify(row),
+              });
+            } else {
+              // Wait before retry (exponential backoff)
+              await new Promise(resolve => setTimeout(resolve, 100 * Math.pow(2, attempt)));
+            }
+          }
+        }
+      });
+      
+      // Wait for batch to complete
+      await Promise.all(batchPromises);
+      
+      // Report progress
+      if (onProgress) {
+        onProgress(Math.min(i + CONCURRENCY, rows.length), rows.length);
+      }
+    }
+    
+    return { successful, updated, failed, errors };
   }
 }
 

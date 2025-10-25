@@ -13,6 +13,7 @@ import { cn } from '../lib/utils'
 import adminTariffService, { TariffCreateRequest, TariffResponse } from '../lib/adminTariffService'
 import adminAgreementService, { AgreementCreateRequest, AgreementResponse } from '../lib/adminAgreementService'
 import adminCountryService, { Country } from '../lib/adminCountryService'
+import { CsvBulkUpload } from '../components/CsvBulkUpload'
 
 function Admin() {
   // State for page navigation
@@ -284,6 +285,9 @@ function Admin() {
       {/* Tab Content */}
       {managementTab === 'tariffs' && (
         <div className="space-y-6">
+          {/* CSV Bulk Upload */}
+          <CsvBulkUpload onUploadComplete={loadTariffs} />
+
           {/* Create Tariff Form */}
           <Card>
             <CardHeader>
