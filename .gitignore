@@ -19,6 +19,10 @@ ENV/
 *.key
 *.crt
 
+# Firebase credentials
+**/firebase-credentials.json
+firebase-adminsdk-*.json
+
 # Tests / coverage / type-checkers / linters
 .pytest_cache/
 .coverage

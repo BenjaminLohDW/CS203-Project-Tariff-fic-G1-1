@@ -23,6 +23,9 @@ WORKDIR /app
 # Copy shaded/fat jar
 COPY --from=build /app/target/*.jar /app/app.jar
 
+# Copy Firebase credentials if available (file will be mounted via docker-compose volume)
+# App works without this - public endpoints function, admin endpoints need Firebase
+
 EXPOSE 5004
 ENV SPRING_PROFILES_ACTIVE=docker \
     JAVA_OPTS=""

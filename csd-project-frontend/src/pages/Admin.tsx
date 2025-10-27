@@ -362,8 +362,11 @@ function Admin() {
                       id="tariffRate"
                       type="number"
                       step="0.0001"
-                      value={tariffForm.tariffRate || ''}
-                      onChange={(e) => setTariffForm({ ...tariffForm, tariffRate: parseFloat(e.target.value) || null })}
+                      value={tariffForm.tariffRate ?? ''}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setTariffForm({ ...tariffForm, tariffRate: val === '' ? null : parseFloat(val) });
+                      }}
                       placeholder="e.g., 0.05 for 5%"
                       required
                     />
@@ -379,8 +382,11 @@ function Admin() {
                         id="specificAmt"
                         type="number"
                         step="0.01"
-                        value={tariffForm.specificAmt || ''}
-                        onChange={(e) => setTariffForm({ ...tariffForm, specificAmt: parseFloat(e.target.value) || null })}
+                        value={tariffForm.specificAmt ?? ''}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setTariffForm({ ...tariffForm, specificAmt: val === '' ? null : parseFloat(val) });
+                        }}
                         placeholder="e.g., 5.00"
                         required
                       />

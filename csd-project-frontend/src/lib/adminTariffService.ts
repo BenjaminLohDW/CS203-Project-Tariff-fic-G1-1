@@ -2,11 +2,10 @@
  * Admin Tariff Service
  * Handles admin operations for tariff management
  * 
- * Authentication: Currently using Basic Auth (tariff_admin:tariff_admin)
- * TODO: Switch to Firebase JWT after backend implements JWT verification
+ * Authentication: Using Firebase JWT tokens
  */
 
-// import { getIdToken } from './auth' // Uncomment when backend supports JWT
+import { getIdToken } from './auth'
 
 export interface TariffCreateRequest {
   hsCode: string;
@@ -66,25 +65,9 @@ class AdminTariffService {
   }
 
   /**
-   * Get authentication header
-   * 
-   * TODO: Currently using Basic Auth because backend doesn't verify JWT yet.
-   * Once backend JWT verification is implemented, switch to Firebase JWT tokens.
+   * Get authentication header using Firebase JWT token
    */
   private async getAuthHeader(): Promise<HeadersInit> {
-    // TEMPORARY: Use Basic Auth until backend implements JWT verification
-    // The backend currently only accepts: tariff_admin:tariff_admin
-    const username = 'tariff_admin';
-    const password = 'tariff_admin';
-    const credentials = btoa(`${username}:${password}`);
-    
-    return {
-      'Authorization': `Basic ${credentials}`,
-      'Content-Type': 'application/json',
-    };
-    
-    /* 
-    // FUTURE: Enable this code after backend implements Firebase JWT verification
     try {
       const token = await getIdToken()
       if (token) {
@@ -94,16 +77,11 @@ class AdminTariffService {
         }
       }
     } catch (error) {
-      console.warn('Failed to get Firebase JWT token:', error)
+      console.error('Failed to get Firebase JWT token:', error)
+      throw new Error('Authentication failed: Unable to get JWT token')
     }
     
-    // Fallback to Basic Auth if no JWT available
-    const credentials = btoa('tariff_admin:tariff_admin')
-    return {
-      'Authorization': `Basic ${credentials}`,
-      'Content-Type': 'application/json',
-    }
-    */
+    throw new Error('Authentication failed: No token available')
   }
 
   /**
