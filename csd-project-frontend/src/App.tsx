@@ -6,6 +6,7 @@ import { saveCalculation, getUserHistory, getHistoryTariffLines } from './lib/hi
 import ProductAutocomplete from './lib/ProductAutocomplete'
 import tariffService from './lib/tariffService'
 import agreementService from './lib/agreementService'
+import forecastService from './lib/forecastService'
 import { Country, ProductOption, TariffData, CalculationData, Agreement, ComparisonResult } from './types'
 import { CostBreakdownPieChart } from './components/CostBreakdownPieChart'
 import { Skeleton } from './components/ui/Skeleton'
@@ -13,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './components/ui/Card'
 import { Button } from './components/ui/Button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from './components/ui/Popover'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './components/ui/Select'
 import { Check, ChevronsUpDown } from 'lucide-react'
 import { cn } from './lib/utils'
 import './App.css'
@@ -54,15 +56,23 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
   const [comparisonResults, setComparisonResults] = useState<ComparisonResult[] | null>(null)
   const [isLoadingComparison, setIsLoadingComparison] = useState(false)
   
+  // State for tracking which comparison cards are expanded
+  const [expandedComparisonCards, setExpandedComparisonCards] = useState<Set<number>>(new Set())
+  
   // Initialize date to current date on component mount
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0] // Format: YYYY-MM-DD
     setDate(today)
   }, [])
   
-  // State for manual tariff mode
-  const [isManualTariff, setIsManualTariff] = useState<boolean>(false)
+  // State for tariff input mode: 'normal' or 'manual'
+  const [tariffMode, setTariffMode] = useState<'normal' | 'manual'>('normal')
   const [tariffRate, setTariffRate] = useState<string>('')
+  
+  // State for predicted calculation results
+  const [predictedResults, setPredictedResults] = useState<any>(null)
+  const [isLoadingPrediction, setIsLoadingPrediction] = useState(false)
+  const [predictionError, setPredictionError] = useState<string>('')
   
   // State for calculated values (only updated when calculate button is clicked)
   const [calculatedProduct, setCalculatedProduct] = useState<string>('')
@@ -102,10 +112,6 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
   // State for detailed tariff view modal
   const [selectedHistoryDetail, setSelectedHistoryDetail] = useState<CalculationData | null>(null)
   const [loadingTariffDetails, setLoadingTariffDetails] = useState(false)
-
-  // Test comparison state
-  const [testComparisonResults, setTestComparisonResults] = useState<ComparisonResult[] | null>(null)
-  const [isTestingComparison, setIsTestingComparison] = useState(false)
 
   // State for showing detailed calculation card
   const [showDetailedCard, setShowDetailedCard] = useState(false)
@@ -202,15 +208,19 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
     }
   }
 
-  const handleManualTariffChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setIsManualTariff(e.target.checked)
+  const handleTariffModeChange = (value: 'normal' | 'manual') => {
+    setTariffMode(value)
+    // Clear manual tariff rate when switching to normal
+    if (value === 'normal') {
+      setTariffRate('')
+    }
+    // Clear validation errors
+    setCountryValidationError('')
+    setDateValidationError('')
     // Mark fields as modified if there are calculated values
     if (calculatedProduct) {
       setFieldsModified(true)
     }
-    // Clear validation errors when switching modes
-    setCountryValidationError('')
-    setDateValidationError('')
   }
 
   const handleTariffRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -222,6 +232,110 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
       if (calculatedProduct) {
         setFieldsModified(true)
       }
+    }
+  }
+
+  // Get predicted tariff and run calculation with it
+  const handlePredictCalculation = async () => {
+    setIsLoadingPrediction(true)
+    setPredictionError('')
+    setPredictedResults(null)
+
+    try {
+      // Validate inputs - use the current calculated values
+      if (!calculatedProduct) {
+        setPredictionError('Please run a calculation first before predicting')
+        return
+      }
+
+      if (!calculatedImportingCountry || !calculatedExportingCountry) {
+        setPredictionError('Missing country information from calculation')
+        return
+      }
+
+      // Get country codes from calculated values
+      const importerCode = getCountryCode(calculatedImportingCountry)
+      const exporterCode = getCountryCode(calculatedExportingCountry)
+
+      if (!importerCode || !exporterCode) {
+        setPredictionError('Invalid country selection')
+        return
+      }
+
+      // Call forecast service with product name
+      const predictedTariffRate = await forecastService.getPredictedTariff(
+        calculatedProduct,
+        importerCode,
+        exporterCode,
+        1 // horizon: 1 month ahead
+      )
+
+      console.log('Predicted tariff rate:', predictedTariffRate)
+
+      // Now run a full calculation using the predicted tariff rate
+      // Use the getEffectiveTariffByNames method
+      const tariffRequest = {
+        product_name: calculatedProduct,
+        import_country: calculatedImportingCountry,
+        export_country: calculatedExportingCountry,
+        date: calculatedDate
+      }
+
+      const fetchedTariffData = await tariffService.getEffectiveTariffByNames(tariffRequest)
+
+      if (!fetchedTariffData || !fetchedTariffData.tariffs || fetchedTariffData.tariffs.length === 0) {
+        setPredictionError('Could not fetch tariff data for prediction')
+        return
+      }
+
+      // Calculate with predicted ad valorem rate
+      const numericQuantity = parseFloat(calculatedQuantity)
+      const numericCost = parseFloat(calculatedCost)
+
+      const totalCost = numericQuantity * numericCost
+      const tariffCost = (totalCost * predictedTariffRate) / 100
+      const totalWithTariff = totalCost + tariffCost
+
+      // Fetch agreements data
+      const agreementsData = await agreementService.getActiveAgreements(
+        calculatedImportingCountry,
+        calculatedExportingCountry,
+        calculatedDate
+      )
+
+      // Store predicted results
+      const predictedCalc = {
+        product: calculatedProduct,
+        hsCode: fetchedTariffData.tariffs[0].hscode,
+        importingCountry: calculatedImportingCountry,
+        exportingCountry: calculatedExportingCountry,
+        quantity: calculatedQuantity,
+        cost: calculatedCost,
+        date: calculatedDate,
+        tariffRate: predictedTariffRate.toString(),
+        totalCost,
+        tariffCost,
+        totalWithTariff,
+        tariffData: fetchedTariffData.tariffs,
+        agreements: agreementsData,
+        isPredicted: true
+      }
+
+      setPredictedResults(predictedCalc)
+
+      // Scroll to predicted results
+      setTimeout(() => {
+        const predictedSection = document.getElementById('predicted-results')
+        if (predictedSection) {
+          predictedSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+      }, 100)
+
+    } catch (error) {
+      console.error('Error during prediction:', error)
+      setPredictionError(`Failed to generate prediction: ${(error as any).message}`)
+    } finally {
+      setIsLoadingPrediction(false)
     }
   }
 
@@ -494,9 +608,9 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
         let effectiveTariffRate = 0
 
         if (!hasOverride && countryTariffs.length > 0) {
-          // Calculate tariff amounts for each tariff type
+          // Calculate tariff amounts for each tariff type using tariffService
           for (const tariff of countryTariffs) {
-            const result = tariffService.calculateTariffAmount(tariff, goodsValue, quantity)
+            const result = tariffService.calculateTariffAmount(tariff, baseCost, quantity)
             const amount = typeof result === 'number' ? result : result.tariffAmount
             totalTariffAmount += amount
           }
@@ -510,21 +624,22 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
         if (countryAgreements.length > 0) {
           // Apply agreements in sequence
           countryAgreements.forEach(agreement => {
-            const beforeAdjustment = adjustedTariffAmount
-
-            switch (agreement.kind) {
-              case 'override':
-                adjustedTariffAmount = agreement.value
-                break
-              case 'surcharge':
-                adjustedTariffAmount += agreement.value
-                break
-              case 'multiplier':
-                adjustedTariffAmount *= agreement.value
-                break
+            if (agreement.kind === 'override') {
+              // Override: replace tariffs with agreement percentage of base cost
+              const overrideAmount = baseCost * agreement.value
+              totalAgreementAdjustment = overrideAmount - totalTariffAmount
+              adjustedTariffAmount = overrideAmount
+            } else if (agreement.kind === 'surcharge') {
+              // Surcharge: add percentage of base cost to tariffs
+              const surchargeAmount = baseCost * agreement.value
+              totalAgreementAdjustment += surchargeAmount
+              adjustedTariffAmount += surchargeAmount
+            } else if (agreement.kind === 'multiplier') {
+              // Multiplier: multiply existing tariffs
+              const beforeMultiplier = adjustedTariffAmount
+              adjustedTariffAmount *= agreement.value
+              totalAgreementAdjustment += (adjustedTariffAmount - beforeMultiplier)
             }
-
-            totalAgreementAdjustment += (adjustedTariffAmount - beforeAdjustment)
           })
         }
 
@@ -532,13 +647,38 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
         const finalTotal = baseCost + adjustedTariffAmount
 
         // Convert tariffs to TariffData format for display
-        const formattedTariffs: TariffData[] = countryTariffs.map(tariff => ({
-          id: tariff.id?.toString() || '',
-          'Tariff Type': tariff.type || 'Unknown',
-          'Tariff amount': tariff.rate || 0,
-          'Tariff Description': tariff.description || '',
-          originalData: tariff
-        }))
+        const formattedTariffs: TariffData[] = countryTariffs.map(tariff => {
+          // Map the correct field names from API response
+          const tariffType = tariff.tariffType || tariff.type || 'ad_valorem'
+          const tariffRate = tariff.tariffRate || tariff.rate || 0
+          const specificAmt = tariff.specificAmt || 0
+          
+          // Determine the tariff amount to display based on type
+          let displayAmount = 0
+          const tariffTypeLower = tariffType.toLowerCase()
+          
+          if (tariffTypeLower === 'specific') {
+            displayAmount = specificAmt
+          } else if (tariffTypeLower === 'ad_valorem' || tariffTypeLower === 'percentage') {
+            displayAmount = tariffRate
+          } else if (tariffTypeLower === 'compound') {
+            displayAmount = tariffRate // Show ad valorem component for compound
+          } else {
+            displayAmount = tariffRate
+          }
+          
+          // Get country names for description
+          const importerName = countries.find(c => c.code === tariff.importerId)?.name || tariff.importerId
+          const exporterName = countries.find(c => c.code === tariff.exporterId)?.name || tariff.exporterId
+          
+          return {
+            id: tariff.id?.toString() || '',
+            'Tariff Type': tariffType,
+            'Tariff amount': displayAmount,
+            'Tariff Description': tariff.description || `${exporterName} → ${importerName} (HS: ${tariff.hsCode || tariff.hscode || 'N/A'})`,
+            originalData: tariff
+          }
+        })
 
         // Add result
         results.push({
@@ -567,6 +707,23 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
 
   // Handle calculate button click
   const handleCalculate = async () => {
+    // Clear ALL previous results (both single and comparison)
+    setCalculatedProduct('')
+    setCalculatedImportingCountry('')
+    setCalculatedExportingCountry('')
+    setCalculatedQuantity('')
+    setCalculatedCost('')
+    setCalculatedDate('')
+    setCalculatedTariffRate('')
+    setTariffData([])
+    setAgreementsData([])
+    setComparisonResults(null)
+    setShowDetailedCard(false)
+    setExpandedComparisonCards(new Set())
+    
+    // Reset fields modified flag since we're recalculating
+    setFieldsModified(false)
+    
     // Check if we're in comparison mode
     if (isComparisonMode) {
       // Validate that we have at least 2 exporters
@@ -583,8 +740,13 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
         return
       }
       
-      // Clear previous comparison results
-      setComparisonResults(null)
+      // Set basic calculated values for display
+      setCalculatedProduct(selectedProduct?.label || '')
+      setCalculatedImportingCountry(selectedImportingCountry)
+      setCalculatedQuantity(quantity)
+      setCalculatedCost(cost)
+      setCalculatedDate(date)
+      
       setIsLoadingComparison(true)
       
       try {
@@ -622,23 +784,6 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
     }
     
     // Regular single-exporter calculation mode
-    // Clear previous results immediately when calculate is clicked
-    setCalculatedProduct('')
-    setCalculatedImportingCountry('')
-    setCalculatedExportingCountry('')
-    setCalculatedQuantity('')
-    setCalculatedCost('')
-    setCalculatedDate('')
-    setCalculatedTariffRate('')
-    setTariffData([])
-    setAgreementsData([])  // Clear previous agreements
-    
-    // Reset fields modified flag since we're recalculating
-    setFieldsModified(false)
-    
-    // Hide detailed card on new calculation (summary row will appear)
-    setShowDetailedCard(false)
-    
     // Set basic calculated values
     setCalculatedProduct(selectedProduct?.label || '')
     setCalculatedImportingCountry(selectedImportingCountry)
@@ -698,43 +843,27 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
       // Clear comparison data
       setExportingCountries([''])
       setComparisonResults(null)
+      setExpandedComparisonCards(new Set())
     }
   }
-
-  // Test comparison function
-  const handleTestComparison = async () => {
-    setIsTestingComparison(true)
-    setTestComparisonResults(null)
-    
-    try {
-      const testProduct: ProductOption = {
-        value: 'smartphone',
-        label: 'Smartphone',
-        apiName: 'smartphone',
-        isHsCode: false
+  
+  // Toggle individual comparison card expansion
+  const toggleComparisonCard = (index: number) => {
+    setExpandedComparisonCards(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(index)) {
+        newSet.delete(index)
+      } else {
+        newSet.add(index)
       }
-      
-      const results = await fetchComparisonData(
-        'United States',
-        ['China', 'South Korea'],
-        testProduct,
-        100,
-        500,
-        '2025-10-23'
-      )
-      
-      setTestComparisonResults(results)
-    } catch (error) {
-      alert(`Test failed: ${(error as Error).message}`)
-    } finally {
-      setIsTestingComparison(false)
-    }
+      return newSet
+    })
   }
 
   // Handle save calculation to history
   const handleSaveCalculation = async () => {
     // Check if there are calculated values to save
-    if (isManualTariff) {
+    if (tariffMode === 'manual') {
       if (!calculatedQuantity && !calculatedCost && !calculatedTariffRate) {
         alert('No calculation results to save. Please calculate first.')
         return
@@ -827,7 +956,7 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
         id: Date.now(),
         date: calculatedDate || new Date().toISOString().split('T')[0],
         timestamp: new Date().toLocaleString(),
-        mode: isManualTariff ? 'Manual Tariff' : 'Standard',
+        mode: tariffMode === 'manual' ? 'Manual Tariff' : 'Standard',
         productType: calculationData.product_type,
         importingCountry: calculationData.import_country,
         exportingCountry: calculationData.export_country,
@@ -1019,9 +1148,9 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
       // Navigate to calculation page
       setCurrentPage('calculation')
       
-      // Set manual tariff mode based on saved data
+      // Set tariff mode based on saved data
       const isManualMode = calculationData.mode === 'Manual Tariff'
-      setIsManualTariff(isManualMode)
+      setTariffMode(isManualMode ? 'manual' : 'normal')
       
       // Populate input fields
       setQuantity(calculationData.quantity !== 'Not specified' ? String(calculationData.quantity) : '')
@@ -1087,135 +1216,6 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
     <div className="text-center py-8 px-4 max-w-[1800px] mx-auto">
       <h1 className="text-gray-800 mb-8 text-4xl font-bold">Trade Calculation</h1>
       
-      {/* Test Comparison Results */}
-      {testComparisonResults && (
-        <Card className="mb-6 bg-green-50 border-green-300">
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between text-lg text-green-800">
-              <span>🧪 Test Comparison Results</span>
-              <button onClick={() => setTestComparisonResults(null)} className="text-sm text-red-600 hover:text-red-800 underline">
-                Clear
-              </button>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-green-100">
-                    <th className="border border-green-300 px-4 py-2">Rank</th>
-                    <th className="border border-green-300 px-4 py-2">Exporter</th>
-                    <th className="border border-green-300 px-4 py-2">Base Cost</th>
-                    <th className="border border-green-300 px-4 py-2">Tariff</th>
-                    <th className="border border-green-300 px-4 py-2">Adjusted</th>
-                    <th className="border border-green-300 px-4 py-2">Final Total</th>
-                    <th className="border border-green-300 px-4 py-2">Rate</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {testComparisonResults.map((result, index) => (
-                    <tr key={result.exporterCountry} className={`${index === 0 ? 'bg-yellow-50 font-semibold' : 'bg-white'} hover:bg-green-50`}>
-                      <td className="border border-green-300 px-4 py-2 text-center">{index === 0 ? '🏆' : index + 1}</td>
-                      <td className="border border-green-300 px-4 py-2">{result.exporterCountry}</td>
-                      <td className="border border-green-300 px-4 py-2 text-right">${result.baseCost.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                      <td className="border border-green-300 px-4 py-2 text-right">${result.totalTariffAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                      <td className="border border-green-300 px-4 py-2 text-right">${result.adjustedTariffAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                      <td className={`border border-green-300 px-4 py-2 text-right font-bold ${index === 0 ? 'text-green-700' : ''}`}>${result.finalTotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-                      <td className="border border-green-300 px-4 py-2 text-right">{result.effectiveTariffRate.toFixed(2)}%</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-      
-      {/* Production Comparison Results */}
-      {comparisonResults && comparisonResults.length > 0 && (
-        <Card className="mb-6 bg-blue-50 border-blue-300">
-          <CardHeader>
-            <CardTitle className="flex items-center justify-between text-lg text-blue-800">
-              <span>📊 Multi-Exporter Comparison Results</span>
-              <button onClick={() => setComparisonResults(null)} className="text-sm text-red-600 hover:text-red-800 underline">
-                Clear
-              </button>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-blue-100">
-                    <th className="border border-blue-300 px-4 py-2">Rank</th>
-                    <th className="border border-blue-300 px-4 py-2">Exporter</th>
-                    <th className="border border-blue-300 px-4 py-2">Base Cost</th>
-                    <th className="border border-blue-300 px-4 py-2">Tariffs</th>
-                    <th className="border border-blue-300 px-4 py-2">Agreements</th>
-                    <th className="border border-blue-300 px-4 py-2">Final Total</th>
-                    <th className="border border-blue-300 px-4 py-2">Effective Rate</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {comparisonResults.map((result, index) => (
-                    <tr key={result.exporterCountry} className={`${index === 0 ? 'bg-yellow-50 font-semibold' : 'bg-white'} hover:bg-blue-50`}>
-                      <td className="border border-blue-300 px-4 py-2 text-center">
-                        {index === 0 ? '🏆 1' : index + 1}
-                      </td>
-                      <td className="border border-blue-300 px-4 py-2 font-medium">{result.exporterCountry}</td>
-                      <td className="border border-blue-300 px-4 py-2 text-right">
-                        ${result.baseCost.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                      </td>
-                      <td className="border border-blue-300 px-4 py-2 text-right">
-                        ${result.totalTariffAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                      </td>
-                      <td className="border border-blue-300 px-4 py-2 text-right">
-                        ${result.adjustedTariffAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                      </td>
-                      <td className={`border border-blue-300 px-4 py-2 text-right font-bold ${index === 0 ? 'text-green-700 text-lg' : ''}`}>
-                        ${result.finalTotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                      </td>
-                      <td className="border border-blue-300 px-4 py-2 text-right">
-                        {result.effectiveTariffRate.toFixed(2)}%
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              
-              {/* Summary statistics */}
-              <div className="mt-4 p-4 bg-blue-100 rounded-lg">
-                <h3 className="font-semibold text-blue-900 mb-2">💡 Comparison Summary</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
-                  <div>
-                    <span className="font-medium">Best Option:</span> {comparisonResults[0].exporterCountry}
-                  </div>
-                  <div>
-                    <span className="font-medium">Savings vs Worst:</span> $
-                    {(comparisonResults[comparisonResults.length - 1].finalTotal - comparisonResults[0].finalTotal).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                  </div>
-                  <div>
-                    <span className="font-medium">Options Compared:</span> {comparisonResults.length}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-      
-      {/* Loading indicator for comparison */}
-      {isLoadingComparison && (
-        <Card className="mb-6 bg-gray-50 border-gray-300">
-          <CardContent className="py-8">
-            <div className="flex items-center justify-center gap-3">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-              <span className="text-lg text-gray-700">Comparing exporters...</span>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-      
       {/* Three containers side by side */}
       <div className="flex flex-col lg:flex-row gap-6 mb-10 items-start">
         {/* First Container - Quantity and Cost */}
@@ -1274,9 +1274,9 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
                 // Disable if countries are still loading
                 isLoadingCountries ||
                 // For manual tariff mode, require tariff rate
-                (isManualTariff && !tariffRate) ||
-                // For standard mode, require all fields and no validation errors
-                (!isManualTariff && (
+                (tariffMode === 'manual' && !tariffRate) ||
+                // For normal mode, require all fields and no validation errors
+                (tariffMode === 'normal' && (
                   !selectedProduct || 
                   !selectedImportingCountry || 
                   // In comparison mode, require at least one exporter in the array
@@ -1302,22 +1302,25 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
               <span className="text-purple-600 mr-2">⚙️</span>
               Tariff Configuration
             </CardTitle>
-            <label className="flex items-center text-sm">
-            <input
-              type="checkbox"
-              checked={isManualTariff}
-              onChange={handleManualTariffChange}
-              className="mr-2"
-            />
-            Insert manually
-          </label>
+            {/* Tariff Mode Dropdown */}
+            <div className="w-48">
+              <Select value={tariffMode} onValueChange={handleTariffModeChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select mode" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="normal">🔍 Normal (Lookup)</SelectItem>
+                  <SelectItem value="manual">✏️ Manual Entry</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
-          {isManualTariff ? (
+          {tariffMode === 'manual' ? (
           // Manual tariff mode - only show tariff rate field
           <div className="flex flex-col items-start text-left w-full">
-            <label htmlFor="tariff-rate">Tariff rate (%):</label>
+            <label htmlFor="tariff-rate" className="font-medium mb-2">Tariff rate (%):</label>
             <input
               type="number"
               id="tariff-rate"
@@ -1329,6 +1332,9 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
               step="0.01"
               className="w-full p-3 text-base border-2 border-gray-300 rounded-lg bg-white text-gray-900 transition-colors hover:border-blue-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 placeholder-gray-500"
             />
+            <p className="text-sm text-gray-500 mt-1">
+              Enter the tariff rate percentage directly
+            </p>
           </div>
         ) : (
           // Normal mode - show all other fields
@@ -1564,8 +1570,382 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
       </Card>
       </div>
 
-      {/* Third Container - Cost Breakdown & Results */}
-      {calculatedQuantity && calculatedCost && (
+      {/* Loading indicator for comparison */}
+      {isLoadingComparison && (
+        <Card className="mb-6 bg-gray-50 border-gray-300">
+          <CardContent className="py-8">
+            <div className="flex items-center justify-center gap-3">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              <span className="text-lg text-gray-700">Comparing exporters...</span>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Unified Results Container - For Both Single and Multiple Exporters */}
+      {/* Show for comparison mode when we have results */}
+      {comparisonResults && comparisonResults.length > 0 && (
+        <div className="mt-6" ref={pieChartRef}>
+          <h2 className="text-2xl font-bold text-center mb-4 text-blue-900">
+            🏆 Exporter Leaderboard - Ranked by Cost
+          </h2>
+          
+          {/* Summary statistics */}
+          <div className="mb-4 p-4 bg-blue-100 rounded-lg">
+            <h3 className="font-semibold text-blue-900 mb-2">💡 Comparison Summary</h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+              <div>
+                <span className="font-medium">Best Option:</span> {comparisonResults[0].exporterCountry}
+              </div>
+              <div>
+                <span className="font-medium">Savings vs Worst:</span> $
+                {(comparisonResults[comparisonResults.length - 1].finalTotal - comparisonResults[0].finalTotal).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+              </div>
+              <div>
+                <span className="font-medium">Options Compared:</span> {comparisonResults.length}
+              </div>
+            </div>
+          </div>
+
+          {/* Leaderboard Cards */}
+          <div className="space-y-4">
+            {comparisonResults.map((result, index) => {
+              const isExpanded = expandedComparisonCards.has(index)
+              const rank = index + 1
+              const isWinner = rank === 1
+              
+              return (
+                <div key={index} className="w-full">
+                  {/* Summary Row */}
+                  <div 
+                    className={`bg-gradient-to-r ${isWinner ? 'from-yellow-50 to-amber-50 border-yellow-400 shadow-lg' : 'from-blue-50 to-purple-50 border-blue-300'} p-4 rounded-lg border-2 shadow-md cursor-pointer hover:shadow-lg hover:border-blue-400 transition-all duration-300`}
+                    onClick={() => toggleComparisonCard(index)}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-6 flex-1">
+                        {/* Rank */}
+                        <div className="text-center min-w-[60px]">
+                          <div className="text-xs text-gray-600 font-semibold">Rank</div>
+                          <div className={`text-2xl font-bold ${isWinner ? 'text-yellow-600' : 'text-gray-800'}`}>
+                            {isWinner ? '🏆' : rank}
+                          </div>
+                        </div>
+                        
+                        {/* From → To */}
+                        <div className="text-center">
+                          <div className="text-xs text-gray-600 font-semibold">From → To</div>
+                          <div className="text-sm font-bold text-gray-800">
+                            {result.exporterCountry} → {calculatedImportingCountry}
+                          </div>
+                        </div>
+                        
+                        {/* Product */}
+                        <div className="text-center">
+                          <div className="text-xs text-gray-600 font-semibold">Product</div>
+                          <div className="text-sm font-bold text-gray-800">{calculatedProduct}</div>
+                        </div>
+                        
+                        {/* Base Cost */}
+                        <div className="text-center">
+                          <div className="text-xs text-gray-600 font-semibold">Base Cost</div>
+                          <div className="text-sm font-bold text-gray-800">
+                            ${result.baseCost.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                          </div>
+                        </div>
+                        
+                        {/* Tariffs Count */}
+                        <div className="text-center">
+                          <div className="text-xs text-gray-600 font-semibold">Tariffs</div>
+                          <div className="text-sm font-bold text-blue-600">{result.tariffs.length}</div>
+                        </div>
+                        
+                        {/* Agreements Count */}
+                        <div className="text-center">
+                          <div className="text-xs text-gray-600 font-semibold">Agreements</div>
+                          <div className="text-sm font-bold text-purple-600">{result.agreements.length}</div>
+                        </div>
+                        
+                        {/* Final Total */}
+                        <div className="text-center">
+                          <div className="text-xs text-gray-600 font-semibold">Final Total</div>
+                          <div className={`text-lg font-bold ${isWinner ? 'text-green-700' : 'text-green-600'}`}>
+                            ${result.finalTotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Expand/Collapse Arrow */}
+                      <div className="text-2xl text-blue-600">
+                        {isExpanded ? '▲' : '▼'}
+                      </div>
+                    </div>
+                    <div className="text-center mt-2 text-xs text-gray-500 italic">
+                      Click to {isExpanded ? 'hide' : 'view'} detailed breakdown
+                    </div>
+                  </div>
+
+                  {/* Detailed Card (hidden by default) */}
+                  {isExpanded && (
+                    <div className="mt-2 bg-gradient-to-br from-purple-50 to-blue-50 p-8 rounded-lg border-2 border-purple-200 shadow-xl">
+                      <h3 className="text-2xl font-bold text-purple-900 mb-6 flex items-center justify-center">
+                        <span className="text-purple-600 mr-3 text-3xl">📊</span>
+                        Cost Breakdown & Calculation Results - {result.exporterCountry}
+                      </h3>
+
+                      {/* Two-column layout: Pie chart on left, details on right */}
+                      <div className="flex flex-col lg:flex-row gap-6 mb-8">
+                        {/* Left Column: Pie Chart */}
+                        <div className="lg:w-1/2 flex items-start justify-center">
+                          {(result.tariffs.length > 0 || result.agreements.length > 0) && (
+                            <CostBreakdownPieChart
+                              baseCost={result.baseCost}
+                              quantity={Number(calculatedQuantity)}
+                              tariffData={result.tariffs}
+                              agreementsData={result.agreements}
+                              importerCountry={calculatedImportingCountry}
+                              exporterCountry={result.exporterCountry}
+                            />
+                          )}
+                        </div>
+
+                        {/* Right Column: Calculation Details */}
+                        <div className="lg:w-1/2 text-left text-sm">
+                          {/* Applied Agreements Summary Table */}
+                          {result.agreements.length > 0 && (
+                            <div className="mb-4">
+                              <div className="text-sm font-bold text-gray-800 mb-2 flex items-center">
+                                <span className="text-purple-500 mr-1">📋</span>
+                                Applied Agreements
+                              </div>
+                              <div className="bg-purple-50 rounded-lg border border-purple-200 overflow-hidden">
+                                <table className="w-full text-xs">
+                                  <thead className="bg-purple-100">
+                                    <tr>
+                                      <th className="text-left p-2 font-semibold text-purple-800">Description</th>
+                                      <th className="text-left p-2 font-semibold text-purple-800">Type</th>
+                                      <th className="text-left p-2 font-semibold text-purple-800">Rate</th>
+                                      <th className="text-left p-2 font-semibold text-purple-800">Start Date</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {result.agreements.map((agreement, agIdx) => (
+                                      <tr key={agIdx} className={agIdx % 2 === 0 ? 'bg-white' : 'bg-purple-25'}>
+                                        <td className="p-2 text-gray-600">
+                                          {agreement.note || 'No note provided'}
+                                        </td>
+                                        <td className="p-2 capitalize">
+                                          <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+                                            agreement.kind === 'override' ? 'bg-blue-100 text-blue-700' :
+                                            agreement.kind === 'surcharge' ? 'bg-red-100 text-red-700' :
+                                            'bg-green-100 text-green-700'
+                                          }`}>
+                                            {agreement.kind}
+                                          </span>
+                                        </td>
+                                        <td className="p-2 font-semibold text-gray-700">
+                                          {agreement.kind === 'multiplier' 
+                                            ? `×${agreement.value}` 
+                                            : `${(agreement.value * 100).toFixed(2)}%`
+                                          }
+                                        </td>
+                                        <td className="p-2 text-gray-600">
+                                          {new Date(agreement.start_date).toLocaleDateString('en-US', { 
+                                            year: 'numeric', 
+                                            month: 'short', 
+                                            day: 'numeric' 
+                                          })}
+                                        </td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Applied Tariffs Summary Table */}
+                          {result.tariffs.length > 0 && (
+                            <div className="mb-4">
+                              <div className="text-sm font-bold text-gray-800 mb-2 flex items-center">
+                                <span className="text-blue-500 mr-1">📊</span>
+                                Applied Tariffs
+                              </div>
+                              <div className="bg-blue-50 rounded-lg border border-blue-200 overflow-hidden">
+                                <table className="w-full text-xs">
+                                  <thead className="bg-blue-100">
+                                    <tr>
+                                      <th className="text-left p-2 font-semibold text-blue-800">Description</th>
+                                      <th className="text-left p-2 font-semibold text-blue-800">Type</th>
+                                      <th className="text-left p-2 font-semibold text-blue-800">Rate</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {result.tariffs.map((tariff, tIdx) => (
+                                      <tr key={tIdx} className={tIdx % 2 === 0 ? 'bg-white' : 'bg-blue-25'}>
+                                        <td className="p-2 text-gray-700">
+                                          {tariff["Tariff Description"]}
+                                        </td>
+                                        <td className="p-2 capitalize">
+                                          <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+                                            tariff["Tariff Type"].toLowerCase() === 'ad_valorem' ? 'bg-green-100 text-green-700' :
+                                            tariff["Tariff Type"].toLowerCase() === 'specific' ? 'bg-orange-100 text-orange-700' :
+                                            'bg-purple-100 text-purple-700'
+                                          }`}>
+                                            {tariff["Tariff Type"]}
+                                          </span>
+                                        </td>
+                                        <td className="p-2 font-semibold text-gray-700">
+                                          {tariff["Tariff Type"].toLowerCase() === 'specific' 
+                                            ? `$${Number(tariff["Tariff amount"]).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} per unit`
+                                            : `${tariff["Tariff amount"]}%`
+                                          }
+                                        </td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Base Cost */}
+                          <div className="mb-4">
+                            <div className="text-sm font-bold text-gray-800 mb-2 flex items-center">
+                              <span className="text-green-500 mr-1">🧮</span>
+                              Base Cost
+                            </div>
+                            <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                              <div className="flex items-center justify-between text-xs">
+                                <span>
+                                  <span className="text-blue-600 font-semibold">{Number(calculatedQuantity).toLocaleString()}</span>
+                                  <span className="text-gray-500 mx-1">×</span>
+                                  <span className="text-green-600 font-semibold">${Number(calculatedCost).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                                </span>
+                                <span className="text-red-600 font-bold">${result.baseCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Tariff Calculations */}
+                          {result.tariffs.length > 0 && (
+                            <div className="mb-4">
+                              <div className="text-sm font-bold text-gray-800 mb-2 flex items-center">
+                                <span className="text-purple-500 mr-1">💰</span>
+                                {result.hasOverride ? 'Tariffs (Overridden by Agreement)' : 'Tariffs'}
+                              </div>
+                              <div className="space-y-2">
+                                {result.tariffs.map((tariff, tIdx) => {
+                                  // Use tariffService for proper calculation
+                                  const calcResult = tariffService.calculateTariffAmount(
+                                    tariff.originalData,
+                                    result.baseCost,
+                                    Number(calculatedQuantity)
+                                  )
+                                  const tariffAmount = calcResult.tariffAmount
+                                  
+                                  return (
+                                    <div key={tIdx} className={`p-2 rounded border ${
+                                      result.hasOverride 
+                                        ? 'bg-gray-100 border-gray-300 opacity-50' 
+                                        : 'bg-purple-50 border-purple-200'
+                                    }`}>
+                                      <div className={`font-semibold text-xs mb-1 ${
+                                        result.hasOverride ? 'text-gray-500 line-through' : 'text-purple-700'
+                                      }`}>
+                                        {tariff["Tariff Description"]}
+                                      </div>
+                                      <div className="flex items-center justify-between text-xs">
+                                        <span className={result.hasOverride ? 'text-gray-500' : 'text-gray-600'}>
+                                          ({tariff["Tariff Type"]}, {tariff["Tariff Type"].toLowerCase() === 'specific' ? `$${Number(tariff["Tariff amount"]).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} per unit` : `${tariff["Tariff amount"]}%`})
+                                        </span>
+                                        <span className={`font-bold ${
+                                          result.hasOverride ? 'text-gray-500 line-through' : 'text-red-600'
+                                        }`}>
+                                          ${tariffAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  )
+                                })}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Agreement Adjustments */}
+                          {result.agreements.length > 0 && (
+                            <div className="mb-4">
+                              <div className="text-sm font-bold text-gray-800 mb-2 flex items-center">
+                                <span className="text-purple-500 mr-1">📝</span>
+                                Agreement Adjustments
+                              </div>
+                              <div className="space-y-2">
+                                {result.agreements.map((agreement, agIdx) => {
+                                  let adjustmentAmount = 0
+                                  let description = ''
+                                  
+                                  if (agreement.kind === 'override') {
+                                    adjustmentAmount = result.baseCost * agreement.value
+                                    description = `Override tariff at ${(agreement.value * 100).toFixed(2)}%`
+                                  } else if (agreement.kind === 'surcharge') {
+                                    adjustmentAmount = result.baseCost * agreement.value
+                                    description = `Additional surcharge of ${(agreement.value * 100).toFixed(2)}%`
+                                  } else if (agreement.kind === 'multiplier') {
+                                    adjustmentAmount = result.totalTariffAmount * (agreement.value - 1)
+                                    description = `Multiply tariffs by ${agreement.value}×`
+                                  }
+                                  
+                                  return (
+                                    <div key={agIdx} className="bg-indigo-50 p-2 rounded border border-indigo-200">
+                                      <div className="font-semibold text-indigo-700 text-xs mb-1">
+                                        {description}
+                                      </div>
+                                      <div className="flex items-center justify-between text-xs">
+                                        <span className="text-gray-600">({agreement.kind})</span>
+                                        <span className="text-indigo-600 font-bold">
+                                          ${adjustmentAmount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  )
+                                })}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Total Amount */}
+                          <div className="bg-gradient-to-r from-green-50 to-blue-50 p-3 rounded-lg border-2 border-green-300 mt-3">
+                            <div className="text-sm font-bold text-gray-800 mb-1 flex items-center">
+                              <span className="text-green-500 mr-1">🎯</span>
+                              Total Amount
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs text-gray-700">
+                                Base + {(() => {
+                                  if (result.hasOverride) return 'Agreement'
+                                  if (result.agreements.length > 0 && result.tariffs.length > 0) return 'Tariffs + Agreements'
+                                  if (result.tariffs.length > 0) return 'Tariffs'
+                                  if (result.agreements.length > 0) return 'Agreements'
+                                  return 'No Adjustments'
+                                })()} = 
+                              </span>
+                              <span className="text-green-600 font-bold text-lg">
+                                ${result.finalTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Show for single calculation mode when we have results */}
+      {!isComparisonMode && calculatedQuantity && calculatedCost && (
         <>
           {/* Summary Row (appears first, always visible) */}
           <div 
@@ -1603,12 +1983,36 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
                   <div className="text-lg font-bold text-green-700">
                     ${(() => {
                       const baseCost = Number(calculatedQuantity) * Number(calculatedCost)
-                      let totalTariff = 0
-                      tariffData.forEach(tariff => {
-                        const amount = parseFloat(String(tariff["Tariff amount"] || 0))
-                        totalTariff += amount
+                      
+                      // Check if there's an override agreement
+                      const overrideAgreement = agreementsData.find(a => a.kind === 'override')
+                      
+                      if (overrideAgreement) {
+                        const overrideAmount = baseCost * overrideAgreement.value
+                        return (baseCost + overrideAmount).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                      }
+                      
+                      // Calculate total tariffs
+                      const totalTariffs = tariffData.reduce((sum, tariff) => {
+                        const result = tariffService.calculateTariffAmount(
+                          tariff.originalData,
+                          baseCost,
+                          Number(calculatedQuantity)
+                        )
+                        return sum + result.tariffAmount
+                      }, 0)
+                      
+                      // Apply other agreement types
+                      let agreementAdjustments = 0
+                      agreementsData.forEach(agreement => {
+                        if (agreement.kind === 'surcharge') {
+                          agreementAdjustments += baseCost * agreement.value
+                        } else if (agreement.kind === 'multiplier') {
+                          agreementAdjustments += totalTariffs * (agreement.value - 1)
+                        }
                       })
-                      return (baseCost + totalTariff).toLocaleString('en-US', { minimumFractionDigits: 2 })
+                      
+                      return (baseCost + totalTariffs + agreementAdjustments).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
                     })()}
                   </div>
                 </div>
@@ -1993,17 +2397,191 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
                   // No calculated results to save
                   (!calculatedQuantity && !calculatedCost) ||
                   // For manual tariff mode, need tariff rate calculated
-                  (isManualTariff && !calculatedTariffRate) ||
+                  (tariffMode === 'manual' && !calculatedTariffRate) ||
                   // For standard mode, need basic calculation done
-                  (!isManualTariff && (!calculatedProduct || !calculatedImportingCountry || !calculatedExportingCountry))
+                  (tariffMode === 'normal' && (!calculatedProduct || !calculatedImportingCountry || !calculatedExportingCountry))
                 }
               >
                 Save Calculation
               </button>
+              
+              {/* Predict Future Tariff Button - only show after calculation */}
+              {calculatedProduct && calculatedImportingCountry && calculatedExportingCountry && (
+                <button 
+                  className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 text-white font-bold py-2 px-4 text-sm rounded-lg transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0 disabled:transform-none disabled:shadow-none"
+                  onClick={handlePredictCalculation}
+                  disabled={isLoadingPrediction || !calculatedProduct}
+                >
+                  {isLoadingPrediction ? '🔄 Predicting...' : '🔮 Predict Future Tariff'}
+                </button>
+              )}
             </div>
             </div>
             </div>
           )}
+        </div>
+      )}
+      
+      {/* Predicted Results Section - Show after prediction */}
+      {predictedResults && (
+        <div className="mb-8" id="predicted-results">
+          <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-300 shadow-lg">
+            <CardHeader>
+              <h3 className="text-2xl font-bold text-blue-900 mb-2 flex items-center justify-center">
+                <span className="text-blue-600 mr-3 text-3xl">🔮</span>
+                Predicted Future Tariff Results
+              </h3>
+              <p className="text-sm text-blue-700 text-center">
+                Based on ML forecast for {predictedResults.importingCountry} importing from {predictedResults.exportingCountry}
+              </p>
+            </CardHeader>
+            <CardContent>
+              {predictionError ? (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <p className="text-sm text-red-800 font-medium">❌ Prediction Error</p>
+                  <p className="text-sm text-red-600">{predictionError}</p>
+                </div>
+              ) : (
+                <div className="flex flex-col lg:flex-row gap-6">
+                  {/* Left Column: Pie Chart */}
+                  <div className="lg:w-1/2 flex items-start justify-center">
+                    <CostBreakdownPieChart
+                      baseCost={predictedResults.totalCost}
+                      quantity={Number(predictedResults.quantity)}
+                      tariffData={predictedResults.tariffData}
+                      agreementsData={predictedResults.agreements}
+                      importerCountry={predictedResults.importingCountry}
+                      exporterCountry={predictedResults.exportingCountry}
+                    />
+                  </div>
+
+                  {/* Right Column: Details */}
+                  <div className="lg:w-1/2 space-y-4">
+                    {/* Predicted Tariff Rate Card */}
+                    <div className="bg-blue-100 border-2 border-blue-400 rounded-lg p-4">
+                      <p className="text-sm font-semibold text-blue-800 mb-1">Predicted Tariff Rate (Ad Valorem)</p>
+                      <p className="text-3xl font-bold text-blue-900">{predictedResults.tariffRate}%</p>
+                      <p className="text-xs text-blue-600 mt-1">ML-forecasted rate for future trade</p>
+                    </div>
+
+                    {/* Agreements Table */}
+                    {predictedResults.agreements && predictedResults.agreements.length > 0 && (
+                      <div>
+                        <h4 className="font-semibold text-blue-900 mb-2 flex items-center">
+                          <span className="text-blue-600 mr-2">🤝</span>
+                          Active Agreements
+                        </h4>
+                        <div className="overflow-x-auto rounded-lg border border-blue-200">
+                          <table className="min-w-full bg-white">
+                            <thead className="bg-blue-100">
+                              <tr>
+                                <th className="px-4 py-2 text-left text-xs font-semibold text-blue-800">Description</th>
+                                <th className="px-4 py-2 text-left text-xs font-semibold text-blue-800">Type</th>
+                                <th className="px-4 py-2 text-left text-xs font-semibold text-blue-800">Value</th>
+                                <th className="px-4 py-2 text-left text-xs font-semibold text-blue-800">Start Date</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {predictedResults.agreements.map((agreement: Agreement, index: number) => (
+                                <tr key={index} className="border-t border-blue-100">
+                                  <td className="px-4 py-2 text-sm text-gray-700">{agreement.note || 'No note'}</td>
+                                  <td className="px-4 py-2 text-sm">
+                                    <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+                                      agreement.kind === 'override' ? 'bg-blue-100 text-blue-700' :
+                                      agreement.kind === 'surcharge' ? 'bg-red-100 text-red-700' :
+                                      'bg-green-100 text-green-700'
+                                    }`}>
+                                      {agreement.kind}
+                                    </span>
+                                  </td>
+                                  <td className="px-4 py-2 text-sm font-semibold text-gray-700">
+                                    {agreement.kind === 'multiplier' 
+                                      ? `×${agreement.value}` 
+                                      : `${(agreement.value * 100).toFixed(2)}%`
+                                    }
+                                  </td>
+                                  <td className="px-4 py-2 text-sm text-gray-600">{agreement.start_date}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Tariff Lines Table */}
+                    {predictedResults.tariffData && predictedResults.tariffData.length > 0 && (
+                      <div>
+                        <h4 className="font-semibold text-blue-900 mb-2 flex items-center">
+                          <span className="text-blue-600 mr-2">📋</span>
+                          Tariff Information
+                        </h4>
+                        <div className="overflow-x-auto rounded-lg border border-blue-200">
+                          <table className="min-w-full bg-white">
+                            <thead className="bg-blue-100">
+                              <tr>
+                                <th className="px-4 py-2 text-left text-xs font-semibold text-blue-800">HS Code</th>
+                                <th className="px-4 py-2 text-left text-xs font-semibold text-blue-800">Description</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {predictedResults.tariffData.slice(0, 3).map((tariff: TariffData, index: number) => (
+                                <tr key={index} className="border-t border-blue-100">
+                                  <td className="px-4 py-2 text-sm font-mono text-gray-700">{tariff.hscode}</td>
+                                  <td className="px-4 py-2 text-sm text-gray-600">{tariff.description}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Cost Breakdown */}
+                    <div className="bg-white border border-blue-200 rounded-lg p-4">
+                      <h4 className="font-semibold text-blue-900 mb-3">Cost Breakdown (Predicted)</h4>
+                      <div className="space-y-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-600">Base Cost ({predictedResults.quantity} units):</span>
+                          <span className="font-semibold text-gray-800">${predictedResults.totalCost.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-600">Predicted Tariff ({predictedResults.tariffRate}%):</span>
+                          <span className="font-semibold text-blue-700">${predictedResults.tariffCost.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between text-lg font-bold pt-2 border-t border-blue-200">
+                          <span className="text-blue-900">Total Predicted Cost:</span>
+                          <span className="text-blue-600">${predictedResults.totalWithTariff.toFixed(2)}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Comparison with Current Calculation */}
+                    {calculatedQuantity && calculatedCost && (
+                      <div className="bg-amber-50 border border-amber-300 rounded-lg p-4">
+                        <h4 className="font-semibold text-amber-900 mb-2">📊 Comparison</h4>
+                        <p className="text-sm text-amber-800">
+                          <strong>Current rate vs. Predicted rate:</strong><br/>
+                          {calculatedTariffRate && parseFloat(calculatedTariffRate) !== parseFloat(predictedResults.tariffRate) ? (
+                            <>
+                              Current: {calculatedTariffRate}% → Predicted: {predictedResults.tariffRate}%<br/>
+                              {parseFloat(predictedResults.tariffRate) > parseFloat(calculatedTariffRate) ? (
+                                <span className="text-red-600">⚠️ Predicted tariff is higher by {(parseFloat(predictedResults.tariffRate) - parseFloat(calculatedTariffRate)).toFixed(2)}%</span>
+                              ) : (
+                                <span className="text-green-600">✓ Predicted tariff is lower by {(parseFloat(calculatedTariffRate) - parseFloat(predictedResults.tariffRate)).toFixed(2)}%</span>
+                              )}
+                            </>
+                          ) : (
+                            <span className="text-gray-600">No current tariff rate to compare</span>
+                          )}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       )}
       </>

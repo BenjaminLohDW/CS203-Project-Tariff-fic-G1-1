@@ -45,6 +45,55 @@ export interface ForecastSimulateResponse {
 class ForecastService {
   
   /**
+   * Get predicted tariff using product name
+   * @param {string} productName - Name of the product
+   * @param {string} importCountry - Import country code (e.g., "US", "SG")
+   * @param {string} exportCountry - Export country code (e.g., "CN", "SG")
+   * @param {number} horizon - Number of periods to forecast ahead (default: 1)
+   * @returns {Promise<number>} Predicted tariff rate
+   */
+  async getPredictedTariff(
+    productName: string,
+    importCountry: string,
+    exportCountry: string,
+    horizon: number = 1
+  ): Promise<number> {
+    try {
+      const requestBody = {
+        product_name: productName,
+        import_country: importCountry.toUpperCase(),
+        export_country: exportCountry.toUpperCase(),
+        horizon: horizon
+      }
+
+      const response = await fetch(`${FORECAST_API_URL}/forecast/predict`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody)
+      })
+
+      if (!response.ok) {
+        if (response.status === 400) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || 'Invalid request parameters')
+        } else if (response.status === 404) {
+          const errorData = await response.json()
+          throw new Error(errorData.error || 'Product or historical data not found')
+        }
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const data = await response.json()
+      return data.predicted_tariff
+    } catch (error) {
+      console.error('Error getting predicted tariff:', error)
+      throw new Error(`Failed to get predicted tariff: ${(error as any).message}`)
+    }
+  }
+
+  /**
    * Predict future tariff based on historical rates
    * @param {string} importCountry - Import country code (e.g., "US", "SG")
    * @param {string} exportCountry - Export country code (e.g., "CN", "SG")
