@@ -109,7 +109,6 @@ services:
       - DB_HOST=db
       - DB_PORT=5432
 
-
   # #------------------------ TARIFF (Spring Boot) ------------------------
   tariff:
     container_name: tariff
@@ -154,7 +153,6 @@ services:
         condition: service_healthy
     command: ["flask", "db", "upgrade"]
     restart: "no"
-
 
   country:
     container_name: country
@@ -256,7 +254,6 @@ services:
   # 1. For local frontend + containerized backend: Use localhost URLs (current setup)
   # 2. For full containerization: Use container names in URLs (see commented config above)
   # 3. For cloud deployment: Use actual domain names or service discovery
-
 
 #----testing-----------
 

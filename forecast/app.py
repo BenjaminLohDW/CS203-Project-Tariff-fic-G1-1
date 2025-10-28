@@ -182,8 +182,8 @@ def simulate_country_rel():
     """
     try: 
         data = request.get_json()
-        required = ['import_country', 'export_country', 'rel_score', 'last_rates']
-        
+        required = ['import_country', 'export_country', 'hs_code', 'rel_score', 'last_rates', 'horizon']
+
         if not all(x in data for x in required):
             return jsonify({
                 "code": 400,
