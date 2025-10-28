@@ -46,7 +46,8 @@ data "aws_iam_policy_document" "task_execution_secrets" {
       "secretsmanager:DescribeSecret"
     ]
     resources = [
-      aws_secretsmanager_secret.db.arn
+      aws_secretsmanager_secret.db.arn,
+      aws_secretsmanager_secret.firebase_credentials.arn
     ]
   }
 }
