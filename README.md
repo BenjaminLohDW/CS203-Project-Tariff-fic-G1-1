@@ -115,7 +115,7 @@ services      = ["user", "product","history","tariff", "country","agreement", "f
 enable_guardduty    = true   # $2/month
 enable_waf          = true   # $5/month + $1 per million requests
 enable_cloudtrail   = true   # $2/month
-alert_email = "jiangqianchen2002@gmail.com" # IMPORTANT: change this to your own email address
+alert_email = "abc@gmail.com" # IMPORTANT: change this to your own email address
 
 # ===== OPTIONAL: Custom Domain for Frontend =====
 # frontend_domain  = "myapp.example.com"
