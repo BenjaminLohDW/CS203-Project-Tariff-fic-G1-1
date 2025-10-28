@@ -10,21 +10,47 @@ import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 @Service
 public class FirebaseService {
     
     private static final Logger logger = LoggerFactory.getLogger(FirebaseService.class);
     
+    @Value("${FIREBASE_CREDENTIALS_JSON:}")
+    private String firebaseCredentialsJson;
+    
     @PostConstruct
     public void initialize() {
         try {
             // Check if Firebase is already initialized
             if (FirebaseApp.getApps().isEmpty()) {
-                // Try to get credentials from environment variable first
+
+                // Try AWS Secrets Manager first
+                if (firebaseCredentialsJson != null && !firebaseCredentialsJson.trim().isEmpty()) {
+                    try {
+                        logger.info("Loading Firebase credentials from FIREBASE_CREDENTIALS_JSON (AWS Secrets Manager)");
+                        try (InputStream stream = new ByteArrayInputStream(
+                                firebaseCredentialsJson.getBytes(StandardCharsets.UTF_8))) {
+                            FirebaseOptions options = FirebaseOptions.builder()
+                                .setCredentials(GoogleCredentials.fromStream(stream))
+                                .build();
+                            FirebaseApp.initializeApp(options);
+                            logger.info("Firebase initialized successfully from AWS Secrets Manager");
+                            return;
+                        }
+                    } catch (Exception e) {
+                        logger.warn("Failed to initialize Firebase from FIREBASE_CREDENTIALS_JSON: {}", e.getMessage());
+                    }
+                }
+                
+                // Try to get credentials from environment variable 
                 String serviceAccountPath = System.getenv("GOOGLE_APPLICATION_CREDENTIALS");
                 
                 if (serviceAccountPath != null && !serviceAccountPath.isEmpty()) {

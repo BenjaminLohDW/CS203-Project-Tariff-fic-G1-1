@@ -76,12 +76,12 @@ resource "aws_ecs_task_definition" "svc" {
         { name = "AGREEMENT_MS_BASE",  value = var.enable_cloud_map ? "http://agreement.svc.local:5006" : "http://localhost:5006"}
       ]
 
-      # secrets = [
-      #   {
-      #     name      = "SPRING_DATASOURCE_PASSWORD"
-      #     valueFrom = "${aws_secretsmanager_secret.db.arn}:password::"
-      #   }
-      # ]
+      secrets = [
+        {
+          name      = "FIREBASE_CREDENTIALS_JSON"
+          valueFrom = aws_secretsmanager_secret.firebase_credentials.arn
+        }
+      ]
 
       logConfiguration = {
         logDriver = "awslogs"
