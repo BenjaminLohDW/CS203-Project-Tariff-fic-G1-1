@@ -57,6 +57,7 @@ DB_PASSWORD = quote_plus(os.getenv('DB_PASSWORD', ''))
 DB_HOST = os.getenv('DB_HOST', 'localhost')
 DB_PORT = os.getenv('DB_PORT', '5432')
 DB_NAME = os.getenv('DB_NAME', 'default')
+PRODUCT_MS_URL = os.getenv('PRODUCT_MS_BASE', 'http://product:5002')
 
 if ENV == 'aws':
     DB_SSLMODE = os.getenv('DB_SSLMODE', 'require') #'disbale'

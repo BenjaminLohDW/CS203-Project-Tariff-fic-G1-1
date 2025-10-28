@@ -70,8 +70,10 @@ resource "aws_ecs_task_definition" "svc" {
         { name = "AWS_REGION",  value = var.aws_region }, # for SDK calls
         
         # internal service discovery endpoint
-        { name = "COUNTRY_MS_BASE",  value = var.enable_cloud_map ? "http://country.svc.local:5005" : "http://localhost:5005" },
         { name = "PRODUCT_MS_BASE",  value = var.enable_cloud_map ? "http://product.svc.local:5002" : "http://localhost:5002" },
+        { name = "TARIFF_MS_BASE",  value = var.enable_cloud_map ? "http://tariff.svc.local:5006" : "http://localhost:5004" },
+        { name = "COUNTRY_MS_BASE",  value = var.enable_cloud_map ? "http://country.svc.local:5005" : "http://localhost:5005" },
+        { name = "AGREEMENT_MS_BASE",  value = var.enable_cloud_map ? "http://agreement.svc.local:5006" : "http://localhost:5006"}
       ]
 
       # secrets = [

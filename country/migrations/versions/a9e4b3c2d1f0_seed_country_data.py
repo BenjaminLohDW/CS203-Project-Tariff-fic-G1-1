@@ -22,6 +22,7 @@ depends_on = None
 
 
 def upgrade():
+    
     # Insert countries from countries_full.csv (if present in package)
     countries_tbl = sa.table(
         'countries',
