@@ -65,21 +65,6 @@ public class TariffController {
     }
   }
 
-  // Preiously used POST with body, changed to GET with query params for simplicity
-  // @PostMapping("/effective/by-names")
-  // public ResponseEntity<TariffResponse> getOneEffectiveByNames(
-  //     @Valid @RequestBody EffectiveByNamesRequest req
-  // ) {
-  //   try {
-  //     TariffResponse r = service.getOneEffectiveByNames(req);
-  //     return (r != null) ? ResponseEntity.ok(r) : ResponseEntity.notFound().build();
-  //   } catch (RestClientException e) {
-  //     return ResponseEntity.status(HttpStatus.BAD_GATEWAY).build();
-  //   } catch (DataAccessException e) {
-  //     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-  //   }
-  // }
-
   @GetMapping("effective/by-names")
     public ResponseEntity<TariffResponse> getOneEffectiveByNames(
             @RequestParam("productName") String productName,
@@ -98,6 +83,23 @@ public class TariffController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/by-product")
+    public ResponseEntity<List<TariffResponse>> getTariffsByProductName(
+            @RequestParam("productName") String productName
+    ) {
+        try {
+            List<TariffResponse> tariffs = service.listByProductName(productName.trim());
+            if (tariffs == null || tariffs.isEmpty()) {
+              return ResponseEntity.notFound().build();
+            }
+            return ResponseEntity.ok(tariffs);
+        } catch (RestClientException e) {
+            return ResponseEntity.status(HttpStatus.BAD_GATEWAY).build(); // product/country call failed
+        } catch (DataAccessException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build(); // DB error
+        }
     }
 
   /**

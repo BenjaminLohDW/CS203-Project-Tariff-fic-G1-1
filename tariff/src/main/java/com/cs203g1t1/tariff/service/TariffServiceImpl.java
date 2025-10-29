@@ -65,6 +65,12 @@ public class TariffServiceImpl implements TariffService {
   }
 
   @Override
+  public List<TariffResponse> listByProductName(String productName) {
+    String hs = productClient.getHsCodeByProductName(productName);
+    return repo.findByHsCode(hs).stream().map(this::toResponse).toList();
+  }
+
+  @Override
   public List<TariffResponse> listByCombo(String hs, String imp, String exp) {
     return repo.findByHsCodeAndImporterIdAndExporterId(hs, imp, exp)
         .stream().map(this::toResponse).toList();
