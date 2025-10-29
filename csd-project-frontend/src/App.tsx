@@ -908,7 +908,10 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
   }
 
   // Handle save calculation to history
-  const handleSaveCalculation = async () => {
+  const handleSaveCalculation = async (specificExporter?: string) => {
+    // Use the specific exporter if provided (for multi-exporter mode), otherwise use calculatedExportingCountry
+    const exporterToSave = specificExporter || calculatedExportingCountry
+    
     // Check if there are calculated values to save
     if (tariffMode === 'manual') {
       if (!calculatedQuantity && !calculatedCost && !calculatedTariffRate) {
@@ -916,7 +919,7 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
         return
       }
     } else {
-      if (!calculatedProduct && !calculatedImportingCountry && !calculatedExportingCountry && !calculatedQuantity && !calculatedCost && !calculatedDate) {
+      if (!calculatedProduct && !calculatedImportingCountry && !exporterToSave && !calculatedQuantity && !calculatedCost && !calculatedDate) {
         alert('No calculation results to save. Please calculate first.')
         return
       }
@@ -968,7 +971,7 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
       base_cost: baseAmount,
       final_cost: finalAmount,
       import_country: calculatedImportingCountry || 'Not specified',
-      export_country: calculatedExportingCountry || 'Not specified',
+      export_country: exporterToSave || 'Not specified',
       tariff_lines: tariffData.length > 0 ? tariffData.map(tariff => {
         // Use the tariffService calculation method
         const result = tariffService.calculateTariffAmount(
@@ -2053,6 +2056,38 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
                               </span>
                             </div>
                           </div>
+
+                          {/* Action Buttons */}
+                          <div className="mt-4 pt-3 border-t border-gray-200">
+                            <button 
+                              className="w-full bg-green-500 hover:bg-green-600 disabled:bg-gray-400 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 text-white font-bold py-2 px-4 text-sm rounded-lg transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0 disabled:transform-none disabled:shadow-none mb-2"
+                              onClick={(e) => {
+                                e.stopPropagation() // Prevent card collapse
+                                // Pass the exporter country directly to the save function
+                                handleSaveCalculation(result.exporterCountry)
+                              }}
+                              disabled={!calculatedQuantity || !calculatedCost || !calculatedProduct || !calculatedImportingCountry}
+                            >
+                              Save This Calculation
+                            </button>
+                            
+                            {/* Predict Future Tariff Button */}
+                            <button 
+                              className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 text-white font-bold py-2 px-4 text-sm rounded-lg transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0 disabled:transform-none disabled:shadow-none"
+                              onClick={async (e) => {
+                                e.stopPropagation() // Prevent card collapse
+                                // Temporarily set the exporter for this specific result
+                                const originalExporter = calculatedExportingCountry
+                                setCalculatedExportingCountry(result.exporterCountry)
+                                await handlePredictCalculation()
+                                // Restore original exporter after prediction
+                                setTimeout(() => setCalculatedExportingCountry(originalExporter), 100)
+                              }}
+                              disabled={isLoadingPrediction || !calculatedProduct}
+                            >
+                              {isLoadingPrediction ? '🔄 Predicting...' : '🔮 Predict Future Tariff'}
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -2512,7 +2547,7 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
             <div className="mt-4 pt-3 border-t border-gray-200">
               <button 
                 className="w-full bg-green-500 hover:bg-green-600 disabled:bg-gray-400 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 text-white font-bold py-2 px-4 text-sm rounded-lg transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0 disabled:transform-none disabled:shadow-none mb-2"
-                onClick={handleSaveCalculation}
+                onClick={() => handleSaveCalculation()}
                 disabled={
                   // No calculated results to save
                   (!calculatedQuantity && !calculatedCost) ||
