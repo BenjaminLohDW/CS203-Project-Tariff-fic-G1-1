@@ -6,7 +6,6 @@ import { saveCalculation, getUserHistory, getHistoryTariffLines } from './lib/hi
 import ProductAutocomplete from './lib/ProductAutocomplete'
 import tariffService from './lib/tariffService'
 import agreementService from './lib/agreementService'
-import forecastService from './lib/forecastService'
 import { Country, ProductOption, TariffData, CalculationData, Agreement, ComparisonResult } from './types'
 import { CostBreakdownPieChart } from './components/CostBreakdownPieChart'
 import { Skeleton } from './components/ui/Skeleton'
@@ -253,7 +252,27 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
         return
       }
 
-      // Get country codes from calculated values
+      // Get HS code from tariffData or selected product
+      let hsCode = null
+      
+      // First try to get from tariffData (most reliable as it's from actual calculation)
+      if (tariffData && tariffData.length > 0) {
+        hsCode = tariffData[0]?.originalData?.hsCode || tariffData[0]?.hscode
+      }
+      
+      // Fallback to selected product if available
+      if (!hsCode && selectedProduct) {
+        if (selectedProduct.isHsCode) {
+          hsCode = selectedProduct.value
+        }
+      }
+
+      if (!hsCode) {
+        setPredictionError('HS code not available. Please ensure you have run a calculation with a valid product first.')
+        return
+      }
+
+      // Get country ISO codes from calculated values
       const importerCode = getCountryCode(calculatedImportingCountry)
       const exporterCode = getCountryCode(calculatedExportingCountry)
 
@@ -262,31 +281,53 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
         return
       }
 
-      // Call forecast service with product name
-      const predictedTariffRate = await forecastService.getPredictedTariff(
-        calculatedProduct,
-        importerCode,
-        exporterCode,
-        1 // horizon: 1 month ahead
-      )
+      console.log('Calling forecast API with:', {
+        hs_code: hsCode,
+        import_country: importerCode,
+        export_country: exporterCode,
+        horizon: 1
+      })
+
+      // Call forecast service with HS code and ISO country codes
+      const response = await fetch('http://localhost:5007/forecast/predict', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          hs_code: hsCode,
+          import_country: importerCode,
+          export_country: exporterCode,
+          horizon: 1
+        })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        const errorMessage = errorData.error || `HTTP ${response.status}: ${response.statusText}`
+        
+        // Provide user-friendly error messages based on the error type
+        if (errorMessage.includes('Insufficient historical data')) {
+          throw new Error(
+            `Cannot predict tariff: Insufficient historical data.\n\n` +
+            `The ML model requires at least 2 months of historical tariff rates for HS code ${hsCode}, ` +
+            `but none were found in the database.\n\n` +
+            `This could mean:\n` +
+            `• This is a new product with no trade history\n` +
+            `• Historical tariff data hasn't been recorded for this country pair\n` +
+            `• The tariff microservice doesn't have historical records for this HS code\n\n` +
+            `Tip: Try a different product or country combination that has more trade history.`
+          )
+        }
+        
+        throw new Error(errorMessage)
+      }
+
+      const forecastData = await response.json()
+      const predictedTariffRate = forecastData.predicted_tariff
 
       console.log('Predicted tariff rate:', predictedTariffRate)
-
-      // Now run a full calculation using the predicted tariff rate
-      // Use the getEffectiveTariffByNames method
-      const tariffRequest = {
-        product_name: calculatedProduct,
-        import_country: calculatedImportingCountry,
-        export_country: calculatedExportingCountry,
-        date: calculatedDate
-      }
-
-      const fetchedTariffData = await tariffService.getEffectiveTariffByNames(tariffRequest)
-
-      if (!fetchedTariffData || !fetchedTariffData.tariffs || fetchedTariffData.tariffs.length === 0) {
-        setPredictionError('Could not fetch tariff data for prediction')
-        return
-      }
+      console.log('Forecast data:', forecastData)
 
       // Calculate with predicted ad valorem rate
       const numericQuantity = parseFloat(calculatedQuantity)
@@ -306,19 +347,25 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
       // Store predicted results
       const predictedCalc = {
         product: calculatedProduct,
-        hsCode: fetchedTariffData.tariffs[0].hscode,
+        hsCode: hsCode,
         importingCountry: calculatedImportingCountry,
         exportingCountry: calculatedExportingCountry,
         quantity: calculatedQuantity,
         cost: calculatedCost,
         date: calculatedDate,
-        tariffRate: predictedTariffRate.toString(),
+        tariffRate: predictedTariffRate.toFixed(2),
         totalCost,
         tariffCost,
         totalWithTariff,
-        tariffData: fetchedTariffData.tariffs,
+        tariffData: [{
+          hscode: hsCode,
+          "Tariff Description": `Predicted tariff for ${calculatedProduct} (HS: ${hsCode})`,
+          "Tariff Type": "ad_valorem",
+          "Tariff amount": predictedTariffRate.toFixed(2)
+        }],
         agreements: agreementsData,
-        isPredicted: true
+        isPredicted: true,
+        historicalContext: forecastData.historical_context
       }
 
       setPredictedResults(predictedCalc)
@@ -861,7 +908,10 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
   }
 
   // Handle save calculation to history
-  const handleSaveCalculation = async () => {
+  const handleSaveCalculation = async (specificExporter?: string) => {
+    // Use the specific exporter if provided (for multi-exporter mode), otherwise use calculatedExportingCountry
+    const exporterToSave = specificExporter || calculatedExportingCountry
+    
     // Check if there are calculated values to save
     if (tariffMode === 'manual') {
       if (!calculatedQuantity && !calculatedCost && !calculatedTariffRate) {
@@ -869,7 +919,7 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
         return
       }
     } else {
-      if (!calculatedProduct && !calculatedImportingCountry && !calculatedExportingCountry && !calculatedQuantity && !calculatedCost && !calculatedDate) {
+      if (!calculatedProduct && !calculatedImportingCountry && !exporterToSave && !calculatedQuantity && !calculatedCost && !calculatedDate) {
         alert('No calculation results to save. Please calculate first.')
         return
       }
@@ -921,7 +971,7 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
       base_cost: baseAmount,
       final_cost: finalAmount,
       import_country: calculatedImportingCountry || 'Not specified',
-      export_country: calculatedExportingCountry || 'Not specified',
+      export_country: exporterToSave || 'Not specified',
       tariff_lines: tariffData.length > 0 ? tariffData.map(tariff => {
         // Use the tariffService calculation method
         const result = tariffService.calculateTariffAmount(
@@ -1572,14 +1622,87 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
 
       {/* Loading indicator for comparison */}
       {isLoadingComparison && (
-        <Card className="mb-6 bg-gray-50 border-gray-300">
-          <CardContent className="py-8">
-            <div className="flex items-center justify-center gap-3">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-              <span className="text-lg text-gray-700">Comparing exporters...</span>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="mt-6 space-y-6">
+          <Card className="bg-gradient-to-br from-blue-50 to-purple-50 border-blue-200">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                <h2 className="text-xl font-bold text-blue-900">Comparing exporters...</h2>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {/* Summary Statistics Skeleton */}
+              <div className="mb-4 p-4 bg-blue-100 rounded-lg space-y-2">
+                <Skeleton className="h-5 w-48 bg-blue-200" />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <Skeleton className="h-4 w-full bg-blue-200" />
+                  <Skeleton className="h-4 w-full bg-blue-200" />
+                  <Skeleton className="h-4 w-full bg-blue-200" />
+                </div>
+              </div>
+
+              {/* Skeleton Cards for Comparison Results */}
+              <div className="space-y-4">
+                {[1, 2, 3].map((idx) => (
+                  <Card key={idx} className="border-blue-300 shadow-md">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between w-full">
+                        <div className="flex items-center justify-between flex-1 gap-2 pr-4">
+                          {/* Rank Skeleton */}
+                          <div className="text-center flex-shrink-0" style={{ minWidth: '70px' }}>
+                            <Skeleton className="h-4 w-12 mx-auto mb-2 bg-gray-200" />
+                            <Skeleton className="h-8 w-8 mx-auto rounded-full bg-gray-300" />
+                          </div>
+                          
+                          {/* From → To Skeleton */}
+                          <div className="text-center flex-1">
+                            <Skeleton className="h-3 w-16 mx-auto mb-2 bg-gray-200" />
+                            <Skeleton className="h-4 w-32 mx-auto bg-gray-300" />
+                          </div>
+                          
+                          {/* Product Skeleton */}
+                          <div className="text-center flex-1">
+                            <Skeleton className="h-3 w-16 mx-auto mb-2 bg-gray-200" />
+                            <Skeleton className="h-4 w-24 mx-auto bg-gray-300" />
+                          </div>
+                          
+                          {/* Base Cost Skeleton */}
+                          <div className="text-center flex-1">
+                            <Skeleton className="h-3 w-20 mx-auto mb-2 bg-gray-200" />
+                            <Skeleton className="h-4 w-28 mx-auto bg-gray-300" />
+                          </div>
+                          
+                          {/* Tariffs Skeleton */}
+                          <div className="text-center flex-1">
+                            <Skeleton className="h-3 w-12 mx-auto mb-2 bg-gray-200" />
+                            <Skeleton className="h-4 w-8 mx-auto bg-blue-300" />
+                          </div>
+                          
+                          {/* Agreements Skeleton */}
+                          <div className="text-center flex-1">
+                            <Skeleton className="h-3 w-20 mx-auto mb-2 bg-gray-200" />
+                            <Skeleton className="h-4 w-8 mx-auto bg-purple-300" />
+                          </div>
+                          
+                          {/* Final Total Skeleton */}
+                          <div className="text-center flex-1">
+                            <Skeleton className="h-3 w-20 mx-auto mb-2 bg-gray-200" />
+                            <Skeleton className="h-5 w-32 mx-auto bg-green-300" />
+                          </div>
+                        </div>
+                        
+                        {/* Arrow Skeleton */}
+                        <div className="flex-shrink-0">
+                          <Skeleton className="h-6 w-6 bg-blue-300" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       )}
 
       {/* Unified Results Container - For Both Single and Multiple Exporters */}
@@ -1621,10 +1744,10 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
                     className={`bg-gradient-to-r ${isWinner ? 'from-yellow-50 to-amber-50 border-yellow-400 shadow-lg' : 'from-blue-50 to-purple-50 border-blue-300'} p-4 rounded-lg border-2 shadow-md cursor-pointer hover:shadow-lg hover:border-blue-400 transition-all duration-300`}
                     onClick={() => toggleComparisonCard(index)}
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-6 flex-1">
+                    <div className="flex items-center justify-between w-full">
+                      <div className="flex items-center justify-between flex-1 gap-2 pr-4">
                         {/* Rank */}
-                        <div className="text-center min-w-[60px]">
+                        <div className="text-center flex-shrink-0" style={{ minWidth: '70px' }}>
                           <div className="text-xs text-gray-600 font-semibold">Rank</div>
                           <div className={`text-2xl font-bold ${isWinner ? 'text-yellow-600' : 'text-gray-800'}`}>
                             {isWinner ? '🏆' : rank}
@@ -1632,7 +1755,7 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
                         </div>
                         
                         {/* From → To */}
-                        <div className="text-center">
+                        <div className="text-center flex-1">
                           <div className="text-xs text-gray-600 font-semibold">From → To</div>
                           <div className="text-sm font-bold text-gray-800">
                             {result.exporterCountry} → {calculatedImportingCountry}
@@ -1640,13 +1763,13 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
                         </div>
                         
                         {/* Product */}
-                        <div className="text-center">
+                        <div className="text-center flex-1">
                           <div className="text-xs text-gray-600 font-semibold">Product</div>
                           <div className="text-sm font-bold text-gray-800">{calculatedProduct}</div>
                         </div>
                         
                         {/* Base Cost */}
-                        <div className="text-center">
+                        <div className="text-center flex-1">
                           <div className="text-xs text-gray-600 font-semibold">Base Cost</div>
                           <div className="text-sm font-bold text-gray-800">
                             ${result.baseCost.toLocaleString('en-US', { minimumFractionDigits: 2 })}
@@ -1654,19 +1777,19 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
                         </div>
                         
                         {/* Tariffs Count */}
-                        <div className="text-center">
+                        <div className="text-center flex-1">
                           <div className="text-xs text-gray-600 font-semibold">Tariffs</div>
                           <div className="text-sm font-bold text-blue-600">{result.tariffs.length}</div>
                         </div>
                         
                         {/* Agreements Count */}
-                        <div className="text-center">
+                        <div className="text-center flex-1">
                           <div className="text-xs text-gray-600 font-semibold">Agreements</div>
                           <div className="text-sm font-bold text-purple-600">{result.agreements.length}</div>
                         </div>
                         
                         {/* Final Total */}
-                        <div className="text-center">
+                        <div className="text-center flex-1">
                           <div className="text-xs text-gray-600 font-semibold">Final Total</div>
                           <div className={`text-lg font-bold ${isWinner ? 'text-green-700' : 'text-green-600'}`}>
                             ${result.finalTotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}
@@ -1675,7 +1798,7 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
                       </div>
                       
                       {/* Expand/Collapse Arrow */}
-                      <div className="text-2xl text-blue-600">
+                      <div className="text-2xl text-blue-600 flex-shrink-0">
                         {isExpanded ? '▲' : '▼'}
                       </div>
                     </div>
@@ -1932,6 +2055,38 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
                                 ${result.finalTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                               </span>
                             </div>
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="mt-4 pt-3 border-t border-gray-200">
+                            <button 
+                              className="w-full bg-green-500 hover:bg-green-600 disabled:bg-gray-400 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 text-white font-bold py-2 px-4 text-sm rounded-lg transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0 disabled:transform-none disabled:shadow-none mb-2"
+                              onClick={(e) => {
+                                e.stopPropagation() // Prevent card collapse
+                                // Pass the exporter country directly to the save function
+                                handleSaveCalculation(result.exporterCountry)
+                              }}
+                              disabled={!calculatedQuantity || !calculatedCost || !calculatedProduct || !calculatedImportingCountry}
+                            >
+                              Save This Calculation
+                            </button>
+                            
+                            {/* Predict Future Tariff Button */}
+                            <button 
+                              className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 text-white font-bold py-2 px-4 text-sm rounded-lg transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0 disabled:transform-none disabled:shadow-none"
+                              onClick={async (e) => {
+                                e.stopPropagation() // Prevent card collapse
+                                // Temporarily set the exporter for this specific result
+                                const originalExporter = calculatedExportingCountry
+                                setCalculatedExportingCountry(result.exporterCountry)
+                                await handlePredictCalculation()
+                                // Restore original exporter after prediction
+                                setTimeout(() => setCalculatedExportingCountry(originalExporter), 100)
+                              }}
+                              disabled={isLoadingPrediction || !calculatedProduct}
+                            >
+                              {isLoadingPrediction ? '🔄 Predicting...' : '🔮 Predict Future Tariff'}
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -2392,7 +2547,7 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
             <div className="mt-4 pt-3 border-t border-gray-200">
               <button 
                 className="w-full bg-green-500 hover:bg-green-600 disabled:bg-gray-400 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 text-white font-bold py-2 px-4 text-sm rounded-lg transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 active:translate-y-0 disabled:transform-none disabled:shadow-none mb-2"
-                onClick={handleSaveCalculation}
+                onClick={() => handleSaveCalculation()}
                 disabled={
                   // No calculated results to save
                   (!calculatedQuantity && !calculatedCost) ||
@@ -2437,9 +2592,16 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
             </CardHeader>
             <CardContent>
               {predictionError ? (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                  <p className="text-sm text-red-800 font-medium">❌ Prediction Error</p>
-                  <p className="text-sm text-red-600">{predictionError}</p>
+                <div className="bg-red-50 border-2 border-red-300 rounded-lg p-6">
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl">❌</span>
+                    <div className="flex-1">
+                      <p className="text-base font-bold text-red-900 mb-3">Prediction Failed</p>
+                      <div className="text-sm text-red-800 whitespace-pre-line leading-relaxed">
+                        {predictionError}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <div className="flex flex-col lg:flex-row gap-6">

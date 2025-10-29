@@ -480,6 +480,20 @@ with app.app_context():
     # Database schema and data are managed exclusively via Alembic migrations.
     print("ℹ️ Country service: using Alembic migrations for schema and data; do not create/seed DB from the app.")
 
+    # try:
+    #     # Only auto-create tables when explicitly enabled. Alembic should be
+    #     # the canonical migration path in CI / production. To enable local
+    #     # quick-start, set AUTO_CREATE_DB=1 in the environment (not recommended
+    #     # for production).
+    #     if os.getenv("AUTO_CREATE_DB") == "1":
+    #         db.create_all()
+    #         print("✅ Database tables created/verified (AUTO_CREATE_DB=1)")
+    #     else:
+    #         print("ℹ️ Skipping db.create_all(); use Alembic migrations (set AUTO_CREATE_DB=1 to enable)")
+    # except Exception as e:
+    #     print(f"⚠️ Database table creation check failed: {e}")
+
+
 
 if __name__ == '__main__':
   # Run on container port 5005
