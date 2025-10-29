@@ -24,6 +24,6 @@ COPY country_relations_all.csv ./country_relations_all.csv
 
 EXPOSE 5005
 
-CMD ["python", "app.py"]
+# CMD ["python", "app.py"]
 
 CMD ["/app/entrypoint.sh"]
