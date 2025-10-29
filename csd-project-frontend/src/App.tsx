@@ -6,7 +6,6 @@ import { saveCalculation, getUserHistory, getHistoryTariffLines } from './lib/hi
 import ProductAutocomplete from './lib/ProductAutocomplete'
 import tariffService from './lib/tariffService'
 import agreementService from './lib/agreementService'
-import forecastService from './lib/forecastService'
 import { Country, ProductOption, TariffData, CalculationData, Agreement, ComparisonResult } from './types'
 import { CostBreakdownPieChart } from './components/CostBreakdownPieChart'
 import { Skeleton } from './components/ui/Skeleton'
@@ -253,7 +252,27 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
         return
       }
 
-      // Get country codes from calculated values
+      // Get HS code from tariffData or selected product
+      let hsCode = null
+      
+      // First try to get from tariffData (most reliable as it's from actual calculation)
+      if (tariffData && tariffData.length > 0) {
+        hsCode = tariffData[0]?.originalData?.hsCode || tariffData[0]?.hscode
+      }
+      
+      // Fallback to selected product if available
+      if (!hsCode && selectedProduct) {
+        if (selectedProduct.isHsCode) {
+          hsCode = selectedProduct.value
+        }
+      }
+
+      if (!hsCode) {
+        setPredictionError('HS code not available. Please ensure you have run a calculation with a valid product first.')
+        return
+      }
+
+      // Get country ISO codes from calculated values
       const importerCode = getCountryCode(calculatedImportingCountry)
       const exporterCode = getCountryCode(calculatedExportingCountry)
 
@@ -262,31 +281,53 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
         return
       }
 
-      // Call forecast service with product name
-      const predictedTariffRate = await forecastService.getPredictedTariff(
-        calculatedProduct,
-        importerCode,
-        exporterCode,
-        1 // horizon: 1 month ahead
-      )
+      console.log('Calling forecast API with:', {
+        hs_code: hsCode,
+        import_country: importerCode,
+        export_country: exporterCode,
+        horizon: 1
+      })
+
+      // Call forecast service with HS code and ISO country codes
+      const response = await fetch('http://localhost:5007/forecast/predict', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          hs_code: hsCode,
+          import_country: importerCode,
+          export_country: exporterCode,
+          horizon: 1
+        })
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json()
+        const errorMessage = errorData.error || `HTTP ${response.status}: ${response.statusText}`
+        
+        // Provide user-friendly error messages based on the error type
+        if (errorMessage.includes('Insufficient historical data')) {
+          throw new Error(
+            `Cannot predict tariff: Insufficient historical data.\n\n` +
+            `The ML model requires at least 2 months of historical tariff rates for HS code ${hsCode}, ` +
+            `but none were found in the database.\n\n` +
+            `This could mean:\n` +
+            `• This is a new product with no trade history\n` +
+            `• Historical tariff data hasn't been recorded for this country pair\n` +
+            `• The tariff microservice doesn't have historical records for this HS code\n\n` +
+            `Tip: Try a different product or country combination that has more trade history.`
+          )
+        }
+        
+        throw new Error(errorMessage)
+      }
+
+      const forecastData = await response.json()
+      const predictedTariffRate = forecastData.predicted_tariff
 
       console.log('Predicted tariff rate:', predictedTariffRate)
-
-      // Now run a full calculation using the predicted tariff rate
-      // Use the getEffectiveTariffByNames method
-      const tariffRequest = {
-        product_name: calculatedProduct,
-        import_country: calculatedImportingCountry,
-        export_country: calculatedExportingCountry,
-        date: calculatedDate
-      }
-
-      const fetchedTariffData = await tariffService.getEffectiveTariffByNames(tariffRequest)
-
-      if (!fetchedTariffData || !fetchedTariffData.tariffs || fetchedTariffData.tariffs.length === 0) {
-        setPredictionError('Could not fetch tariff data for prediction')
-        return
-      }
+      console.log('Forecast data:', forecastData)
 
       // Calculate with predicted ad valorem rate
       const numericQuantity = parseFloat(calculatedQuantity)
@@ -306,19 +347,25 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
       // Store predicted results
       const predictedCalc = {
         product: calculatedProduct,
-        hsCode: fetchedTariffData.tariffs[0].hscode,
+        hsCode: hsCode,
         importingCountry: calculatedImportingCountry,
         exportingCountry: calculatedExportingCountry,
         quantity: calculatedQuantity,
         cost: calculatedCost,
         date: calculatedDate,
-        tariffRate: predictedTariffRate.toString(),
+        tariffRate: predictedTariffRate.toFixed(2),
         totalCost,
         tariffCost,
         totalWithTariff,
-        tariffData: fetchedTariffData.tariffs,
+        tariffData: [{
+          hscode: hsCode,
+          "Tariff Description": `Predicted tariff for ${calculatedProduct} (HS: ${hsCode})`,
+          "Tariff Type": "ad_valorem",
+          "Tariff amount": predictedTariffRate.toFixed(2)
+        }],
         agreements: agreementsData,
-        isPredicted: true
+        isPredicted: true,
+        historicalContext: forecastData.historical_context
       }
 
       setPredictedResults(predictedCalc)
@@ -2437,9 +2484,16 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
             </CardHeader>
             <CardContent>
               {predictionError ? (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                  <p className="text-sm text-red-800 font-medium">❌ Prediction Error</p>
-                  <p className="text-sm text-red-600">{predictionError}</p>
+                <div className="bg-red-50 border-2 border-red-300 rounded-lg p-6">
+                  <div className="flex items-start gap-3">
+                    <span className="text-2xl">❌</span>
+                    <div className="flex-1">
+                      <p className="text-base font-bold text-red-900 mb-3">Prediction Failed</p>
+                      <div className="text-sm text-red-800 whitespace-pre-line leading-relaxed">
+                        {predictionError}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               ) : (
                 <div className="flex flex-col lg:flex-row gap-6">
