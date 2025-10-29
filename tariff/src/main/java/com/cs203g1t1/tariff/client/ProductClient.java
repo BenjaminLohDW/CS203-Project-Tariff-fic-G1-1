@@ -69,12 +69,6 @@ public class ProductClient {
       // Normalize: remove dots so downstream uses a clean HS code
       String normalized = subheading.replace(".", "");
       
-      // Pad to 8 digits with trailing zeros to match database format
-      // Product MS returns 6-digit codes (e.g., "851713"), but DB uses 8-digit (e.g., "85171300")
-      while (normalized.length() < 8) {
-        normalized += "0";
-      }
-      
       log.info("Resolved HS code '{}' -> normalized and padded to '{}'", subheading, normalized);
       return normalized;
 

@@ -33,6 +33,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, 
                                     HttpServletResponse response, 
                                     FilterChain filterChain) throws ServletException, IOException {
+
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            // Someone (DevAuthFilter) already set an authenticated principal; skip Firebase.
+            filterChain.doFilter(request, response);
+            return;
+        }
         
         // Skip JWT validation for public endpoints
         String path = request.getRequestURI();

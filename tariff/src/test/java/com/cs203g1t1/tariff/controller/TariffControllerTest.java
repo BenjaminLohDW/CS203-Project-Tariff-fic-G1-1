@@ -11,9 +11,15 @@ import org.hibernate.annotations.TimeZoneStorage;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
@@ -29,12 +35,24 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(TariffController.class)
+@AutoConfigureMockMvc
+@Import(TariffControllerTest.TestSecurityConfig.class)
 class TariffControllerTest {
 
   @Autowired MockMvc mvc;
   @Autowired ObjectMapper om;
 
   @MockBean TariffService service;
+
+  @TestConfiguration
+  static class TestSecurityConfig {
+    @Bean
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+      http.csrf(csrf -> csrf.disable())
+          .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+      return http.build();
+    }
+  }
 
   // ---------- helpers ----------
   private TariffResponse sampleResponse() {
@@ -158,37 +176,18 @@ class TariffControllerTest {
         .andExpect(status().isNotFound());
   }
 
-  // Previous helper for POST body request
-  // // ---------- POST /api/tariffs/effective/by-names ----------
-  // @Test
-  // void getOneEffectiveByNames_post_returns200_andPassesDTO() throws Exception {
-  //   // Arrange request body that matches YOUR DTO fields
-  //   var body = "{\n"
-  //       + "  \"productName\": \"Smartphone\",\n"
-  //       + "  \"importerCountryName\": \"Singapore\",\n"
-  //       + "  \"exporterCountryName\": \"China\",\n"
-  //       + "  \"date\": \"2025-01-15\"\n"
-  //       + "}";
+  // ---------- GET /api/tariffs/by-product ----------
+  @Test
+  void getTariffsByProductName_returns200_andArray() throws Exception {
+    when(service.listByProductName(eq("smartphone")))
+        .thenReturn(List.of(sampleResponse(), sampleResponse()));
 
-  //   when(service.getOneEffectiveByNames(any(EffectiveByNamesRequest.class)))
-  //       .thenReturn(sampleResponse());
-
-  //   var result = mvc.perform(post("/api/tariffs/effective/by-names")
-  //           .contentType(MediaType.APPLICATION_JSON)
-  //           .content(body))
-  //       .andExpect(status().isOk())
-  //       .andExpect(jsonPath("$.hsCode").value("85171300"))
-  //       .andReturn();
-
-  //   // (Optional) capture & assert the DTO passed into the service
-  //   ArgumentCaptor<EffectiveByNamesRequest> cap = ArgumentCaptor.forClass(EffectiveByNamesRequest.class);
-  //   // Since we used when(...).thenReturn(...) above, direct verification is enough in Mockito 5+
-  //   // If you prefer, switch to Mockito.verify(service).getOneEffectiveByNames(cap.capture());
-  //   // But @WebMvcTest + MockBean doesn't require verification for a passing controller test.
-
-  //   // Basic sanity: confirm response content type
-  //   assertThat(result.getResponse().getContentType()).contains("application/json");
-  // }
+    mvc.perform(get("/api/tariffs/by-product")
+            .param("productName", "smartphone"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(2))
+        .andExpect(jsonPath("$[0].hsCode").value("85171300"));
+  }
 
   // ---------- GET /api/tariffs (list by combo) ----------
   @Test

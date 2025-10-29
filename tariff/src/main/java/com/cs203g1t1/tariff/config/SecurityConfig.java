@@ -8,15 +8,19 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import java.util.Optional;
 
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final Optional<DevAuthFilter> devAuthFilter; // optional (only present when property=true)
     
-    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter) {
+    public SecurityConfig(JwtAuthenticationFilter jwtAuthenticationFilter,
+                            Optional<DevAuthFilter> devAuthFilter) {
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.devAuthFilter = devAuthFilter;
     }
 
     @Bean
@@ -27,9 +31,17 @@ public class SecurityConfig {
             // we provide JSON API, no CSRF tokens
             .csrf(csrf -> csrf.disable())
             // enable CORS using the bean below
-            .cors(Customizer.withDefaults())
-            // Add JWT filter before UsernamePasswordAuthenticationFilter
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+            .cors(Customizer.withDefaults());
+
+        // Add the bypass first if enabled
+        devAuthFilter.ifPresent(f ->
+            http.addFilterBefore(f, UsernamePasswordAuthenticationFilter.class)
+        );
+
+        // Add JWT filter before UsernamePasswordAuthenticationFilter
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        http
             // authorization rules
             .authorizeHttpRequests(auth -> auth
                 // swagger & api docs

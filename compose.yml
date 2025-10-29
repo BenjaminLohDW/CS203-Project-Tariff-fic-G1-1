@@ -123,13 +123,8 @@ services:
       SPRING_FLYWAY_BASELINE_VERSION: 0
       # Firebase Admin SDK credentials path (optional - app works without it)
       GOOGLE_APPLICATION_CREDENTIALS: /app/firebase-credentials.json
-      # If you prefer env over yaml config, uncomment these:
-      # SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/tariff
-      # SPRING_DATASOURCE_USERNAME: tariff
-      # SPRING_DATASOURCE_PASSWORD: tariff
-      # If tariff needs to call other services internally (optional):
-      # PRODUCT_BASE_URL: http://product:5002
-      # COUNTRY_BASE_URL: http://country:5005
+      # Bypass security for development/testing (set to false for production)
+      SECURITY_DEV_BYPASS: true
     ports:
       - "5004:5004"
     volumes:

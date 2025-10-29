@@ -85,8 +85,8 @@ public class TariffController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/by-product")
-    public ResponseEntity<List<TariffResponse>> getTariffsByProductName(
+  @GetMapping("/by-product")
+    public ResponseEntity<List<TariffResponse>> listByProductName(
             @RequestParam("productName") String productName
     ) {
         try {
