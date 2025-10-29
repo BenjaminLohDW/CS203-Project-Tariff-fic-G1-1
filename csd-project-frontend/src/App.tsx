@@ -1619,14 +1619,87 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
 
       {/* Loading indicator for comparison */}
       {isLoadingComparison && (
-        <Card className="mb-6 bg-gray-50 border-gray-300">
-          <CardContent className="py-8">
-            <div className="flex items-center justify-center gap-3">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-              <span className="text-lg text-gray-700">Comparing exporters...</span>
-            </div>
-          </CardContent>
-        </Card>
+        <div className="mt-6 space-y-6">
+          <Card className="bg-gradient-to-br from-blue-50 to-purple-50 border-blue-200">
+            <CardHeader>
+              <div className="flex items-center gap-3">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                <h2 className="text-xl font-bold text-blue-900">Comparing exporters...</h2>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {/* Summary Statistics Skeleton */}
+              <div className="mb-4 p-4 bg-blue-100 rounded-lg space-y-2">
+                <Skeleton className="h-5 w-48 bg-blue-200" />
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <Skeleton className="h-4 w-full bg-blue-200" />
+                  <Skeleton className="h-4 w-full bg-blue-200" />
+                  <Skeleton className="h-4 w-full bg-blue-200" />
+                </div>
+              </div>
+
+              {/* Skeleton Cards for Comparison Results */}
+              <div className="space-y-4">
+                {[1, 2, 3].map((idx) => (
+                  <Card key={idx} className="border-blue-300 shadow-md">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between w-full">
+                        <div className="flex items-center justify-between flex-1 gap-2 pr-4">
+                          {/* Rank Skeleton */}
+                          <div className="text-center flex-shrink-0" style={{ minWidth: '70px' }}>
+                            <Skeleton className="h-4 w-12 mx-auto mb-2 bg-gray-200" />
+                            <Skeleton className="h-8 w-8 mx-auto rounded-full bg-gray-300" />
+                          </div>
+                          
+                          {/* From → To Skeleton */}
+                          <div className="text-center flex-1">
+                            <Skeleton className="h-3 w-16 mx-auto mb-2 bg-gray-200" />
+                            <Skeleton className="h-4 w-32 mx-auto bg-gray-300" />
+                          </div>
+                          
+                          {/* Product Skeleton */}
+                          <div className="text-center flex-1">
+                            <Skeleton className="h-3 w-16 mx-auto mb-2 bg-gray-200" />
+                            <Skeleton className="h-4 w-24 mx-auto bg-gray-300" />
+                          </div>
+                          
+                          {/* Base Cost Skeleton */}
+                          <div className="text-center flex-1">
+                            <Skeleton className="h-3 w-20 mx-auto mb-2 bg-gray-200" />
+                            <Skeleton className="h-4 w-28 mx-auto bg-gray-300" />
+                          </div>
+                          
+                          {/* Tariffs Skeleton */}
+                          <div className="text-center flex-1">
+                            <Skeleton className="h-3 w-12 mx-auto mb-2 bg-gray-200" />
+                            <Skeleton className="h-4 w-8 mx-auto bg-blue-300" />
+                          </div>
+                          
+                          {/* Agreements Skeleton */}
+                          <div className="text-center flex-1">
+                            <Skeleton className="h-3 w-20 mx-auto mb-2 bg-gray-200" />
+                            <Skeleton className="h-4 w-8 mx-auto bg-purple-300" />
+                          </div>
+                          
+                          {/* Final Total Skeleton */}
+                          <div className="text-center flex-1">
+                            <Skeleton className="h-3 w-20 mx-auto mb-2 bg-gray-200" />
+                            <Skeleton className="h-5 w-32 mx-auto bg-green-300" />
+                          </div>
+                        </div>
+                        
+                        {/* Arrow Skeleton */}
+                        <div className="flex-shrink-0">
+                          <Skeleton className="h-6 w-6 bg-blue-300" />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       )}
 
       {/* Unified Results Container - For Both Single and Multiple Exporters */}
@@ -1668,10 +1741,10 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
                     className={`bg-gradient-to-r ${isWinner ? 'from-yellow-50 to-amber-50 border-yellow-400 shadow-lg' : 'from-blue-50 to-purple-50 border-blue-300'} p-4 rounded-lg border-2 shadow-md cursor-pointer hover:shadow-lg hover:border-blue-400 transition-all duration-300`}
                     onClick={() => toggleComparisonCard(index)}
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-6 flex-1">
+                    <div className="flex items-center justify-between w-full">
+                      <div className="flex items-center justify-between flex-1 gap-2 pr-4">
                         {/* Rank */}
-                        <div className="text-center min-w-[60px]">
+                        <div className="text-center flex-shrink-0" style={{ minWidth: '70px' }}>
                           <div className="text-xs text-gray-600 font-semibold">Rank</div>
                           <div className={`text-2xl font-bold ${isWinner ? 'text-yellow-600' : 'text-gray-800'}`}>
                             {isWinner ? '🏆' : rank}
@@ -1679,7 +1752,7 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
                         </div>
                         
                         {/* From → To */}
-                        <div className="text-center">
+                        <div className="text-center flex-1">
                           <div className="text-xs text-gray-600 font-semibold">From → To</div>
                           <div className="text-sm font-bold text-gray-800">
                             {result.exporterCountry} → {calculatedImportingCountry}
@@ -1687,13 +1760,13 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
                         </div>
                         
                         {/* Product */}
-                        <div className="text-center">
+                        <div className="text-center flex-1">
                           <div className="text-xs text-gray-600 font-semibold">Product</div>
                           <div className="text-sm font-bold text-gray-800">{calculatedProduct}</div>
                         </div>
                         
                         {/* Base Cost */}
-                        <div className="text-center">
+                        <div className="text-center flex-1">
                           <div className="text-xs text-gray-600 font-semibold">Base Cost</div>
                           <div className="text-sm font-bold text-gray-800">
                             ${result.baseCost.toLocaleString('en-US', { minimumFractionDigits: 2 })}
@@ -1701,19 +1774,19 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
                         </div>
                         
                         {/* Tariffs Count */}
-                        <div className="text-center">
+                        <div className="text-center flex-1">
                           <div className="text-xs text-gray-600 font-semibold">Tariffs</div>
                           <div className="text-sm font-bold text-blue-600">{result.tariffs.length}</div>
                         </div>
                         
                         {/* Agreements Count */}
-                        <div className="text-center">
+                        <div className="text-center flex-1">
                           <div className="text-xs text-gray-600 font-semibold">Agreements</div>
                           <div className="text-sm font-bold text-purple-600">{result.agreements.length}</div>
                         </div>
                         
                         {/* Final Total */}
-                        <div className="text-center">
+                        <div className="text-center flex-1">
                           <div className="text-xs text-gray-600 font-semibold">Final Total</div>
                           <div className={`text-lg font-bold ${isWinner ? 'text-green-700' : 'text-green-600'}`}>
                             ${result.finalTotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}
@@ -1722,7 +1795,7 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
                       </div>
                       
                       {/* Expand/Collapse Arrow */}
-                      <div className="text-2xl text-blue-600">
+                      <div className="text-2xl text-blue-600 flex-shrink-0">
                         {isExpanded ? '▲' : '▼'}
                       </div>
                     </div>
