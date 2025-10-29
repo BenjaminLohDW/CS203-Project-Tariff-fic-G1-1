@@ -68,6 +68,7 @@ resource "aws_ecs_task_definition" "svc" {
         { name = "REDIS_HOST",  value = var.enable_redis ? aws_elasticache_replication_group.this[0].primary_endpoint_address : "" },
         { name = "REDIS_PORT",  value = "6379"}, 
         { name = "AWS_REGION",  value = var.aws_region }, # for SDK calls
+        { name = "AUTO_CREATE_DB", value = "1" }, # ensures that the tables are created in the rds when the project is initialised
         
         # internal service discovery endpoint
         { name = "PRODUCT_MS_BASE",  value = var.enable_cloud_map ? "http://product.svc.local:5002" : "http://localhost:5002" },

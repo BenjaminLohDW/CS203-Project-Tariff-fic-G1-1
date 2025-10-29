@@ -13,9 +13,17 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
+
+COPY migrations/ /app/migrations/
+COPY data/ /app/data/
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
 COPY countries_full.csv ./countries_full.csv
 COPY country_relations_all.csv ./country_relations_all.csv
 
 EXPOSE 5005
 
 CMD ["python", "app.py"]
+
+CMD ["/app/entrypoint.sh"]
