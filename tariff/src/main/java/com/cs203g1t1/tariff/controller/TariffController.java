@@ -133,6 +133,44 @@ public class TariffController {
     return ResponseEntity.ok(service.listAll());
   }
 
+  /**
+   * Update tariff record by id (admin use)
+   * PUT /api/tariffs/{id}
+   *
+   * Semantics: full replace of mutable fields using TariffCreateRequest.
+   * Responses:
+   *  - 200 OK with updated body
+   *  - 404 Not Found if id doesn't exist
+   *  - 400 Bad Request for invalid request data (e.g., bad dates)
+   *  - 409 Conflict if your service enforces non-overlapping validity ranges and detects a clash
+   *  - 502 Bad Gateway if dependent microservice lookup fails
+   *  - 500 Internal Server Error on DB errors
+   */
+  @PutMapping("/{id}")
+  public ResponseEntity<TariffResponse> update(
+      @PathVariable Long id,
+      @Valid @RequestBody TariffCreateRequest req
+  ) {
+    try {
+      TariffResponse updated = service.update(id, req);
+      if (updated == null) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+      }
+      return ResponseEntity.ok(updated);
+    } catch (IllegalArgumentException e) {
+      // e.g., req validation beyond bean validation, invalid date ranges, etc.
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+    } catch (IllegalStateException e) {
+      // use this in service for domain conflicts, e.g., validity-range overlap with another record
+      return ResponseEntity.status(HttpStatus.CONFLICT).build();
+    } catch (RestClientException e) {
+      // downstream product/country/agreement lookups failed
+      return ResponseEntity.status(HttpStatus.BAD_GATEWAY).build();
+    } catch (DataAccessException e) {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+  }
+
   @GetMapping("/health")
   public Map<String, String> healthCheck() {
     return Map.of("status", "Tariff service is healthy");

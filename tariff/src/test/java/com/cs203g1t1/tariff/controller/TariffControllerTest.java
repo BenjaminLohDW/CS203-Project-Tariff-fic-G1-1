@@ -1,6 +1,7 @@
 // src/test/java/com/cs203g1t1/tariff/controller/TariffControllerTest.java
 package com.cs203g1t1.tariff.controller;
 
+import com.cs203g1t1.tariff.config.JwtAuthenticationFilter;
 import com.cs203g1t1.tariff.dto.EffectiveByNamesRequest;
 import com.cs203g1t1.tariff.dto.TariffCreateRequest;
 import com.cs203g1t1.tariff.dto.TariffResponse;
@@ -35,7 +36,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(TariffController.class)
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @Import(TariffControllerTest.TestSecurityConfig.class)
 class TariffControllerTest {
 
@@ -43,6 +44,7 @@ class TariffControllerTest {
   @Autowired ObjectMapper om;
 
   @MockBean TariffService service;
+  @MockBean JwtAuthenticationFilter jwtAuthenticationFilter;
 
   @TestConfiguration
   static class TestSecurityConfig {
@@ -226,4 +228,95 @@ class TariffControllerTest {
         .andExpect(jsonPath("$.length()").value(2))
         .andExpect(jsonPath("$[0].hsCode").value("85171300"));
   }
+
+  // ---------- PUT /api/tariffs/{id} (update) ----------
+  private TariffCreateRequest sampleUpdateReq() {
+    TariffCreateRequest req = new TariffCreateRequest();
+    req.setHsCode("85171300");
+    req.setImporterId("SG");
+    req.setExporterId("CN");
+    req.setTariffType("Ad Valorem");
+    req.setTariffRate(0.05);
+    req.setSpecificAmt(null);
+    req.setSpecificUnit(null);
+    req.setMinTariffAmt(2.00);
+    req.setMaxTariffAmt(50.00);
+    req.setStartDate(LocalDate.of(2024,1,1));
+    req.setEndDate(LocalDate.of(2026,12,31));
+    return req;
+  }
+
+  @Test
+  void update_returns200_andBody_andPassesId() throws Exception {
+    when(service.update(eq(1L), any(TariffCreateRequest.class)))
+        .thenReturn(sampleResponse());
+
+    mvc.perform(put("/api/tariffs/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(om.writeValueAsString(sampleUpdateReq())))
+        .andExpect(status().isOk())
+        .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+        .andExpect(jsonPath("$.id").value(1))
+        .andExpect(jsonPath("$.hsCode").value("85171300"))
+        .andExpect(jsonPath("$.tariffRate").value(0.05));
+
+    verify(service).update(eq(1L), any(TariffCreateRequest.class));
+  }
+
+  @Test
+  void update_returns404_whenNotFound() throws Exception {
+    when(service.update(eq(999L), any(TariffCreateRequest.class)))
+        .thenReturn(null);
+
+    mvc.perform(put("/api/tariffs/999")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(om.writeValueAsString(sampleUpdateReq())))
+        .andExpect(status().isNotFound());
+  }
+
+  @Test
+  void update_returns400_onBadRequest() throws Exception {
+    when(service.update(eq(1L), any(TariffCreateRequest.class)))
+        .thenThrow(new IllegalArgumentException("endDate cannot be before startDate"));
+
+    mvc.perform(put("/api/tariffs/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(om.writeValueAsString(sampleUpdateReq())))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void update_returns409_onDomainConflict() throws Exception {
+    when(service.update(eq(1L), any(TariffCreateRequest.class)))
+        .thenThrow(new IllegalStateException("Validity period overlaps"));
+
+    mvc.perform(put("/api/tariffs/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(om.writeValueAsString(sampleUpdateReq())))
+        .andExpect(status().isConflict());
+  }
+
+  @Test
+  void update_returns502_onDownstreamFailure() throws Exception {
+    when(service.update(eq(1L), any(TariffCreateRequest.class)))
+        .thenThrow(new org.springframework.web.client.RestClientException("downstream"));
+
+    mvc.perform(put("/api/tariffs/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(om.writeValueAsString(sampleUpdateReq())))
+        .andExpect(status().isBadGateway());
+  }
+
+  @Test
+  void update_returns500_onDbError() throws Exception {
+    when(service.update(eq(1L), any(TariffCreateRequest.class)))
+        .thenThrow(new org.springframework.dao.DataAccessException("db error") {});
+
+    mvc.perform(put("/api/tariffs/1")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(om.writeValueAsString(sampleUpdateReq())))
+        .andExpect(status().isInternalServerError());
+  }
+
+
 }

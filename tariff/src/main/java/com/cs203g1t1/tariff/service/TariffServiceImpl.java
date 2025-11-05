@@ -8,10 +8,14 @@ import com.cs203g1t1.tariff.dto.TariffResponse;
 import com.cs203g1t1.tariff.dto.EffectiveByNamesRequest;
 import com.cs203g1t1.tariff.repository.TariffRepository;
 import org.springframework.context.annotation.Profile;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Profile({"local", "test", "docker", "aws"}) // activate this when running with profile=local
 @Service
@@ -54,6 +58,58 @@ public class TariffServiceImpl implements TariffService {
         .build();
     Tariff saved = repo.save(t);
     return toResponse(saved);
+  }
+
+  @Override
+  @Transactional
+  public TariffResponse update(Long id, TariffCreateRequest req) throws DataAccessException, RestClientException {
+      Tariff entity = repo.findById(id).orElse(null);
+      if (entity == null) {
+          return null; // controller will 404
+      }
+
+      // --- Validation (throwing -> controller maps to 400/409 as you set up) ---
+      if (req.getStartDate() != null && req.getEndDate() != null
+              && req.getEndDate().isBefore(req.getStartDate())) {
+          throw new IllegalArgumentException("endDate cannot be before startDate");
+      }
+      if (req.getTariffRate() != null && req.getTariffRate() < 0) {
+          throw new IllegalArgumentException("tariffRate cannot be negative");
+      }
+      if (req.getSpecificAmt() != null && req.getSpecificAmt() < 0) {
+          throw new IllegalArgumentException("specificAmt cannot be negative");
+      }
+      if (req.getMinTariffAmt() != null && req.getMinTariffAmt() < 0) {
+          throw new IllegalArgumentException("minTariffAmt cannot be negative");
+      }
+      if (req.getMaxTariffAmt() != null && req.getMaxTariffAmt() < 0) {
+          throw new IllegalArgumentException("maxTariffAmt cannot be negative");
+      }
+      if (req.getMinTariffAmt() != null && req.getMaxTariffAmt() != null
+              && req.getMinTariffAmt().compareTo(req.getMaxTariffAmt()) > 0) {
+          throw new IllegalArgumentException("minTariffAmt cannot exceed maxTariffAmt");
+      }
+
+      // Full replace of mutable fields — adapt names to your entity/DTO
+      entity.setHsCode(nzt(req.getHsCode()));
+      entity.setImporterId(nzt(req.getImporterId()));
+      entity.setExporterId(nzt(req.getExporterId()));
+      entity.setTariffType(nzt(req.getTariffType()));
+      entity.setTariffRate(req.getTariffRate());
+      entity.setSpecificAmt(req.getSpecificAmt());
+      entity.setSpecificUnit(req.getSpecificUnit());
+      entity.setMinTariffAmt(req.getMinTariffAmt());
+      entity.setMaxTariffAmt(req.getMaxTariffAmt());
+      entity.setStartDate(req.getStartDate());
+      entity.setEndDate(req.getEndDate());
+
+      Tariff saved = repo.save(entity);
+      return toResponse(saved);
+  }
+
+  // null->"" trimmed, otherwise trimmed; adjust to return null instead if you prefer to keep nulls:
+  private static String nzt(String s) {
+      return (s == null) ? null : s.trim();
   }
 
   @Override
