@@ -18,7 +18,7 @@ class TariffForecaster:
         self.product_url = os.getenv('PRODUCT_MS_BASE', 'http://product:5002')
 
         self.request_timeout = int(os.getenv('REQUEST_TIMEOUT', '10'))
-        self.min_historical_months = int(os.getenv('MODEL_MIN_HISTORICAL_MONTHS', '12'))
+        self.min_historical_years = int(os.getenv('MODEL_MIN_HISTORICAL_YEARS', '2'))
         self.graph_strategy = os.getenv('GRAPH_STRATEGY', 'us_centric')
         
         self.n_estimators = int(os.getenv('MODEL_N_ESTIMATORS', '200'))
@@ -454,13 +454,13 @@ class TariffForecaster:
                     if rate is None:
                         continue
                     
-                    # Generate monthly entries for this tariff period
-                    months = pd.date_range(start, end, freq='MS')
+                    # Generate yearly entries for this tariff period
+                    years = pd.date_range(start, end, freq='YS')
                     
-                    for month in months:
-                        if start_date <= month <= end_date:
+                    for year in years:
+                        if start_date <= year <= end_date:
                             records.append({
-                                'date': month,
+                                'date': year,
                                 'tariff_rate': rate
                             })
                             
@@ -479,7 +479,7 @@ class TariffForecaster:
             # Remove duplicates (keep last if multiple rates for same month)
             df = df.drop_duplicates(subset=['date'], keep='last')
             
-            print(f"   ✅ Fetched {len(df)} months of tariff data for {hs_code} {importer}-{exporter}")
+            print(f"   ✅ Fetched {len(df)} years of tariff data for {hs_code} {importer}-{exporter}")
             return df
         
         except requests.exceptions.Timeout:
@@ -494,14 +494,14 @@ class TariffForecaster:
 
 
     def get_recent_tariff_rates(
-        self, hs_code: str, importer: str, exporter: str, months: int = 12
+        self, hs_code: str, importer: str, exporter: str, years: int = 4
     ) -> list[float]:
         """
-        Get last N months of tariff rates
+        Get last N years of tariff rates
         Returns: List of tariff rates (most recent last)
         """
         end_date = pd.Timestamp.now()
-        start_date = end_date - pd.DateOffset(months=months)
+        start_date = end_date - pd.DateOffset(years=years)
         
         df = self.fetch_historical_tariffs(hs_code, importer, exporter, start_date, end_date)
         
@@ -519,26 +519,26 @@ class TariffForecaster:
         Train XGBoost regression model on historical tariff data
         
         Features:
-        - lag1: Previous month's tariff rate
-        - lag2: Tariff rate 2 months ago
+        - lag1: Previous year's tariff rate
+        - lag2: Tariff rate 2 years ago
         - rel_score: Country relationship score from graph
         
         Target:
-        - Current month's tariff rate
+        - Current year's tariff rate
         
         Falls back to mock data if insufficient real data available
         """
         print(f"🎓 Training model on {hs_code} {importer}-{exporter}...")
         
-        # Fetch 4 years of historical data for training
+        # Fetch 10 years of historical data for training
         end_date = pd.Timestamp.now()
-        start_date = end_date - pd.DateOffset(years=4)
+        start_date = end_date - pd.DateOffset(years=10)
         
         df = self.fetch_historical_tariffs(hs_code, importer, exporter, start_date, end_date)
         
         # Check if we have enough data
-        if len(df) < self.min_historical_months:
-            print(f"⚠️ Only {len(df)} months of data. Need {self.min_historical_months}+.")
+        if len(df) < self.min_historical_years:
+            print(f"⚠️ Only {len(df)} years of data. Need {self.min_historical_years}+.")
             print("⚠️ Falling back to mock data for training")
             self.train_on_mock_data()
             return
@@ -550,16 +550,16 @@ class TariffForecaster:
         df['rel_score'] = rel_score
         
         # Create lagged features for time series prediction
-        df['lag1'] = df['tariff_rate'].shift(1)  # Previous month
-        df['lag2'] = df['tariff_rate'].shift(2)  # 2 months ago
+        df['lag1'] = df['tariff_rate'].shift(1)  # Previous year
+        df['lag2'] = df['tariff_rate'].shift(2)  # 2 years ago
         
         # Drop rows with NaN (first 2 rows after shifting)
         df = df.dropna()
         
-        if len(df) < 10:
-            print(f"⚠️ Only {len(df)} rows after creating lags. Need 10+.")
+        if len(df) < 3:
+            print(f"⚠️ Only {len(df)} rows after creating lags. Need 3+.")
             print("⚠️ Falling back to mock data")
-            self._train_on_mock_data()
+            self.train_on_mock_data()
             return
         
         # Prepare features (X) and target (y)
@@ -615,16 +615,15 @@ class TariffForecaster:
         print("🎓 Training on mock data (fallback mode)...")
         
         # Generate 4 years of monthly data
-        dates = pd.date_range("2020-01-01", "2023-12-01", freq="MS")
+        dates = pd.date_range("2020-01-01", "2023-12-01", freq="YS")
         
         # Simulate US-China tariff rates (realistic trend)
         # Base rate around 15%, increasing trend, some noise
         base_rate = 15.0
         trend = np.linspace(0, 3, len(dates))  # Increasing trend
-        seasonality = 0.3 * np.sin(np.arange(len(dates)) * 2 * np.pi / 12)  # Seasonal variation
         noise = np.random.normal(0, 0.5, len(dates))  # Random noise
         
-        tariffs = base_rate + trend + seasonality + noise
+        tariffs = base_rate + trend + noise
         
         df = pd.DataFrame({
             "date": dates,
@@ -716,8 +715,8 @@ class TariffForecaster:
         Args:
             import_country: Importer country code (e.g., 'US')
             export_country: Exporter country code (e.g., 'CN')
-            last_rates: List of recent tariff rates (need at least 2)
-            horizon: Number of months ahead (currently only supports 1)
+            last_rates: List of recent tariff rates (need at least 2 years)
+            horizon: Number of years ahead (currently only supports 1)
         
         Returns:
             Predicted tariff rate (percentage)
@@ -733,8 +732,8 @@ class TariffForecaster:
         
         # Prepare features for prediction
         X_future = pd.DataFrame([{
-            "lag1": last_rates[-1],  # Most recent month
-            "lag2": last_rates[-2],  # 2 months ago
+            "lag1": last_rates[-1],  # Most recent year
+            "lag2": last_rates[-2],  # 2 year ago
             "rel_score": rel_score
         }])
         
@@ -752,15 +751,15 @@ class TariffForecaster:
         return prediction
 
 
-    def forecast(self, import_country, export_country, last_rates, horizon=1):
-        """Forecast next tariff given last 2 rates and graph relationship"""
-        rel = self.get_relative_score(import_country, export_country)
-        X_future = pd.DataFrame([{
-            "lag1": last_rates[-1],
-            "lag2": last_rates[-2],
-            "rel_score": rel
-        }])
-        return float(self.model.predict(X_future)[0])
+    # def forecast(self, import_country, export_country, last_rates, horizon=1):
+    #     """Forecast next tariff given last 2 rates and graph relationship"""
+    #     rel = self.get_relative_score(import_country, export_country)
+    #     X_future = pd.DataFrame([{
+    #         "lag1": last_rates[-1],
+    #         "lag2": last_rates[-2],
+    #         "rel_score": rel
+    #     }])
+    #     return float(self.model.predict(X_future)[0])
     
 
     def forecast_by_product_name(
@@ -773,7 +772,7 @@ class TariffForecaster:
             product_name: Product description (e.g., "smartphones")
             import_country: Importer country code
             export_country: Exporter country code
-            horizon: Months ahead to predict
+            horizon: Years ahead to predict
         
         Returns:
             Dict with prediction details or None if failed
@@ -785,7 +784,7 @@ class TariffForecaster:
             return None
         
         # Get recent tariff rates
-        last_rates = self.get_recent_tariff_rates(hs_code, import_country, export_country, months=12)
+        last_rates = self.get_recent_tariff_rates(hs_code, import_country, export_country, years=4)
         
         if len(last_rates) < 2:
             print(f"⚠️ Insufficient historical data for {product_name} (HS: {hs_code})")
@@ -800,13 +799,12 @@ class TariffForecaster:
             "import_country": import_country,
             "export_country": export_country,
             "predicted_tariff": round(prediction, 2),
-            "historical_rates": last_rates[-6:],  # Last 6 months
-            "horizon_months": horizon
+            "historical_rates": last_rates[-3:],  # Last 3 years
+            "horizon_years": horizon
         }
     
     
 # ========== UTILITY METHODS ==========
-
     def get_graph_stats(self) -> dict:
         """Get statistics about the relationship graph"""
         if self.graph.number_of_nodes() == 0:
