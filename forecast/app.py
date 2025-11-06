@@ -92,13 +92,13 @@ def forecast_tariff():
         elif 'hs_code' in data:
             hs_code = data['hs_code'].strip()
             last_rates = forecaster.get_recent_tariff_rates(
-                hs_code, import_country, export_country, months=12
+                hs_code, import_country, export_country, years=4
             )
             
             if len(last_rates) < 2:
                 return jsonify({
                     "code": 400,
-                    "error": f"Insufficient historical data for HS code {hs_code}. Found {len(last_rates)} months, need at least 2."
+                    "error": f"Insufficient historical data for HS code {hs_code}. Found {len(last_rates)} years, need at least 2."
                 }), 400
             
             prediction = forecaster.forecast(import_country, export_country, last_rates, horizon)
@@ -109,9 +109,9 @@ def forecast_tariff():
                 "import_country": import_country,
                 "export_country": export_country,
                 "predicted_tariff": round(prediction, 2),
-                "horizon_months": horizon,
+                "horizon_years": horizon,
                 "historical_context": {
-                    "last_6_months": last_rates[-6:] if len(last_rates) >= 6 else last_rates,
+                    "last_3_years": last_rates[-6:] if len(last_rates) >= 6 else last_rates,
                     "data_points_used": len(last_rates)
                 }
             }), 200
@@ -133,7 +133,7 @@ def forecast_tariff():
                 "import_country": import_country,
                 "export_country": export_country,
                 "predicted_tariff": round(prediction, 2),
-                "horizon_months": horizon,
+                "horizon_years": horizon,
                 "historical_context": {
                     "last_rates": last_rates,
                     "data_points_used": len(last_rates)
