@@ -4,6 +4,7 @@ import { useAuth } from './lib/AuthContext'
 import { fetchCountries } from './lib/countryService'
 import { saveCalculation, getUserHistory, getHistoryTariffLines } from './lib/historyService'
 import ProductAutocomplete from './lib/ProductAutocomplete'
+import { groupedTariffProducts } from './lib/tariffProductData'
 import tariffService from './lib/tariffService'
 import agreementService from './lib/agreementService'
 import { Country, ProductOption, TariffData, CalculationData, Agreement, ComparisonResult } from './types'
@@ -13,7 +14,6 @@ import { Card, CardContent, CardHeader, CardTitle } from './components/ui/Card'
 import { Button } from './components/ui/Button'
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from './components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from './components/ui/Popover'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './components/ui/Select'
 import { Check, ChevronsUpDown } from 'lucide-react'
 import { cn } from './lib/utils'
 import './App.css'
@@ -38,7 +38,7 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
   const [currentPage, setCurrentPage] = useState<string>('calculation')
   
   // State for storing selected values
-  const [selectedProduct, setSelectedProduct] = useState<string>('') // Changed to simple string input
+  const [selectedProduct, setSelectedProduct] = useState<ProductOption | null>(null)
   const [selectedImportingCountry, setSelectedImportingCountry] = useState<string>('')
   const [selectedExportingCountry, setSelectedExportingCountry] = useState<string>('')
   const [quantity, setQuantity] = useState<string>('')
@@ -64,10 +64,6 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
     setDate(today)
   }, [])
   
-  // State for tariff input mode: 'normal' or 'manual'
-  const [tariffMode, setTariffMode] = useState<'normal' | 'manual'>('normal')
-  const [tariffRate, setTariffRate] = useState<string>('')
-  
   // State for predicted calculation results
   const [predictedResults, setPredictedResults] = useState<any>(null)
   const [isLoadingPrediction, setIsLoadingPrediction] = useState(false)
@@ -80,7 +76,6 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
   const [calculatedQuantity, setCalculatedQuantity] = useState<string>('')
   const [calculatedCost, setCalculatedCost] = useState<string>('')
   const [calculatedDate, setCalculatedDate] = useState<string>('')
-  const [calculatedTariffRate, setCalculatedTariffRate] = useState<string>('')
   
   // State for API tariff data
   const [tariffData, setTariffData] = useState<TariffData[]>([])
@@ -143,9 +138,8 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
   }
 
   // Handle dropdown changes
-  const handleProductChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setSelectedProduct(value)
+  const handleProductChange = (selectedOption: ProductOption | null) => {
+    setSelectedProduct(selectedOption)
     // Mark fields as modified if there are calculated values
     if (calculatedProduct) {
       setFieldsModified(true)
@@ -201,33 +195,6 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
     // Allow positive numbers (including decimals)
     if (value === '' || (!isNaN(Number(value)) && Number(value) >= 0)) {
       setCost(value)
-      // Mark fields as modified if there are calculated values
-      if (calculatedProduct) {
-        setFieldsModified(true)
-      }
-    }
-  }
-
-  const handleTariffModeChange = (value: 'normal' | 'manual') => {
-    setTariffMode(value)
-    // Clear manual tariff rate when switching to normal
-    if (value === 'normal') {
-      setTariffRate('')
-    }
-    // Clear validation errors
-    setCountryValidationError('')
-    setDateValidationError('')
-    // Mark fields as modified if there are calculated values
-    if (calculatedProduct) {
-      setFieldsModified(true)
-    }
-  }
-
-  const handleTariffRateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    // Only allow numbers between 0 and 100 (inclusive, with decimals)
-    if (value === '' || (!isNaN(Number(value)) && Number(value) >= 0 && Number(value) <= 100)) {
-      setTariffRate(value)
       // Mark fields as modified if there are calculated values
       if (calculatedProduct) {
         setFieldsModified(true)
@@ -407,51 +374,19 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
     try {
       let tariffs = []
       
-      // Get HS code from selected product or user input
+      // Get HS code from selected product
       let hsCode = null
       
       if (selectedProduct) {
-        // Remove periods from input (e.g., "8504.40.90" becomes "85044090")
-        const cleanedInput = selectedProduct.trim().replace(/\./g, '')
-        
-        // Check if the cleaned input looks like an HS code (4-10 digits)
-        if (/^\d{4,10}$/.test(cleanedInput)) {
-          // User entered HS code directly - trim to first 6 digits for standardization
-          hsCode = cleanedInput.substring(0, 6)
-        } else {
-          // User entered a product name - use the by-names endpoint
-          // Check if we have all required data for the by-names endpoint
-          if (selectedImportingCountry && selectedExportingCountry && date) {
-            
-            // Use the product name as entered by user
-            const productNameForApi = selectedProduct.trim()
-            
-            // Call the by-names endpoint
-            const tariff = await tariffService.getEffectiveTariffByNames({
-              productName: productNameForApi,
-              importerCountryName: selectedImportingCountry,
-              exporterCountryName: selectedExportingCountry,
-              date: date
-            })
-            
-            if (tariff) {
-              tariffs = [tariff] // Wrap in array for consistent handling
-            } else {
-              // Don't return early - continue with empty tariffs array so agreements can still be applied
-              tariffs = []
-            }
-          } else {
-            // Missing required data for by-names endpoint
-            setTariffData([])
-            setIsLoadingTariffs(false)
-            alert('Please select importing country, exporting country, and date to search by product name.')
-            // Don't return - let the function continue to set empty tariff data
-            tariffs = []
-          }
+        // If selectedProduct has an hsCode property (from ProductAutocomplete), use it directly
+        if (selectedProduct.hsCode) {
+          // Remove periods and ensure HS code is trimmed to 6 digits
+          const cleanedHsCode = selectedProduct.hsCode.replace(/\./g, '')
+          hsCode = cleanedHsCode.substring(0, 6)
         }
       }
       
-      // Handle HS code lookup (when entered directly)
+      // Handle HS code lookup
       if (hsCode) {
         // Call tariff service with HS code
         if (selectedImportingCountry && selectedExportingCountry && date) {
@@ -585,7 +520,7 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
    * 
    * @param importerCountry - Single importing country name
    * @param exporterCountries - Array of exporting country names to compare
-   * @param productInput - Product string (can be HS code or product name)
+   * @param product - ProductOption object with hsCode
    * @param quantity - Quantity of goods
    * @param goodsValue - Cost/value of goods
    * @param date - Date for tariff/agreement lookup (YYYY-MM-DD)
@@ -594,24 +529,19 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
   const fetchComparisonData = async (
     importerCountry: string,
     exporterCountries: string[],
-    productInput: string,
+    product: ProductOption,
     quantity: number,
     goodsValue: number,
     date: string
   ): Promise<ComparisonResult[]> => {
     try {
-      // Step 1: Determine if input is HS code or product name
+      // Step 1: Get HS code from product
       let hsCode = ''
-      let productName = ''
       
-      // Remove periods from input (e.g., "8504.40.90" becomes "85044090")
-      const cleanedInput = productInput.trim().replace(/\./g, '')
-      
-      if (/^\d{4,10}$/.test(cleanedInput)) {
-        // Trim to first 6 digits for standardization
-        hsCode = cleanedInput.substring(0, 6)
-      } else {
-        productName = productInput.trim()
+      if (product.hsCode) {
+        // Remove periods and ensure HS code is trimmed to 6 digits
+        const cleanedHsCode = product.hsCode.replace(/\./g, '')
+        hsCode = cleanedHsCode.substring(0, 6)
       }
 
       // Step 2: Fetch ALL agreements once (filter by importer, will filter by exporter per country)
@@ -636,33 +566,19 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
           continue
         }
 
-        // Fetch tariffs for this specific country pair
+        // Fetch tariffs for this specific country pair using HS code
         let countryTariffs: any[] = []
         
         if (hsCode) {
-          // If we have HS code, use getTariffsByCombo with country codes
+          // Use getEffectiveTariff with date filtering to get single active tariff
           try {
-            countryTariffs = await tariffService.getTariffsByCombo(hsCode, importerCode, exporter.code)
-          } catch (error) {
-            countryTariffs = []
-          }
-        } else if (productName) {
-          // If product name, use getEffectiveTariffByNames with country names
-          try {
-            const tariffResult = await tariffService.getEffectiveTariffByNames({
-              productName: productName,
-              importerCountryName: importerCountry,  // Use country name, not code
-              exporterCountryName: exporter.name,    // Use country name, not code
-              date: date
-            })
-            
-            // getEffectiveTariffByNames returns a single object, not array
-            countryTariffs = tariffResult ? [tariffResult] : []
-            
-            // Extract HS code from first result for future reference
-            if (!hsCode && countryTariffs.length > 0 && countryTariffs[0].hs_code) {
-              hsCode = countryTariffs[0].hs_code
-            }
+            const effectiveTariff = await tariffService.getEffectiveTariff(
+              hsCode, 
+              importerCode, 
+              exporter.code,
+              date
+            )
+            countryTariffs = effectiveTariff ? [effectiveTariff] : []
           } catch (error) {
             countryTariffs = []
           }
@@ -791,7 +707,6 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
     setCalculatedQuantity('')
     setCalculatedCost('')
     setCalculatedDate('')
-    setCalculatedTariffRate('')
     setTariffData([])
     setAgreementsData([])
     setComparisonResults(null)
@@ -818,7 +733,7 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
       }
       
       // Set basic calculated values for display
-      setCalculatedProduct(selectedProduct || '')
+      setCalculatedProduct(selectedProduct?.label || '')
       setCalculatedImportingCountry(selectedImportingCountry)
       setCalculatedQuantity(quantity)
       setCalculatedCost(cost)
@@ -862,13 +777,12 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
     
     // Regular single-exporter calculation mode
     // Set basic calculated values
-    setCalculatedProduct(selectedProduct || '')
+    setCalculatedProduct(selectedProduct?.label || '')
     setCalculatedImportingCountry(selectedImportingCountry)
     setCalculatedExportingCountry(selectedExportingCountry)
     setCalculatedQuantity(quantity)
     setCalculatedCost(cost)
     setCalculatedDate(date)
-    setCalculatedTariffRate(tariffRate)
     
     // Fetch tariff data and agreements in parallel
     if (quantity && cost) {
@@ -943,16 +857,9 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
     const exporterToSave = specificExporter || calculatedExportingCountry
     
     // Check if there are calculated values to save
-    if (tariffMode === 'manual') {
-      if (!calculatedQuantity && !calculatedCost && !calculatedTariffRate) {
-        alert('No calculation results to save. Please calculate first.')
-        return
-      }
-    } else {
-      if (!calculatedProduct && !calculatedImportingCountry && !exporterToSave && !calculatedQuantity && !calculatedCost && !calculatedDate) {
-        alert('No calculation results to save. Please calculate first.')
-        return
-      }
+    if (!calculatedProduct && !calculatedImportingCountry && !exporterToSave && !calculatedQuantity && !calculatedCost && !calculatedDate) {
+      alert('No calculation results to save. Please calculate first.')
+      return
     }
 
     // Create calculation data object
@@ -1036,13 +943,13 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
         id: Date.now(),
         date: calculatedDate || new Date().toISOString().split('T')[0],
         timestamp: new Date().toLocaleString(),
-        mode: tariffMode === 'manual' ? 'Manual Tariff' : 'Standard',
+        mode: 'Standard',
         productType: calculationData.product_type,
         importingCountry: calculationData.import_country,
         exportingCountry: calculationData.export_country,
         quantity: calculationData.total_qty,
         cost: calculatedCost || 0,
-        tariffRate: calculatedTariffRate || 0,
+        tariffRate: 0, // Not used anymore
         baseAmount: calculationData.base_cost.toFixed(2),
         tariffs: calculationData.tariff_lines.map((line: any) => ({
           type: line.type,
@@ -1228,25 +1135,35 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
       // Navigate to calculation page
       setCurrentPage('calculation')
       
-      // Set tariff mode based on saved data
-      const isManualMode = calculationData.mode === 'Manual Tariff'
-      setTariffMode(isManualMode ? 'manual' : 'normal')
-      
       // Populate input fields
       setQuantity(calculationData.quantity !== 'Not specified' ? String(calculationData.quantity) : '')
       setCost(calculationData.cost !== 'Not specified' ? String(calculationData.cost) : '')
       
-      if (!isManualMode) {
-        // Standard mode - populate all fields
-        const productValue = calculationData.productType !== 'Not specified' ? calculationData.productType : ''
-        setSelectedProduct(productValue)
-        setSelectedImportingCountry(calculationData.importingCountry !== 'Not specified' ? calculationData.importingCountry : '')
-        setSelectedExportingCountry(calculationData.exportingCountry !== 'Not specified' ? calculationData.exportingCountry : '')
-        setDate(calculationData.date || calculationData.originalApiData?.created_at?.split('T')[0] || new Date().toISOString().split('T')[0])
+      // Create ProductOption from saved data
+      const productValue = calculationData.productType !== 'Not specified' ? calculationData.productType : ''
+      if (productValue) {
+        // Try to find the product in our seed data first by flattening grouped products
+        const allProducts = groupedTariffProducts.flatMap(group => group.options)
+        const matchedProduct = allProducts.find(p => p.label === productValue)
+        
+        if (matchedProduct) {
+          setSelectedProduct(matchedProduct)
+        } else {
+          // If not found, create a generic ProductOption
+          setSelectedProduct({
+            value: productValue,
+            label: productValue,
+            hsCode: productValue.match(/^\d+$/) ? productValue : '', // Only use as HS code if it's numeric
+            category: "Restored from History"
+          })
+        }
       } else {
-        // Manual tariff mode - populate tariff rate
-        setTariffRate(calculationData.tariffRate !== 'Not specified' ? String(calculationData.tariffRate || '') : '')
+        setSelectedProduct(null)
       }
+      
+      setSelectedImportingCountry(calculationData.importingCountry !== 'Not specified' ? calculationData.importingCountry : '')
+      setSelectedExportingCountry(calculationData.exportingCountry !== 'Not specified' ? calculationData.exportingCountry : '')
+      setDate(calculationData.date || calculationData.originalApiData?.created_at?.split('T')[0] || new Date().toISOString().split('T')[0])
       
       // Set calculated values
       setCalculatedProduct(calculationData.productType !== 'Not specified' ? calculationData.productType : '')
@@ -1255,7 +1172,6 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
       setCalculatedQuantity(calculationData.quantity !== 'Not specified' ? String(calculationData.quantity) : '')
       setCalculatedCost(calculationData.cost !== 'Not specified' ? String(calculationData.cost) : '')
       setCalculatedDate(calculationData.date || calculationData.originalApiData?.created_at?.split('T')[0] || new Date().toISOString().split('T')[0])
-      setCalculatedTariffRate(calculationData.tariffRate !== 'Not specified' ? String(calculationData.tariffRate || '') : '')
       
       // Restore tariff data if it exists (now loaded on-demand)
       if (calculationData.tariffs && calculationData.tariffs.length > 0) {
@@ -1351,19 +1267,15 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
                 !quantity || !cost || 
                 // Disable if countries are still loading
                 isLoadingCountries ||
-                // For manual tariff mode, require tariff rate
-                (tariffMode === 'manual' && !tariffRate) ||
-                // For normal mode, require all fields and no validation errors
-                (tariffMode === 'normal' && (
-                  !selectedProduct || 
-                  !selectedImportingCountry || 
-                  // In comparison mode, require at least one exporter in the array
-                  // In single mode, require selectedExportingCountry
-                  (isComparisonMode ? exportingCountries.filter(e => e.trim() !== '').length === 0 : !selectedExportingCountry) ||
-                  !date ||
-                  dateValidationError !== '' || 
-                  countryValidationError !== ''
-                ))
+                // Require all fields and no validation errors
+                !selectedProduct || 
+                !selectedImportingCountry || 
+                // In comparison mode, require at least one exporter in the array
+                // In single mode, require selectedExportingCountry
+                (isComparisonMode ? exportingCountries.filter(e => e.trim() !== '').length === 0 : !selectedExportingCountry) ||
+                !date ||
+                dateValidationError !== '' || 
+                countryValidationError !== ''
               }
             >
               {isLoadingCountries ? 'Loading...' : 'Calculate'}
@@ -1380,61 +1292,20 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
               <span className="text-purple-600 mr-2">⚙️</span>
               Tariff Configuration
             </CardTitle>
-            {/* Tariff Mode Dropdown */}
-            <div className="w-48">
-              <Select value={tariffMode} onValueChange={handleTariffModeChange}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select mode" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="normal">🔍 Normal (Lookup)</SelectItem>
-                  <SelectItem value="manual">✏️ Manual Entry</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
           </div>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
-          {tariffMode === 'manual' ? (
-          // Manual tariff mode - only show tariff rate field
           <div className="flex flex-col items-start text-left w-full">
-            <label htmlFor="tariff-rate" className="font-medium mb-2">Tariff rate (%):</label>
-            <input
-              type="number"
-              id="tariff-rate"
-              value={tariffRate}
-              onChange={handleTariffRateChange}
-              placeholder="Enter tariff rate (0-100)"
-              min="0"
-              max="100"
-              step="0.01"
-              className="w-full p-3 text-base border-2 border-gray-300 rounded-lg bg-white text-gray-900 transition-colors hover:border-blue-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 placeholder-gray-500"
+            <label htmlFor="product-type" className="font-medium mb-2">Product Type:</label>
+            <ProductAutocomplete
+              value={selectedProduct}
+              onChange={handleProductChange}
+              disabled={isLoadingCountries}
             />
-            <p className="text-sm text-gray-500 mt-1">
-              Enter the tariff rate percentage directly
-            </p>
           </div>
-        ) : (
-          // Normal mode - show all other fields
-          <>
-            <div className="flex flex-col items-start text-left w-full">
-              <label htmlFor="product-type" className="font-medium mb-2">Product Type:</label>
-              <input
-                type="text"
-                id="product-type"
-                value={selectedProduct}
-                onChange={handleProductChange}
-                placeholder="Enter product name or HS code (e.g., 'Smartphones' or '8517120000')"
-                disabled={isLoadingCountries}
-                className="w-full p-3 text-base border-2 border-gray-300 rounded-lg bg-white text-gray-900 transition-colors hover:border-blue-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 placeholder-gray-500 disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed"
-              />
-              <p className="text-sm text-gray-500 mt-1">
-                Enter a product name or HS code (4-10 digits)
-              </p>
-            </div>
 
-            <div className="flex flex-col items-start text-left w-full">
-              <label htmlFor="importing-country">Importing Country:</label>
+          <div className="flex flex-col items-start text-left w-full">
+            <label htmlFor="importing-country" className="font-medium mb-2">Importing Country:</label>
               <Popover open={importingCountryOpen} onOpenChange={setImportingCountryOpen}>
                 <PopoverTrigger asChild>
                   <Button
@@ -1647,8 +1518,6 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
                 ⚠️ {dateValidationError}
               </div>
             )}
-          </>
-        )}
         </CardContent>
       </Card>
       </div>
@@ -2584,10 +2453,8 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
                 disabled={
                   // No calculated results to save
                   (!calculatedQuantity && !calculatedCost) ||
-                  // For manual tariff mode, need tariff rate calculated
-                  (tariffMode === 'manual' && !calculatedTariffRate) ||
-                  // For standard mode, need basic calculation done
-                  (tariffMode === 'normal' && (!calculatedProduct || !calculatedImportingCountry || !calculatedExportingCountry))
+                  // Need basic calculation done
+                  (!calculatedProduct || !calculatedImportingCountry || !calculatedExportingCountry)
                 }
               >
                 Save Calculation
@@ -2757,13 +2624,13 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
                         <h4 className="font-semibold text-amber-900 mb-2">📊 Comparison</h4>
                         <p className="text-sm text-amber-800">
                           <strong>Current rate vs. Predicted rate:</strong><br/>
-                          {calculatedTariffRate && parseFloat(calculatedTariffRate) !== parseFloat(predictedResults.tariffRate) ? (
+                          {tariffData && tariffData.length > 0 && tariffData[0]['Tariff amount'] ? (
                             <>
-                              Current: {calculatedTariffRate}% → Predicted: {predictedResults.tariffRate}%<br/>
-                              {parseFloat(predictedResults.tariffRate) > parseFloat(calculatedTariffRate) ? (
-                                <span className="text-red-600">⚠️ Predicted tariff is higher by {(parseFloat(predictedResults.tariffRate) - parseFloat(calculatedTariffRate)).toFixed(2)}%</span>
+                              Current: {tariffData[0]['Tariff amount']}% → Predicted: {predictedResults.tariffRate}%<br/>
+                              {parseFloat(predictedResults.tariffRate) > parseFloat(String(tariffData[0]['Tariff amount'])) ? (
+                                <span className="text-red-600">⚠️ Predicted tariff is higher by {(parseFloat(predictedResults.tariffRate) - parseFloat(String(tariffData[0]['Tariff amount']))).toFixed(2)}%</span>
                               ) : (
-                                <span className="text-green-600">✓ Predicted tariff is lower by {(parseFloat(calculatedTariffRate) - parseFloat(predictedResults.tariffRate)).toFixed(2)}%</span>
+                                <span className="text-green-600">✓ Predicted tariff is lower by {(parseFloat(String(tariffData[0]['Tariff amount'])) - parseFloat(predictedResults.tariffRate)).toFixed(2)}%</span>
                               )}
                             </>
                           ) : (
