@@ -278,8 +278,8 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
         if (errorMessage.includes('Insufficient historical data')) {
           throw new Error(
             `Cannot predict tariff: Insufficient historical data.\n\n` +
-            `The ML model requires at least 2 months of historical tariff rates for HS code ${hsCode}, ` +
-            `but none were found in the database.\n\n` +
+            `The ML model requires at least 2 years of historical tariff rates for HS code ${hsCode}, ` +
+            `but insufficient data was found in the database.\n\n` +
             `This could mean:\n` +
             `• This is a new product with no trade history\n` +
             `• Historical tariff data hasn't been recorded for this country pair\n` +

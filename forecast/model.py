@@ -414,21 +414,27 @@ class TariffForecaster:
             importer = importer.strip().upper()
             exporter = exporter.strip().upper()
             
-            resp = requests.get(
-                f"{self.tariff_url}/api/tariffs",
-                params={
-                    "hs_code": hs_code,
-                    "importer": importer,
-                    "exporter": exporter
-                },
-                timeout=self.request_timeout
-            )
+            url = f"{self.tariff_url}/api/tariffs"
+            params = {
+                "hs_code": hs_code,
+                "importer": importer,
+                "exporter": exporter
+            }
+            
+            print(f"🔍 Fetching tariffs from: {url}")
+            print(f"   Params: {params}")
+            
+            resp = requests.get(url, params=params, timeout=self.request_timeout)
+            
+            print(f"   Response status: {resp.status_code}")
             
             if resp.status_code != 200:
                 print(f"⚠️ Tariff service returned {resp.status_code} for {hs_code} {importer}-{exporter}")
+                print(f"   Response: {resp.text}")
                 return pd.DataFrame(columns=['date', 'tariff_rate'])
             
             tariffs = resp.json()
+            print(f"   Received {len(tariffs) if isinstance(tariffs, list) else 0} tariff records")
             
             if not tariffs or not isinstance(tariffs, list):
                 print(f"⚠️ No tariffs found for {hs_code} {importer}-{exporter}")
@@ -437,32 +443,55 @@ class TariffForecaster:
             # Convert tariff records to monthly time series
             records = []
             
-            for t in tariffs:
+            print(f"   Processing {len(tariffs)} tariff records...")
+            
+            for i, t in enumerate(tariffs):
                 try:
-                    start = pd.Timestamp(t['start_date'])
-                    end = pd.Timestamp(t['end_date'])
+                    print(f"   Record {i+1}: {t}")
                     
-                    # Handle different rate field names
+                    # Handle both snake_case and camelCase date fields
+                    start = None
+                    end = None
+                    
+                    if 'start_date' in t:
+                        start = pd.Timestamp(t['start_date'])
+                    elif 'startDate' in t:
+                        start = pd.Timestamp(t['startDate'])
+                    
+                    if 'end_date' in t:
+                        end = pd.Timestamp(t['end_date'])
+                    elif 'endDate' in t:
+                        end = pd.Timestamp(t['endDate'])
+                    
+                    if start is None or end is None:
+                        print(f"   ⚠️ Skipping record: missing start/end date - {t}")
+                        continue
+                    
+                    # Handle different rate field names (both snake_case and camelCase)
                     rate = None
                     if 'rate' in t:
                         rate = float(t['rate'])
                     elif 'tariff_rate' in t:
                         rate = float(t['tariff_rate'])
+                    elif 'tariffRate' in t:
+                        rate = float(t['tariffRate'])
                     elif 'ad_valorem_rate' in t:
                         rate = float(t['ad_valorem_rate'])
                     
                     if rate is None:
+                        print(f"   ⚠️ Skipping record: no rate found - {t}")
                         continue
                     
                     # Generate yearly entries for this tariff period
-                    years = pd.date_range(start, end, freq='YS')
-                    
-                    for year in years:
-                        if start_date <= year <= end_date:
-                            records.append({
-                                'date': year,
-                                'tariff_rate': rate
-                            })
+                    # Use the start date of each tariff record as the data point
+                    if start_date <= start <= end_date:
+                        records.append({
+                            'date': start,
+                            'tariff_rate': rate
+                        })
+                        print(f"   ✓ Added record: {start.date()} -> {rate}%")
+                    else:
+                        print(f"   ⚠️ Record {start.date()} outside date range [{start_date.date()} to {end_date.date()}]")
                             
                 except (KeyError, ValueError, TypeError) as e:
                     print(f"   ⚠️ Skipping malformed tariff record: {e}")
