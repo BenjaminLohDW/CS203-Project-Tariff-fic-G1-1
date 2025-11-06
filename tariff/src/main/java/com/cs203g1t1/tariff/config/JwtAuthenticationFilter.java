@@ -52,18 +52,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         
-        logger.debug("Protected endpoint, checking for JWT: {} {}", method, path);
+        logger.info("Protected endpoint detected, checking for JWT: {} {}", method, path);
         
         try {
             String token = extractTokenFromRequest(request);
             
             if (token != null) {
+                logger.info("JWT token found, attempting verification. Token prefix: {}...", token.substring(0, Math.min(20, token.length())));
+                
                 // Verify the token with Firebase
                 FirebaseToken decodedToken = firebaseService.verifyToken(token);
                 
                 // Extract user information
                 String uid = decodedToken.getUid();
                 String email = decodedToken.getEmail();
+                
+                logger.info("Firebase token verified successfully - UID: {}, Email: {}", uid, email);
                 
                 // Create authentication token with ROLE_USER authority
                 UsernamePasswordAuthenticationToken authentication = 
@@ -78,16 +82,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // Set authentication in security context
                 SecurityContextHolder.getContext().setAuthentication(authentication);
                 
-                logger.debug("JWT authentication successful for user: {}", email != null ? email : uid);
+                logger.info("JWT authentication successful for user: {}", email != null ? email : uid);
             } else {
-                logger.debug("No JWT token found in request");
+                logger.warn("No JWT token found in Authorization header for protected endpoint: {} {}", method, path);
             }
             
         } catch (FirebaseAuthException e) {
-            logger.error("Firebase token verification failed: {}", e.getMessage());
+            logger.error("Firebase token verification failed: {} - Message: {}", e.getErrorCode(), e.getMessage());
             // Don't set authentication - request will be rejected by Spring Security
         } catch (Exception e) {
-            logger.error("JWT authentication error: {}", e.getMessage());
+            logger.error("JWT authentication error: {} - {}", e.getClass().getSimpleName(), e.getMessage(), e);
         }
         
         filterChain.doFilter(request, response);

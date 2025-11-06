@@ -45,6 +45,7 @@ export interface CsvUploadError {
 export interface CsvUploadResult {
   successful: number;
   updated: number;
+  skipped: number;
   failed: number;
   errors?: CsvUploadError[];
 }
@@ -66,9 +67,11 @@ class AdminTariffService {
 
   /**
    * Get authentication header using Firebase JWT token
+   * Automatically refreshes token if needed
    */
   private async getAuthHeader(): Promise<HeadersInit> {
     try {
+      // Force refresh token to ensure it's valid (Firebase caches for 5 minutes)
       const token = await getIdToken()
       if (token) {
         return {
@@ -78,10 +81,10 @@ class AdminTariffService {
       }
     } catch (error) {
       console.error('Failed to get Firebase JWT token:', error)
-      throw new Error('Authentication failed: Unable to get JWT token')
+      throw new Error('Authentication failed: Unable to get JWT token. Please log in again.')
     }
     
-    throw new Error('Authentication failed: No token available')
+    throw new Error('Authentication failed: No user logged in. Please log in first.')
   }
 
   /**
@@ -97,8 +100,21 @@ class AdminTariffService {
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Failed to create tariff: ${response.status} - ${errorText}`);
+        // Try to parse error response as JSON first
+        let errorMessage = `Failed to create tariff: ${response.status}`;
+        try {
+          const errorBody = await response.json();
+          if (errorBody.message) {
+            errorMessage = errorBody.message;
+          }
+        } catch {
+          // If JSON parsing fails, try as text
+          const errorText = await response.text();
+          if (errorText) {
+            errorMessage = errorText;
+          }
+        }
+        throw new Error(errorMessage);
       }
 
       return await response.json();
@@ -176,6 +192,7 @@ class AdminTariffService {
         return {
           successful: 0,
           updated: 0,
+          skipped: 0,
           failed: rows.length,
           errors: [{
             row: 0,
@@ -191,6 +208,7 @@ class AdminTariffService {
         return {
           successful: 0,
           updated: 0,
+          skipped: 0,
           failed: validationErrors.length,
           errors: validationErrors,
         };
@@ -400,19 +418,39 @@ class AdminTariffService {
 
   /**
    * Build map of existing tariffs for duplicate detection
-   * Key: hsCode|importerId|exporterId|startDate
+   * Key: hsCode|importerId|exporterId|tariffType|startDate|endDate
+   * NOTE: All 6 fields must match EXACTLY for UPDATE (same tariff rule)
+   * Different tariffType or dates = different tariff rules (INSERT)
    */
   private buildTariffMap(tariffs: TariffResponse[]): Map<string, TariffResponse> {
     const map = new Map<string, TariffResponse>();
     tariffs.forEach(tariff => {
-      const key = `${tariff.hsCode}|${tariff.importerId}|${tariff.exporterId}|${tariff.startDate}`;
+      const key = `${tariff.hsCode}|${tariff.importerId}|${tariff.exporterId}|${tariff.tariffType}|${tariff.startDate}|${tariff.endDate}`;
       map.set(key, tariff);
     });
     return map;
   }
 
   /**
+   * Compare existing tariff with CSV row to determine if update is needed
+   * Returns true if any value differs (except ID and timestamps)
+   */
+  private tariffNeedsUpdate(existing: TariffResponse, newData: TariffCreateRequest): boolean {
+    // Compare all editable fields
+    return (
+      existing.endDate !== newData.endDate ||
+      existing.tariffType !== newData.tariffType ||
+      existing.tariffRate !== newData.tariffRate ||
+      existing.specificAmt !== newData.specificAmt ||
+      existing.specificUnit !== newData.specificUnit ||
+      existing.minTariffAmt !== newData.minTariffAmt ||
+      existing.maxTariffAmt !== newData.maxTariffAmt
+    );
+  }
+
+  /**
    * Process rows with concurrency control and retry logic
+   * If duplicate detected with different values, UPDATE existing tariff
    */
   private async processRowsWithConcurrency(
     rows: TariffCreateRequest[],
@@ -424,6 +462,7 @@ class AdminTariffService {
     
     let successful = 0;
     let updated = 0;
+    let skipped = 0;
     let failed = 0;
     const errors: CsvUploadError[] = [];
     
@@ -433,33 +472,61 @@ class AdminTariffService {
       
       const batchPromises = batch.map(async (row, batchIdx) => {
         const rowNum = i + batchIdx + 2; // +2 for header and 0-index
-        const key = `${row.hsCode}|${row.importerId}|${row.exporterId}|${row.startDate}`;
-        const isDuplicate = existingMap.has(key);
+        const key = `${row.hsCode}|${row.importerId}|${row.exporterId}|${row.tariffType}|${row.startDate}|${row.endDate}`;
+        const existingTariff = existingMap.get(key);
         
-        // Skip duplicates since backend doesn't have UPDATE endpoint
-        if (isDuplicate) {
-          updated++; // Count as "skipped duplicate"
-          return; // Don't create duplicate
-        }
-        
-        // Try to create new tariff with retries
-        for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
-          try {
-            await this.createTariff(row);
-            successful++;
-            return; // Success, exit retry loop
-          } catch (error) {
-            // If last attempt, record error
-            if (attempt === MAX_RETRIES - 1) {
-              failed++;
-              errors.push({
-                row: rowNum,
-                error: error instanceof Error ? error.message : String(error),
-                data: JSON.stringify(row),
-              });
-            } else {
-              // Wait before retry (exponential backoff)
-              await new Promise(resolve => setTimeout(resolve, 100 * Math.pow(2, attempt)));
+        // Check if duplicate exists
+        if (existingTariff) {
+          // Compare values to see if update is needed
+          const needsUpdate = this.tariffNeedsUpdate(existingTariff, row);
+          
+          if (needsUpdate) {
+            // Try to UPDATE existing tariff with retries
+            for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+              try {
+                await this.updateTariff(existingTariff.id, row);
+                updated++;
+                return; // Success, exit retry loop
+              } catch (error) {
+                // If last attempt, record error
+                if (attempt === MAX_RETRIES - 1) {
+                  failed++;
+                  errors.push({
+                    row: rowNum,
+                    error: `Update failed: ${error instanceof Error ? error.message : String(error)}`,
+                    data: JSON.stringify(row),
+                  });
+                } else {
+                  // Wait before retry (exponential backoff)
+                  await new Promise(resolve => setTimeout(resolve, 100 * Math.pow(2, attempt)));
+                }
+              }
+            }
+          } else {
+            // Identical duplicate - skip silently (no update needed)
+            skipped++;
+            return;
+          }
+        } else {
+          // Try to CREATE new tariff with retries
+          for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+            try {
+              await this.createTariff(row);
+              successful++;
+              return; // Success, exit retry loop
+            } catch (error) {
+              // If last attempt, record error
+              if (attempt === MAX_RETRIES - 1) {
+                failed++;
+                errors.push({
+                  row: rowNum,
+                  error: error instanceof Error ? error.message : String(error),
+                  data: JSON.stringify(row),
+                });
+              } else {
+                // Wait before retry (exponential backoff)
+                await new Promise(resolve => setTimeout(resolve, 100 * Math.pow(2, attempt)));
+              }
             }
           }
         }
@@ -474,7 +541,7 @@ class AdminTariffService {
       }
     }
     
-    return { successful, updated, failed, errors };
+    return { successful, updated, skipped, failed, errors };
   }
 }
 
