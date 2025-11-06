@@ -258,7 +258,12 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
       
       // First try to get from tariffData (most reliable as it's from actual calculation)
       if (tariffData && tariffData.length > 0) {
-        hsCode = tariffData[0]?.originalData?.hsCode || tariffData[0]?.hscode
+        const rawHsCode = tariffData[0]?.originalData?.hsCode || tariffData[0]?.hscode
+        if (rawHsCode) {
+          // Remove periods and ensure HS code is trimmed to 6 digits for consistency
+          const cleanedHsCode = String(rawHsCode).replace(/\./g, '')
+          hsCode = cleanedHsCode.substring(0, 6)
+        }
       }
       
       // For string input, we'll need to rely on tariffData from previous calculation
@@ -406,10 +411,13 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
       let hsCode = null
       
       if (selectedProduct) {
-        // Check if the input looks like an HS code (4-10 digits)
-        if (/^\d{4,10}$/.test(selectedProduct.trim())) {
-          // User entered HS code directly
-          hsCode = selectedProduct.trim()
+        // Remove periods from input (e.g., "8504.40.90" becomes "85044090")
+        const cleanedInput = selectedProduct.trim().replace(/\./g, '')
+        
+        // Check if the cleaned input looks like an HS code (4-10 digits)
+        if (/^\d{4,10}$/.test(cleanedInput)) {
+          // User entered HS code directly - trim to first 6 digits for standardization
+          hsCode = cleanedInput.substring(0, 6)
         } else {
           // User entered a product name - use the by-names endpoint
           // Check if we have all required data for the by-names endpoint
@@ -446,7 +454,7 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
       // Handle HS code lookup (when entered directly)
       if (hsCode) {
         // Call tariff service with HS code
-        if (selectedImportingCountry && selectedExportingCountry) {
+        if (selectedImportingCountry && selectedExportingCountry && date) {
           // Convert country names to ISO codes before API call
           const importerCode = getCountryCode(selectedImportingCountry)
           const exporterCode = getCountryCode(selectedExportingCountry)
@@ -455,11 +463,29 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
             throw new Error(`Could not find country codes for: ${selectedImportingCountry} -> ${selectedExportingCountry}`)
           }
           
-          // Get specific tariffs for the country combination using ISO codes
-          tariffs = await tariffService.getTariffsByCombo(
+          // Get effective tariff for the specific date (returns only one tariff)
+          const effectiveTariff = await tariffService.getEffectiveTariff(
             hsCode, 
             importerCode,  // Use ISO code instead of full name
-            exporterCode   // Use ISO code instead of full name
+            exporterCode,  // Use ISO code instead of full name
+            date           // Use selected date to filter
+          )
+          
+          // Wrap in array for consistent handling
+          tariffs = effectiveTariff ? [effectiveTariff] : []
+        } else if (selectedImportingCountry && selectedExportingCountry) {
+          // If no date is provided, get all tariffs for the country combination
+          const importerCode = getCountryCode(selectedImportingCountry)
+          const exporterCode = getCountryCode(selectedExportingCountry)
+          
+          if (!importerCode || !exporterCode) {
+            throw new Error(`Could not find country codes for: ${selectedImportingCountry} -> ${selectedExportingCountry}`)
+          }
+          
+          tariffs = await tariffService.getTariffsByCombo(
+            hsCode, 
+            importerCode,
+            exporterCode
           )
         } else {
           // Get all tariffs for this HS code
@@ -578,8 +604,12 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
       let hsCode = ''
       let productName = ''
       
-      if (/^\d{4,10}$/.test(productInput.trim())) {
-        hsCode = productInput.trim()
+      // Remove periods from input (e.g., "8504.40.90" becomes "85044090")
+      const cleanedInput = productInput.trim().replace(/\./g, '')
+      
+      if (/^\d{4,10}$/.test(cleanedInput)) {
+        // Trim to first 6 digits for standardization
+        hsCode = cleanedInput.substring(0, 6)
       } else {
         productName = productInput.trim()
       }
