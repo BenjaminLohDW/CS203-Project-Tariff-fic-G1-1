@@ -38,7 +38,7 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
   const [currentPage, setCurrentPage] = useState<string>('calculation')
   
   // State for storing selected values
-  const [selectedProduct, setSelectedProduct] = useState<ProductOption | null>(null) // Changed to object for React Select
+  const [selectedProduct, setSelectedProduct] = useState<string>('') // Changed to simple string input
   const [selectedImportingCountry, setSelectedImportingCountry] = useState<string>('')
   const [selectedExportingCountry, setSelectedExportingCountry] = useState<string>('')
   const [quantity, setQuantity] = useState<string>('')
@@ -143,8 +143,9 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
   }
 
   // Handle dropdown changes
-  const handleProductChange = (selectedOption: ProductOption | null) => {
-    setSelectedProduct(selectedOption)
+  const handleProductChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setSelectedProduct(value)
     // Mark fields as modified if there are calculated values
     if (calculatedProduct) {
       setFieldsModified(true)
@@ -260,13 +261,8 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
         hsCode = tariffData[0]?.originalData?.hsCode || tariffData[0]?.hscode
       }
       
-      // Fallback to selected product if available
-      if (!hsCode && selectedProduct) {
-        if (selectedProduct.isHsCode) {
-          hsCode = selectedProduct.value
-        }
-      }
-
+      // For string input, we'll need to rely on tariffData from previous calculation
+      // since we don't know if it's an HS code or product name
       if (!hsCode) {
         setPredictionError('HS code not available. Please ensure you have run a calculation with a valid product first.')
         return
@@ -410,17 +406,17 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
       let hsCode = null
       
       if (selectedProduct) {
-        // If product is selected, extract or derive HS code
-        if (selectedProduct.isHsCode) {
+        // Check if the input looks like an HS code (4-10 digits)
+        if (/^\d{4,10}$/.test(selectedProduct.trim())) {
           // User entered HS code directly
-          hsCode = selectedProduct.value
+          hsCode = selectedProduct.trim()
         } else {
-          // Product name is selected - use the by-names endpoint
+          // User entered a product name - use the by-names endpoint
           // Check if we have all required data for the by-names endpoint
           if (selectedImportingCountry && selectedExportingCountry && date) {
             
-            // Use apiName (single word) if available, otherwise fall back to full label
-            const productNameForApi = selectedProduct.apiName || selectedProduct.label
+            // Use the product name as entered by user
+            const productNameForApi = selectedProduct.trim()
             
             // Call the by-names endpoint
             const tariff = await tariffService.getEffectiveTariffByNames({
@@ -515,9 +511,9 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
       
       // Provide more helpful error messages
       if (errorMessage.includes('500')) {
-        alert(`Failed to fetch tariff data: The server encountered an error.\n\nPossible causes:\n- Product "${selectedProduct?.label}" may not be found in the database\n- Product or Country microservices may not be running\n- Try using HS code input mode instead\n\nTechnical error: ${errorMessage}`)
+        alert(`Failed to fetch tariff data: The server encountered an error.\n\nPossible causes:\n- Product "${selectedProduct}" may not be found in the database\n- Product or Country microservices may not be running\n- Try using HS code input instead\n\nTechnical error: ${errorMessage}`)
       } else if (errorMessage.includes('404')) {
-        alert(`No tariff data found for:\n- Product: ${selectedProduct?.label}\n- From: ${selectedExportingCountry}\n- To: ${selectedImportingCountry}\n- Date: ${date}\n\nTry a different product or country combination.`)
+        alert(`No tariff data found for:\n- Product: ${selectedProduct}\n- From: ${selectedExportingCountry}\n- To: ${selectedImportingCountry}\n- Date: ${date}\n\nTry a different product or country combination.`)
       } else {
         alert(`Failed to fetch tariff data: ${errorMessage}`)
       }
@@ -563,7 +559,7 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
    * 
    * @param importerCountry - Single importing country name
    * @param exporterCountries - Array of exporting country names to compare
-   * @param product - Product option object with HS code
+   * @param productInput - Product string (can be HS code or product name)
    * @param quantity - Quantity of goods
    * @param goodsValue - Cost/value of goods
    * @param date - Date for tariff/agreement lookup (YYYY-MM-DD)
@@ -572,16 +568,20 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
   const fetchComparisonData = async (
     importerCountry: string,
     exporterCountries: string[],
-    product: ProductOption,
+    productInput: string,
     quantity: number,
     goodsValue: number,
     date: string
   ): Promise<ComparisonResult[]> => {
     try {
-      // Step 1: Get product HS code (only if not already provided)
+      // Step 1: Determine if input is HS code or product name
       let hsCode = ''
-      if (product.isHsCode) {
-        hsCode = product.value
+      let productName = ''
+      
+      if (/^\d{4,10}$/.test(productInput.trim())) {
+        hsCode = productInput.trim()
+      } else {
+        productName = productInput.trim()
       }
 
       // Step 2: Fetch ALL agreements once (filter by importer, will filter by exporter per country)
@@ -616,11 +616,11 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
           } catch (error) {
             countryTariffs = []
           }
-        } else {
+        } else if (productName) {
           // If product name, use getEffectiveTariffByNames with country names
           try {
             const tariffResult = await tariffService.getEffectiveTariffByNames({
-              productName: product.apiName || product.value,
+              productName: productName,
               importerCountryName: importerCountry,  // Use country name, not code
               exporterCountryName: exporter.name,    // Use country name, not code
               date: date
@@ -788,7 +788,7 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
       }
       
       // Set basic calculated values for display
-      setCalculatedProduct(selectedProduct?.label || '')
+      setCalculatedProduct(selectedProduct || '')
       setCalculatedImportingCountry(selectedImportingCountry)
       setCalculatedQuantity(quantity)
       setCalculatedCost(cost)
@@ -832,7 +832,7 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
     
     // Regular single-exporter calculation mode
     // Set basic calculated values
-    setCalculatedProduct(selectedProduct?.label || '')
+    setCalculatedProduct(selectedProduct || '')
     setCalculatedImportingCountry(selectedImportingCountry)
     setCalculatedExportingCountry(selectedExportingCountry)
     setCalculatedQuantity(quantity)
@@ -1208,10 +1208,8 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
       
       if (!isManualMode) {
         // Standard mode - populate all fields
-        const productOption = calculationData.productType !== 'Not specified' ? 
-          { value: calculationData.productType.toLowerCase().replace(/[^a-z0-9]/g, '-'), label: calculationData.productType } : 
-          null
-        setSelectedProduct(productOption)
+        const productValue = calculationData.productType !== 'Not specified' ? calculationData.productType : ''
+        setSelectedProduct(productValue)
         setSelectedImportingCountry(calculationData.importingCountry !== 'Not specified' ? calculationData.importingCountry : '')
         setSelectedExportingCountry(calculationData.exportingCountry !== 'Not specified' ? calculationData.exportingCountry : '')
         setDate(calculationData.date || calculationData.originalApiData?.created_at?.split('T')[0] || new Date().toISOString().split('T')[0])
@@ -1390,14 +1388,19 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
           // Normal mode - show all other fields
           <>
             <div className="flex flex-col items-start text-left w-full">
-              <label htmlFor="product-type">Product Type:</label>
-              <ProductAutocomplete
+              <label htmlFor="product-type" className="font-medium mb-2">Product Type:</label>
+              <input
+                type="text"
+                id="product-type"
                 value={selectedProduct}
                 onChange={handleProductChange}
-                placeholder="Search and select a product..."
+                placeholder="Enter product name or HS code (e.g., 'Smartphones' or '8517120000')"
                 disabled={isLoadingCountries}
-                className="w-full"
+                className="w-full p-3 text-base border-2 border-gray-300 rounded-lg bg-white text-gray-900 transition-colors hover:border-blue-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200 placeholder-gray-500 disabled:bg-gray-50 disabled:text-gray-400 disabled:cursor-not-allowed"
               />
+              <p className="text-sm text-gray-500 mt-1">
+                Enter a product name or HS code (4-10 digits)
+              </p>
             </div>
 
             <div className="flex flex-col items-start text-left w-full">
