@@ -139,6 +139,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (path.equals("/api/tariffs") ||
                 path.equals("/api/tariffs/effective") ||
                 path.equals("/api/tariffs/effective/by-names") ||
+                path.equals("/api/tariffs/by-product") ||
                 path.equals("/api/tariffs/all") ||
                 path.startsWith("/api/tariffs/by-hs/")) {
                 return true;

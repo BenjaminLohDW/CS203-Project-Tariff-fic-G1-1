@@ -43,6 +43,30 @@ public class TariffServiceImpl implements TariffService {
 
   @Override
   public TariffResponse create(TariffCreateRequest req) {
+    // Validate date range
+    if (req.getEndDate().isBefore(req.getStartDate())) {
+      throw new IllegalArgumentException("endDate cannot be before startDate");
+    }
+
+    // Check for overlapping tariffs with the same HS code and country pair
+    List<Tariff> overlapping = repo.findOverlappingTariffs(
+        req.getHsCode(),
+        req.getImporterId(),
+        req.getExporterId(),
+        req.getStartDate(),
+        req.getEndDate(),
+        null  // null means we're creating, not updating
+    );
+
+    if (!overlapping.isEmpty()) {
+      Tariff conflict = overlapping.get(0);
+      throw new IllegalStateException(
+          String.format("Tariff already exists for HS code %s, importer %s, exporter %s with overlapping date range (%s to %s). Conflicting tariff ID: %d",
+              req.getHsCode(), req.getImporterId(), req.getExporterId(),
+              conflict.getStartDate(), conflict.getEndDate(), conflict.getId())
+      );
+    }
+
     Tariff t = Tariff.builder()
         .hsCode(req.getHsCode())
         .importerId(req.getImporterId())
@@ -88,6 +112,25 @@ public class TariffServiceImpl implements TariffService {
       if (req.getMinTariffAmt() != null && req.getMaxTariffAmt() != null
               && req.getMinTariffAmt().compareTo(req.getMaxTariffAmt()) > 0) {
           throw new IllegalArgumentException("minTariffAmt cannot exceed maxTariffAmt");
+      }
+
+      // Check for overlapping tariffs (excluding the current tariff being updated)
+      List<Tariff> overlapping = repo.findOverlappingTariffs(
+          req.getHsCode(),
+          req.getImporterId(),
+          req.getExporterId(),
+          req.getStartDate(),
+          req.getEndDate(),
+          id  // Exclude the current tariff from overlap check
+      );
+
+      if (!overlapping.isEmpty()) {
+          Tariff conflict = overlapping.get(0);
+          throw new IllegalStateException(
+              String.format("Update would create overlapping tariff for HS code %s, importer %s, exporter %s with date range (%s to %s). Conflicting tariff ID: %d",
+                  req.getHsCode(), req.getImporterId(), req.getExporterId(),
+                  conflict.getStartDate(), conflict.getEndDate(), conflict.getId())
+          );
       }
 
       // Full replace of mutable fields — adapt names to your entity/DTO
