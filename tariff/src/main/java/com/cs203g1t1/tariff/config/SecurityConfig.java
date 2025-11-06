@@ -63,6 +63,7 @@ public class SecurityConfig {
                     "/api/tariffs",
                     "/api/tariffs/effective",
                     "/api/tariffs/effective/by-names",
+                    "/api/tariffs/by-product",
                     "/api/tariffs/by-hs/**",
                     "/api/tariffs/all"
                 ).permitAll()

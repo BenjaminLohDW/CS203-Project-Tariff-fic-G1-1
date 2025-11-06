@@ -22,9 +22,11 @@ import java.util.Map;
 @RequestMapping("/api/tariffs")
 @CrossOrigin(origins = {
     "http://localhost:5173",  // Local Vite dev server
+    "http://localhost:5174",  // Local Vite dev server (alternative port)
     "http://localhost:3000",  // Local React dev server
     "http://frontend:5173",   // Docker frontend container
     "http://127.0.0.1:5173", // Alternative localhost
+    "http://127.0.0.1:5174", // Alternative localhost
     "http://127.0.0.1:3000"  // Alternative localhost
 }, allowCredentials = "true", maxAge = 3600)
 public class TariffController {

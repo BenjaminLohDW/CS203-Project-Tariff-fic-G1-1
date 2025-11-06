@@ -124,7 +124,7 @@ services:
       # Firebase Admin SDK credentials path (optional - app works without it)
       GOOGLE_APPLICATION_CREDENTIALS: /app/firebase-credentials.json
       # Bypass security for development/testing (set to false for production)
-      SECURITY_DEV_BYPASS: true
+      # SECURITY_DEV_BYPASS: true
     ports:
       - "5004:5004"
     volumes:

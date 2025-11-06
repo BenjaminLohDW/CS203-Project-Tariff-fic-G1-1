@@ -131,18 +131,27 @@ class AdminTariffService {
   }
 
   /**
-   * Update tariff (placeholder for when backend endpoint is ready)
-   * TODO: Implement when teammate creates PUT /api/tariffs/{id} endpoint
+   * Update an existing tariff record
    */
-  async updateTariff(_id: number, _tariff: Partial<TariffCreateRequest>): Promise<TariffResponse> {
-    throw new Error('Update endpoint not yet implemented by backend team');
-    // Future implementation:
-    // const response = await fetch(`${this.baseUrl}/api/tariffs/${id}`, {
-    //   method: 'PUT',
-    //   headers: this.getAuthHeader(),
-    //   body: JSON.stringify(tariff),
-    // });
-    // return await response.json();
+  async updateTariff(id: number, tariff: TariffCreateRequest): Promise<TariffResponse> {
+    try {
+      const headers = await this.getAuthHeader()
+      const response = await fetch(`${this.baseUrl}/api/tariffs/${id}`, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify(tariff),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Failed to update tariff: ${response.status} - ${errorText}`);
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error updating tariff:', error);
+      throw error;
+    }
   }
 
   /**

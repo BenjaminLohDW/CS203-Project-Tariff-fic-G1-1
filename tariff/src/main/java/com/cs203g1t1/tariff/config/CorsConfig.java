@@ -18,8 +18,10 @@ public class CorsConfig implements WebMvcConfigurer {
         registry.addMapping("/api/**")
                 .allowedOrigins(
                     "http://localhost:5173",  // Vite dev server
+                    "http://localhost:5174",  // Vite dev server (alternative port)
                     "http://localhost:3000",  // React dev server (alternative)
                     "http://127.0.0.1:5173", // Alternative localhost
+                    "http://127.0.0.1:5174", // Alternative localhost
                     "http://127.0.0.1:3000"  // Alternative localhost
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
@@ -35,8 +37,10 @@ public class CorsConfig implements WebMvcConfigurer {
         // Allow specific origins (frontend URLs)
         configuration.setAllowedOrigins(Arrays.asList(
             "http://localhost:5173",  // Vite dev server
+            "http://localhost:5174",  // Vite dev server (alternative port)
             "http://localhost:3000",  // React dev server (alternative)
             "http://127.0.0.1:5173", // Alternative localhost
+            "http://127.0.0.1:5174", // Alternative localhost
             "http://127.0.0.1:3000"  // Alternative localhost
         ));
         
