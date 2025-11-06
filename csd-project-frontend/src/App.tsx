@@ -305,12 +305,8 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
       const tariffCost = (totalCost * predictedTariffRate) / 100
       const totalWithTariff = totalCost + tariffCost
 
-      // Fetch agreements data
-      const agreementsData = await agreementService.getActiveAgreements(
-        calculatedImportingCountry,
-        calculatedExportingCountry,
-        calculatedDate
-      )
+      // Don't fetch agreements for predictions - we're forecasting future tariffs
+      // without accounting for current trade agreements
 
       // Store predicted results
       const predictedCalc = {
@@ -329,9 +325,18 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
           hscode: hsCode,
           "Tariff Description": `Predicted tariff for ${calculatedProduct} (HS: ${hsCode})`,
           "Tariff Type": "ad_valorem",
-          "Tariff amount": predictedTariffRate.toFixed(2)
+          "Tariff amount": predictedTariffRate.toFixed(2),
+          originalData: {
+            hsCode: hsCode,
+            tariffType: "ad_valorem",
+            tariffRate: predictedTariffRate,
+            importerId: importerCode,
+            exporterId: exporterCode,
+            startDate: calculatedDate,
+            endDate: calculatedDate
+          }
         }],
-        agreements: agreementsData,
+        agreements: [], // No agreements for predictions
         isPredicted: true,
         historicalContext: forecastData.historical_context
       }
@@ -712,6 +717,7 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
     setComparisonResults(null)
     setShowDetailedCard(false)
     setExpandedComparisonCards(new Set())
+    setPredictedResults(null) // Clear predicted results when recalculating
     
     // Reset fields modified flag since we're recalculating
     setFieldsModified(false)
