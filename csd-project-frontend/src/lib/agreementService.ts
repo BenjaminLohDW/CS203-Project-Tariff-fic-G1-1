@@ -144,8 +144,35 @@ class AgreementService {
 
   /**
    * Calculate the adjusted tariff based on agreements
-   * @param {number} baseTariff - The base tariff amount
-   * @param {Agreement[]} agreements - Array of active agreements
+   * 
+   * REAL-WORLD BEHAVIOR:
+   * - Base trade frameworks (FTA with "override") establish the baseline
+   * - Temporary surcharges/multipliers stack on top of the base
+   * - When multiple agreements of SAME TYPE exist, use the latest one
+   * 
+   * LOGIC:
+   * 1. Find the latest "override" agreement (if any) → this becomes the base
+   * 2. Find the latest "surcharge" agreement (if any) → add to base
+   * 3. Find the latest "multiplier" agreement (if any) → multiply result
+   * 
+   * EXAMPLES:
+   * 
+   * Example 1 (FTA only):
+   *   US-SG FTA: override to 0%
+   *   Result: $0
+   * 
+   * Example 2 (FTA + Section 301):
+   *   US-CN FTA: override to 0%
+   *   Section 301: surcharge +$20
+   *   Result: $0 + $20 = $20
+   * 
+   * Example 3 (Section 301 rate change):
+   *   Old Section 301: surcharge +$10 (expired)
+   *   New Section 301: surcharge +$20 (active)
+   *   Result: Use latest surcharge = $20
+   * 
+   * @param {number} baseTariff - The base MFN tariff amount
+   * @param {Agreement[]} agreements - Array of active agreements (ordered newest first)
    * @returns {number} Adjusted tariff amount
    */
   calculateAdjustedTariff(baseTariff: number, agreements: Agreement[]): number {
@@ -155,23 +182,23 @@ class AgreementService {
 
     let adjustedTariff = baseTariff
 
-    // Apply agreements in order
-    agreements.forEach(agreement => {
-      switch (agreement.kind) {
-        case 'override':
-          // Override replaces the tariff entirely
-          adjustedTariff = agreement.value
-          break
-        case 'surcharge':
-          // Surcharge adds to the tariff
-          adjustedTariff += agreement.value
-          break
-        case 'multiplier':
-          // Multiplier multiplies the tariff
-          adjustedTariff *= agreement.value
-          break
-      }
-    })
+    // Step 1: Apply the latest "override" if it exists (FTA, etc.)
+    const latestOverride = agreements.find(a => a.kind === 'override')
+    if (latestOverride) {
+      adjustedTariff = latestOverride.value
+    }
+
+    // Step 2: Apply the latest "surcharge" if it exists (Section 301, anti-dumping, etc.)
+    const latestSurcharge = agreements.find(a => a.kind === 'surcharge')
+    if (latestSurcharge) {
+      adjustedTariff += latestSurcharge.value
+    }
+
+    // Step 3: Apply the latest "multiplier" if it exists (luxury tax, etc.)
+    const latestMultiplier = agreements.find(a => a.kind === 'multiplier')
+    if (latestMultiplier) {
+      adjustedTariff *= latestMultiplier.value
+    }
 
     return adjustedTariff
   }

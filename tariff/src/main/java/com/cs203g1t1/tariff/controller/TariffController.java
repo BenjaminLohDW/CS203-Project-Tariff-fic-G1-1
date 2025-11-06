@@ -2,6 +2,7 @@ package com.cs203g1t1.tariff.controller;
 
 import com.cs203g1t1.tariff.dto.TariffCreateRequest;
 import com.cs203g1t1.tariff.dto.TariffResponse;
+import com.cs203g1t1.tariff.dto.ErrorResponse;
 import com.cs203g1t1.tariff.service.TariffService;
 import com.cs203g1t1.tariff.dto.EffectiveByNamesRequest;
 
@@ -41,8 +42,26 @@ public class TariffController {
    * Create a tariff record (admin use)
    */
   @PostMapping
-  public ResponseEntity<TariffResponse> create(@Valid @RequestBody TariffCreateRequest req) {
-    return ResponseEntity.status(HttpStatus.CREATED).body(service.create(req));
+  public ResponseEntity<?> create(@Valid @RequestBody TariffCreateRequest req) {
+    try {
+      return ResponseEntity.status(HttpStatus.CREATED).body(service.create(req));
+    } catch (IllegalArgumentException e) {
+      // Validation errors (e.g., invalid date ranges, negative values)
+      ErrorResponse error = new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    } catch (IllegalStateException e) {
+      // Domain conflicts (e.g., duplicate/overlapping tariffs)
+      ErrorResponse error = new ErrorResponse(e.getMessage(), HttpStatus.CONFLICT.value());
+      return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    } catch (RestClientException e) {
+      // Downstream service lookups failed (product/country microservices)
+      ErrorResponse error = new ErrorResponse("External service unavailable", HttpStatus.BAD_GATEWAY.value());
+      return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(error);
+    } catch (DataAccessException e) {
+      // Database errors
+      ErrorResponse error = new ErrorResponse("Database error", HttpStatus.INTERNAL_SERVER_ERROR.value());
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
   }
 
   /**

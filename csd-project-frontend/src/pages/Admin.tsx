@@ -14,6 +14,7 @@ import adminTariffService, { TariffCreateRequest, TariffResponse } from '../lib/
 import adminAgreementService, { AgreementCreateRequest, AgreementResponse } from '../lib/adminAgreementService'
 import adminCountryService, { Country } from '../lib/adminCountryService'
 import { CsvBulkUpload } from '../components/CsvBulkUpload'
+import { getCurrentUser } from '../lib/auth'
 
 function Admin() {
   // State for page navigation
@@ -100,6 +101,14 @@ function Admin() {
   // Create Tariff
   const handleCreateTariff = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Check if user is logged in
+    const currentUser = getCurrentUser()
+    if (!currentUser) {
+      alert('You must be logged in to create tariffs. Please log in and try again.')
+      return
+    }
+    
     try {
       await adminTariffService.createTariff(tariffForm)
       alert('Tariff created successfully!')
@@ -117,9 +126,59 @@ function Admin() {
         endDate: '',
       })
       loadTariffs()
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to create tariff:', error)
-      alert('Failed to create tariff. Please check your inputs.')
+      const errorMessage = error?.message || String(error)
+      
+      // Check if it's an exact duplicate or overlapping dates error
+      if (errorMessage.includes('EXACT_DUPLICATE')) {
+        // Exact duplicate - offer UPDATE
+        const match = errorMessage.match(/Conflicting tariff ID: (\d+)/)
+        const conflictId = match ? parseInt(match[1]) : null
+        
+        const confirmUpdate = window.confirm(
+          `A tariff with identical HS Code, countries, type, and dates already exists${conflictId ? ` (ID: ${conflictId})` : ''}.\n\n` +
+          'Do you want to UPDATE the existing tariff with the new rate/amount values?'
+        )
+        
+        if (confirmUpdate && conflictId) {
+          try {
+            console.log('Updating tariff ID', conflictId, 'with new values:', tariffForm)
+            const allTariffs = await adminTariffService.getAllTariffs()
+            const existingTariff = allTariffs.find(t => t.id === conflictId)
+            
+            if (existingTariff) {
+              await adminTariffService.updateTariff(existingTariff.id, tariffForm)
+              alert('Tariff updated successfully!')
+              setTariffForm({
+                hsCode: '',
+                importerId: '',
+                exporterId: '',
+                tariffType: 'Ad Valorem',
+                tariffRate: 0,
+                specificAmt: null,
+                specificUnit: null,
+                minTariffAmt: null,
+                maxTariffAmt: null,
+                startDate: '',
+                endDate: '',
+              })
+              loadTariffs()
+            } else {
+              alert('Could not find the existing tariff to update.')
+            }
+          } catch (updateError: any) {
+            console.error('Failed to update tariff:', updateError)
+            const errorMsg = updateError?.message || String(updateError)
+            alert(`Failed to update tariff: ${errorMsg}`)
+          }
+        }
+      } else if (errorMessage.includes('OVERLAPPING_DATES')) {
+          alert('Cannot create tariff: The date range overlaps with an existing tariff.')
+      } else {
+        // Generic error (conflict or other)
+        alert(`Failed to create tariff: ${errorMessage}`)
+      }
     }
   }
 

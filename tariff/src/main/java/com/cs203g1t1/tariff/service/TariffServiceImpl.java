@@ -48,11 +48,12 @@ public class TariffServiceImpl implements TariffService {
       throw new IllegalArgumentException("endDate cannot be before startDate");
     }
 
-    // Check for overlapping tariffs with the same HS code and country pair
+    // Check for overlapping tariffs with the same HS code, country pair, and tariff type
     List<Tariff> overlapping = repo.findOverlappingTariffs(
         req.getHsCode(),
         req.getImporterId(),
         req.getExporterId(),
+        req.getTariffType(),
         req.getStartDate(),
         req.getEndDate(),
         null  // null means we're creating, not updating
@@ -60,11 +61,28 @@ public class TariffServiceImpl implements TariffService {
 
     if (!overlapping.isEmpty()) {
       Tariff conflict = overlapping.get(0);
-      throw new IllegalStateException(
-          String.format("Tariff already exists for HS code %s, importer %s, exporter %s with overlapping date range (%s to %s). Conflicting tariff ID: %d",
-              req.getHsCode(), req.getImporterId(), req.getExporterId(),
-              conflict.getStartDate(), conflict.getEndDate(), conflict.getId())
-      );
+      
+      // Check if it's an exact duplicate (same dates) or just overlapping
+      boolean exactMatch = conflict.getStartDate().equals(req.getStartDate()) 
+                        && conflict.getEndDate().equals(req.getEndDate());
+      
+      if (exactMatch) {
+        // Exact duplicate - suggest UPDATE
+        throw new IllegalStateException(
+            String.format("EXACT_DUPLICATE: Tariff already exists for HS code %s, importer %s, exporter %s, type %s with same dates (%s to %s). Use UPDATE to modify rates. Conflicting tariff ID: %d",
+                req.getHsCode(), req.getImporterId(), req.getExporterId(), req.getTariffType(),
+                conflict.getStartDate(), conflict.getEndDate(), conflict.getId())
+        );
+      } else {
+        // Overlapping dates - not allowed in real-world tariff management
+        throw new IllegalStateException(
+            String.format("OVERLAPPING_DATES|HS:%s|Importer:%s|Exporter:%s|Type:%s|YourDates:%s to %s|ExistingID:%d|ExistingDates:%s to %s|ExistingRate:%.2f",
+                req.getHsCode(), req.getImporterId(), req.getExporterId(), req.getTariffType(),
+                req.getStartDate(), req.getEndDate(),
+                conflict.getId(), conflict.getStartDate(), conflict.getEndDate(),
+                conflict.getTariffRate())
+        );
+      }
     }
 
     Tariff t = Tariff.builder()
@@ -119,6 +137,7 @@ public class TariffServiceImpl implements TariffService {
           req.getHsCode(),
           req.getImporterId(),
           req.getExporterId(),
+          req.getTariffType(),
           req.getStartDate(),
           req.getEndDate(),
           id  // Exclude the current tariff from overlap check

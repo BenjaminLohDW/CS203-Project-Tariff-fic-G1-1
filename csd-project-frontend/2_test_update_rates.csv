@@ -1,0 +1,5 @@
+hsCode,importerId,exporterId,tariffType,tariffRate,specificAmt,specificUnit,minTariffAmt,maxTariffAmt,startDate,endDate
+851713,US,CN,Ad Valorem,25.0,,,,,2025-01-01,2025-12-31
+851713,US,JP,Ad Valorem,15.0,,,,,2025-01-01,2025-12-31
+851713,US,KR,Ad Valorem,12.0,,,,,2025-01-01,2025-12-31
+851762,US,CN,Specific,,35.00,USD/unit,,,2025-01-01,2025-12-31
