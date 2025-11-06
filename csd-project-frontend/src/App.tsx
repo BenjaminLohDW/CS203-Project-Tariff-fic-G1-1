@@ -1057,18 +1057,52 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
       // Fetch tariff lines from the history microservice
       const tariffResponse = await getHistoryTariffLines(historyItem.id)
       
+      console.log('Tariff Response:', tariffResponse)
+      console.log('Tariff Data:', tariffResponse.data)
+      
       if (tariffResponse.code === 200 && tariffResponse.data) {
-        const tariffLines = tariffResponse.data.map((line: any) => ({
-          type: line.tariff_type || 'N/A',
-          description: line.tariff_desc || 'No description available',
-          rate: line.rate_str || '0%',
-          amount: line.amount_str || '$0.00'
-        }))
+        // The API returns data in a nested structure: { tariff_lines: [...], agreement_lines: [...], history: {...} }
+        // Extract the tariff_lines array from the response
+        let dataArray = []
+        
+        if (tariffResponse.data.tariff_lines && Array.isArray(tariffResponse.data.tariff_lines)) {
+          dataArray = tariffResponse.data.tariff_lines
+        } else if (Array.isArray(tariffResponse.data)) {
+          dataArray = tariffResponse.data
+        } else {
+          dataArray = [tariffResponse.data]
+        }
+        
+        console.log('Data Array:', dataArray)
+        
+        const tariffLines = dataArray.map((line: any) => {
+          console.log('Processing line:', line)
+          return {
+            type: line.tariff_type || line.type || 'N/A',
+            description: line.tariff_desc || line.description || 'No description available',
+            rate: line.rate_str || (typeof line.rate === 'number' ? `${line.rate}%` : line.rate) || '0%',
+            amount: line.amount_str || (typeof line.amount === 'number' ? `$${line.amount.toFixed(2)}` : line.amount) || '$0.00'
+          }
+        })
+        
+        console.log('Processed Tariff Lines:', tariffLines)
+        
+        // Extract agreement_lines if available
+        const agreementLines = tariffResponse.data.agreement_lines && Array.isArray(tariffResponse.data.agreement_lines)
+          ? tariffResponse.data.agreement_lines.map((agreement: any) => ({
+              kind: agreement.kind || 'N/A',
+              value: agreement.value_str || agreement.value || 'N/A',
+              startDate: agreement.start_date || 'N/A',
+              endDate: agreement.end_date || 'N/A',
+              note: agreement.note || ''
+            }))
+          : []
         
         // Create detailed view object
         const detailedInfo = {
           ...historyItem,
           tariffs: tariffLines,
+          agreements: agreementLines,
           tariffLinesLoaded: true
         }
         
@@ -1076,7 +1110,7 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
         setCalculationHistory(prevHistory => 
           prevHistory.map(item => 
             item.id === historyItem.id 
-              ? { ...item, tariffs: tariffLines, tariffLinesLoaded: true }
+              ? { ...item, tariffs: tariffLines, agreements: agreementLines, tariffLinesLoaded: true }
               : item
           )
         )
@@ -1107,11 +1141,23 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
           const tariffResponse = await getHistoryTariffLines(calculationData.id.toString())
           
           if (tariffResponse.code === 200 && tariffResponse.data) {
-            const tariffLines = tariffResponse.data.map((line: any) => ({
-              type: line.tariff_type,
-              description: line.tariff_desc,
-              rate: line.rate_str,
-              amount: parseFloat(line.amount_str.replace('$', '')).toFixed(2)
+            // The API returns data in a nested structure: { tariff_lines: [...], agreement_lines: [...], history: {...} }
+            // Extract the tariff_lines array from the response
+            let dataArray = []
+            
+            if (tariffResponse.data.tariff_lines && Array.isArray(tariffResponse.data.tariff_lines)) {
+              dataArray = tariffResponse.data.tariff_lines
+            } else if (Array.isArray(tariffResponse.data)) {
+              dataArray = tariffResponse.data
+            } else {
+              dataArray = [tariffResponse.data]
+            }
+            
+            const tariffLines = dataArray.map((line: any) => ({
+              type: line.tariff_type || line.type || 'N/A',
+              description: line.tariff_desc || line.description || 'No description available',
+              rate: line.rate_str || (typeof line.rate === 'number' ? `${line.rate}%` : line.rate) || '0%',
+              amount: line.amount_str ? parseFloat(line.amount_str.replace('$', '')).toFixed(2) : (typeof line.amount === 'number' ? line.amount.toFixed(2) : '0.00')
             }))
             
             // Update the calculation data with loaded tariff lines
@@ -2920,6 +2966,37 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
                   </div>
                 )}
               </div>
+              
+              {/* Agreement Breakdown */}
+              {selectedHistoryDetail.agreements && selectedHistoryDetail.agreements.length > 0 && (
+                <div className="mb-6">
+                  <h3 className="text-lg font-semibold mb-3 text-gray-700">Agreement Breakdown</h3>
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse border border-gray-300">
+                      <thead>
+                        <tr className="bg-gray-100">
+                          <th className="border border-gray-300 px-4 py-2 text-left font-semibold">Agreement Type</th>
+                          <th className="border border-gray-300 px-4 py-2 text-left font-semibold">Value</th>
+                          <th className="border border-gray-300 px-4 py-2 text-left font-semibold">Start Date</th>
+                          <th className="border border-gray-300 px-4 py-2 text-left font-semibold">End Date</th>
+                          <th className="border border-gray-300 px-4 py-2 text-left font-semibold">Note</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedHistoryDetail.agreements.map((agreement: any, index: number) => (
+                          <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                            <td className="border border-gray-300 px-4 py-2 font-medium capitalize">{agreement.kind}</td>
+                            <td className="border border-gray-300 px-4 py-2 text-right">{agreement.value}</td>
+                            <td className="border border-gray-300 px-4 py-2">{agreement.startDate}</td>
+                            <td className="border border-gray-300 px-4 py-2">{agreement.endDate}</td>
+                            <td className="border border-gray-300 px-4 py-2 text-sm">{agreement.note || '-'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
               
               {/* Action Buttons */}
               <div className="flex gap-3 justify-end pt-4 border-t border-gray-200">
