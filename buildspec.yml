@@ -93,8 +93,58 @@ phases:
       - echo "Pre-Build Phase - ECR Login"
       - aws --version
       - docker --version
+
+      # NEW: Check if this service has changes
+      - echo "Checking if $SERVICE has changes..."
+      - |
+        # Get changed files in this commit
+        CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || echo "")
+        
+        if [ -z "$CHANGED_FILES" ]; then
+          echo "⚠️  Cannot detect file changes, will build to be safe"
+          export SHOULD_BUILD="true"
+        else
+          echo "📝 Changed files:"
+          echo "$CHANGED_FILES"
+          
+          # Check if this specific service directory has changes
+          if echo "$CHANGED_FILES" | grep -q "^${SERVICE}/"; then
+            echo "✅ Service $SERVICE has changes - will build"
+            export SHOULD_BUILD="true"
+          # Also rebuild if shared files changed (buildspec, Dockerfiles, etc)
+          elif echo "$CHANGED_FILES" | grep -qE "^(buildspec\.yml|\.dockerignore)$"; then
+            echo "✅ Build files changed - will rebuild $SERVICE"
+            export SHOULD_BUILD="true"
+          else
+            echo "⏭️  Service $SERVICE unchanged - skipping build"
+            export SHOULD_BUILD="false"
+          fi
+        fi
+      
+      # NEW: If service unchanged, create imagedefinitions with existing image and exit
+      - |
+        if [ "$SHOULD_BUILD" = "false" ]; then
+          echo "📦 Using existing image for $SERVICE (no changes detected)"
+          
+          # Create imagedefinitions.json pointing to existing latest image
+          printf '[{"name":"%s","imageUri":"%s:%s-latest"}]\n' \
+            "$SERVICE" \
+            "$ECR_REPO" \
+            "$SERVICE" \
+            > imagedefinitions-${SERVICE}.json
+          
+          echo "✅ Imagedefinitions created (build skipped):"
+          cat imagedefinitions-${SERVICE}.json
+          
+          # Exit early - skip build and post_build phases
+          exit 0
+        fi
+      
+      # Only log in to ECR if we're actually building
+      - echo "Building $SERVICE (changes detected)..."
       - echo "Logging in to Amazon ECR..."
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $ECR_REPO
+  
   
   build:
     commands:
