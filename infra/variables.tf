@@ -7,7 +7,7 @@
 variable "project_name" {
   description = "Project name used for resource naming"
   type        = string
-  default     = "cs203g1t1"
+  default     = "tariffic"
 }
 
 variable "env" {
