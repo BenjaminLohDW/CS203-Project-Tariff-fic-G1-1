@@ -76,7 +76,7 @@ resource "aws_iam_role_policy_attachment" "codebuild_s3" {
 }
 
 
-# ================= 2. CodeBuild Project: actual packaging of images into services =================
+# ================= 2. CodeBuild Project: actual packaging of images into services (backend and frontend) =================
 resource "aws_codebuild_project" "build" {
   for_each = toset(var.services)
   name         = "${local.name_prefix}-build-${each.value}"
@@ -136,6 +136,56 @@ resource "aws_codebuild_project" "build" {
   tags = local.tags
 }
 
+resource "aws_codebuild_project" "frontend" {
+  name         = "${local.name_prefix}-build-frontend"
+  service_role = aws_iam_role.codebuild.arn
+
+  artifacts {
+    type = "CODEPIPELINE"
+  }
+
+  source {
+    type      = "CODEPIPELINE"
+    buildspec = "buildspec-frontend.yml"
+  }
+
+  cache {
+    type = "LOCAL"
+    modes = ["LOCAL_SOURCE_CACHE"]
+  }
+
+  environment {
+    type         = "LINUX_CONTAINER"
+    image        = "aws/codebuild/standard:7.0"
+    compute_type = "BUILD_GENERAL1_SMALL"
+
+    environment_variable {
+      name  = "FRONTEND_BUCKET"
+      value = aws_s3_bucket.frontend.bucket
+    }
+    environment_variable {
+      name  = "CLOUDFRONT_DISTRIBUTION_ID"
+      value = aws_cloudfront_distribution.frontend.id
+    }
+    environment_variable {
+      name  = "ALB_DNS_NAME"
+      value = aws_lb.public.dns_name
+    }
+    environment_variable {
+      name  = "AWS_DEFAULT_REGION"
+      value = var.aws_region
+    }
+  }
+
+  logs_config {
+    cloudwatch_logs {
+      group_name  = "/codebuild/${local.name_prefix}-frontend"
+      stream_name = "build"
+    }
+  }
+
+  tags = local.tags
+}
 
 # ================= 3. CodePipeline: define IAM roles and permissions =================
 data "aws_iam_policy_document" "codepipeline_assume" {
@@ -163,7 +213,8 @@ data "aws_iam_policy_document" "codepipeline_policy" {
       "s3:PutObject"
     ]
     resources = [
-      "${aws_s3_bucket.codepipeline_artifacts.arn}/*"
+      "${aws_s3_bucket.codepipeline_artifacts.arn}/*",
+      "${aws_s3_bucket.frontend.arn}/*"  #for frontend bucket access for deployment
     ]
   }
 
@@ -192,6 +243,15 @@ data "aws_iam_policy_document" "codepipeline_policy" {
       "iam:PassRole"
     ]
     resources = ["*"]
+  }
+
+  statement {
+    actions = [
+      "cloudfront:CreateInvalidation"
+    ]
+    resources = [
+      aws_cloudfront_distribution.frontend.arn
+    ]
   }
 }
 
@@ -255,7 +315,25 @@ resource "aws_codepipeline" "this" {
     }
   }
 
-  # Stage 3: Deploy to ECS (one action per service)
+  # Stage 3: Build the frontend
+  stage {
+    name = "BuildFrontend"
+    action {
+      name             = "BuildAndDeployFrontend"
+      category         = "Build"
+      owner            = "AWS"
+      provider         = "CodeBuild"
+      version          = "1"
+      input_artifacts  = ["source_output"]
+      output_artifacts = ["frontend_output"]
+      run_order        = 2  # Run after backend builds
+      configuration = {
+        ProjectName = aws_codebuild_project.frontend.name
+      }
+    }
+  }
+
+  # Stage 4: Deploy to ECS (one action per service)
   stage {
     name = "Deploy"
 

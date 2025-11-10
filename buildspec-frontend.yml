@@ -1,0 +1,62 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo "Installing Node.js dependencies..."
+      - cd frontend
+      - npm ci
+      
+      - echo "Creating environment file for production..."
+      - |
+        cat > .env.production << EOF
+        VITE_API_BASE_URL=http://$ALB_DNS_NAME
+        VITE_USER_API_URL=http://$ALB_DNS_NAME
+        VITE_TARIFF_API_URL=http://$ALB_DNS_NAME
+        VITE_COUNTRY_API_URL=http://$ALB_DNS_NAME
+        VITE_AGREEMENT_API_URL=http://$ALB_DNS_NAME
+        EOF
+            
+      - echo "Environment configuration:"
+      - cat .env.production
+
+  build:
+    commands:
+      - echo "Building frontend for production..."
+      - npm run build
+      - ls -la dist/
+      - echo "Build completed!"
+
+  post_build:
+    commands:
+      - echo "Deploying to S3..."
+      - |
+        aws s3 sync dist/ s3://$FRONTEND_BUCKET/ \
+          --delete \
+          --cache-control "public, max-age=31536000, immutable" \
+          --exclude "index.html" \
+          --region $AWS_DEFAULT_REGION
+      
+      - |
+        aws s3 cp dist/index.html s3://$FRONTEND_BUCKET/index.html \
+          --cache-control "public, max-age=0, must-revalidate" \
+          --region $AWS_DEFAULT_REGION
+      
+      - echo "Creating CloudFront invalidation..."
+      - |
+        aws cloudfront create-invalidation \
+          --distribution-id $CLOUDFRONT_DISTRIBUTION_ID \
+          --paths "/*" \
+          --region $AWS_DEFAULT_REGION
+      
+      - echo "Frontend deployment completed!"
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: frontend/dist
+  name: frontend-build
+
+cache:
+  paths:
+    - 'frontend/node_modules/**/*'
