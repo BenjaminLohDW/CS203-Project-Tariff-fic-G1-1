@@ -5,7 +5,9 @@ phases:
     commands:
       - echo "Installing Node.js dependencies..."
       - cd csd-project-frontend
-      - npm install
+      
+      # Use npm ci for faster, deterministic installs (requires package-lock.json)
+      - npm ci
       
       - echo "Creating environment file for production..."
       - |
@@ -54,9 +56,9 @@ phases:
 artifacts:
   files:
     - '**/*'
-  base-directory: csd-project-frontend/dist  
+  base-directory: csd-project-frontend/dist
   name: frontend-build
 
 cache:
   paths:
-    - 'csd-project-frontend/node_modules/**/*'  
+    - 'csd-project-frontend/node_modules/**/*'
