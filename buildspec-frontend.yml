@@ -4,7 +4,7 @@ phases:
   pre_build:
     commands:
       - echo "Installing Node.js dependencies..."
-      - cd frontend
+      - cd csd-project-frontend
       - npm install
       
       - echo "Creating environment file for production..."
