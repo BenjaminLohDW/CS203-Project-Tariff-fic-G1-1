@@ -4,6 +4,7 @@ import { useAuth } from './lib/AuthContext'
 import { fetchCountries } from './lib/countryService'
 import { saveCalculation, getUserHistory, getHistoryTariffLines } from './lib/historyService'
 import ProductAutocomplete from './lib/ProductAutocomplete'
+import HsCodeSuggestions from './components/HsCodeSuggestions'
 import { groupedTariffProducts } from './lib/tariffProductData'
 import tariffService from './lib/tariffService'
 import agreementService from './lib/agreementService'
@@ -44,6 +45,10 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
   const [quantity, setQuantity] = useState<string>('')
   const [cost, setCost] = useState<string>('')
   const [date, setDate] = useState<string>('')
+  
+  // State for HS Code Smart Search suggestions
+  const [selectedHsCodeFromSuggestions, setSelectedHsCodeFromSuggestions] = useState<string>('')
+  const [hsCodeDescription, setHsCodeDescription] = useState<string>('')
   
   // State for combobox open/close
   const [importingCountryOpen, setImportingCountryOpen] = useState(false)
@@ -140,6 +145,33 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
   // Handle dropdown changes
   const handleProductChange = (selectedOption: ProductOption | null) => {
     setSelectedProduct(selectedOption)
+    // Mark fields as modified if there are calculated values
+    if (calculatedProduct) {
+      setFieldsModified(true)
+    }
+  }
+
+  // Handle HS Code selection from AI-powered suggestions
+  const handleHsCodeSelect = (hsCode: string, description: string) => {
+    setSelectedHsCodeFromSuggestions(hsCode)
+    setHsCodeDescription(description)
+    
+    // Also update selectedProduct to maintain compatibility with existing calculate logic
+    if (hsCode) {
+      const hsCodeProduct: ProductOption = {
+        value: hsCode,
+        label: description || `HS Code: ${hsCode}`,
+        hsCode: hsCode,
+        category: "AI-Powered HS Code Search"
+      }
+      setSelectedProduct(hsCodeProduct)
+    } else {
+      // Clear if hsCode is empty
+      if (!selectedProduct?.hsCode || selectedProduct.category === "AI-Powered HS Code Search") {
+        setSelectedProduct(null)
+      }
+    }
+    
     // Mark fields as modified if there are calculated values
     if (calculatedProduct) {
       setFieldsModified(true)
@@ -1352,6 +1384,14 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
             <ProductAutocomplete
               value={selectedProduct}
               onChange={handleProductChange}
+              disabled={isLoadingCountries}
+            />
+          </div>
+
+          {/* New AI-Powered HS Code Smart Search Component */}
+          <div className="flex flex-col items-start text-left w-full">
+            <HsCodeSuggestions
+              onHsCodeSelect={handleHsCodeSelect}
               disabled={isLoadingCountries}
             />
           </div>
