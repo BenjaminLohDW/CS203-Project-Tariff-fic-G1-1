@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import Select from 'react-select'
-import { groupedProducts } from './productData'
+import { groupedTariffProducts, type ProductOption } from './tariffProductData'
 
 interface ProductAutocompleteProps {
-  value: any
-  onChange: (value: any) => void
+  value: ProductOption | null
+  onChange: (value: ProductOption | null) => void
   placeholder?: string
   disabled?: boolean
   className?: string
@@ -173,12 +173,12 @@ const ProductAutocomplete = ({
     const newValue = e.target.value
     setHsCodeValue(newValue)
     
-    // Create a fake option object for HS code
-    const hsCodeOption = {
+    // Create a ProductOption object for HS code
+    const hsCodeOption: ProductOption = {
       value: newValue,
-      label: newValue,
-      isHsCode: true,
-      category: "HS Code"
+      label: `HS Code: ${newValue}`,
+      hsCode: newValue,
+      category: "Direct HS Code Entry"
     }
     
     onChange(newValue ? hsCodeOption : null)
@@ -221,7 +221,7 @@ const ProductAutocomplete = ({
   }
 
   return (
-    <div className={className}>
+    <div className={`w-full ${className}`}>
       {/* Mode Toggle Button */}
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm font-medium text-gray-700">
@@ -252,7 +252,7 @@ const ProductAutocomplete = ({
             type="text"
             value={hsCodeValue}
             onChange={handleHsCodeChange}
-            placeholder="Enter HS Code (e.g., 8517120000)"
+            placeholder="Enter HS Code (e.g., 851713)"
             disabled={disabled}
             className={`
               w-full px-4 py-3 text-base border-2 rounded-lg transition-colors duration-200
@@ -285,7 +285,7 @@ const ProductAutocomplete = ({
           )}
           {hsCodeValue && !isValidHsCode(hsCodeValue) && (
             <p className="mt-1 text-xs text-red-600">
-              HS Code should be 4-10 digits (e.g., 8517120000)
+              HS Code should be 4-10 digits (e.g., 851713)
             </p>
           )}
           <p className="mt-1 text-xs text-gray-500">
@@ -296,7 +296,7 @@ const ProductAutocomplete = ({
         <Select
           value={value}
           onChange={handleProductSelect}
-          options={groupedProducts}
+          options={groupedTariffProducts}
           styles={customStyles}
           placeholder={placeholder}
           isDisabled={disabled}

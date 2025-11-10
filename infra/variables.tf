@@ -7,7 +7,7 @@
 variable "project_name" {
   description = "Project name used for resource naming"
   type        = string
-  default     = "cs203g1t1"
+  default     = "tariffic"
 }
 
 variable "env" {
@@ -98,10 +98,11 @@ variable "fargate_memory" {
   }
 }
 
+#CHANGE THIS TO RESUME
 variable "desired_count" {
   description = "Default desired count of tasks per service"
   type        = number
-  default     = 1
+  default     = 0
 }
 
 variable "min_count" {
@@ -185,10 +186,11 @@ variable "db_allocated" {
   }
 }
 
+# CHANGE THIS TO RESUME
 variable "db_multi_az" {
   description = "Enable Multi-AZ for primary database (high availability)"
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "enable_read_replica" {

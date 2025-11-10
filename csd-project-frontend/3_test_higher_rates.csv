@@ -1,0 +1,11 @@
+hsCode,importerId,exporterId,tariffType,tariffRate,specificAmt,specificUnit,minTariffAmt,maxTariffAmt,startDate,endDate
+851713,US,CN,Ad Valorem,25.0,,,,,2025-01-01,2025-12-31
+851713,US,JP,Ad Valorem,15.0,,,,,2025-01-01,2025-12-31
+851713,US,KR,Ad Valorem,12.5,,,,,2025-01-01,2025-12-31
+851762,US,CN,Specific,,35.00,USD/unit,,,2025-01-01,2025-12-31
+850980,US,MX,Compound,7.5,15.00,USD/kg,,,2025-01-01,2025-12-31
+847130,SG,MY,Ad Valorem,5.0,,,10.00,150.00,2025-01-01,2025-12-31
+850440,US,CA,Specific,,20.00,USD/kg,,,2025-01-01,2025-12-31
+851822,SG,TH,Ad Valorem,10.0,,,,,2025-06-01,2025-12-31
+852852,US,VN,Compound,15.0,12.00,USD/unit,,,2025-01-01,2026-12-31
+853120,SG,ID,Specific,,25.00,USD/kg,15.00,600.00,2025-01-01,2025-12-31

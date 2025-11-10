@@ -10,6 +10,7 @@ export interface Country {
 export interface ProductOption {
   value: string
   label: string
+  hsCode?: string  // HS code for the product (optional)
   fullName?: string
   category?: string
   isHsCode?: boolean

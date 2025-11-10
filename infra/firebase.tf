@@ -5,10 +5,10 @@
 
 # Store Firebase service account credentials in AWS Secrets Manager
 resource "aws_secretsmanager_secret" "firebase_credentials" {
-  name        = "${local.name_prefix}-firebase-credentials"
+  name        = "${local.name_prefix}-firebase-credentials-v2"
   description = "Firebase service account credentials for JWT authentication"
   
-  recovery_window_in_days = 7  # Allow 7 days to recover if accidentally deleted
+  recovery_window_in_days = 0  # Allow 7 days to recover if accidentally deleted
   
   tags = local.tags
 }

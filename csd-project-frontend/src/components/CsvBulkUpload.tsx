@@ -289,7 +289,7 @@ export function CsvBulkUpload({ onUploadComplete }: CsvBulkUploadProps) {
           <div className="space-y-3 border-t pt-4">
             <h3 className="font-medium">Upload Results</h3>
             
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-4 gap-4">
               <div className="text-center p-3 bg-green-50 border border-green-200 rounded">
                 <CheckCircle2 className="h-6 w-6 text-green-600 mx-auto mb-1" />
                 <div className="text-2xl font-bold text-green-700">{uploadResult.successful}</div>
@@ -299,7 +299,13 @@ export function CsvBulkUpload({ onUploadComplete }: CsvBulkUploadProps) {
               <div className="text-center p-3 bg-blue-50 border border-blue-200 rounded">
                 <FileText className="h-6 w-6 text-blue-600 mx-auto mb-1" />
                 <div className="text-2xl font-bold text-blue-700">{uploadResult.updated}</div>
-                <div className="text-xs text-blue-600">Skipped (Duplicates)</div>
+                <div className="text-xs text-blue-600">Updated</div>
+              </div>
+              
+              <div className="text-center p-3 bg-gray-50 border border-gray-200 rounded">
+                <FileText className="h-6 w-6 text-gray-600 mx-auto mb-1" />
+                <div className="text-2xl font-bold text-gray-700">{uploadResult.skipped}</div>
+                <div className="text-xs text-gray-600">Skipped</div>
               </div>
               
               <div className="text-center p-3 bg-red-50 border border-red-200 rounded">
