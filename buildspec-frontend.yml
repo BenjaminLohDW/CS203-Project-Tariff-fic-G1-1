@@ -16,7 +16,7 @@ phases:
         VITE_COUNTRY_API_URL=http://$ALB_DNS_NAME
         VITE_AGREEMENT_API_URL=http://$ALB_DNS_NAME
         EOF
-            
+      
       - echo "Environment configuration:"
       - cat .env.production
 
@@ -54,9 +54,9 @@ phases:
 artifacts:
   files:
     - '**/*'
-  base-directory: frontend/dist
+  base-directory: csd-project-frontend/dist  
   name: frontend-build
 
 cache:
   paths:
-    - 'frontend/node_modules/**/*'
+    - 'csd-project-frontend/node_modules/**/*'  
