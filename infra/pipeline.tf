@@ -223,9 +223,10 @@ data "aws_iam_policy_document" "codepipeline_policy" {
       "codebuild:BatchGetBuilds",
       "codebuild:StartBuild"
     ]
-    resources = [
-      for project in aws_codebuild_project.build : project.arn
-    ]
+    resources = concat(
+      [for project in aws_codebuild_project.build : project.arn],
+      [aws_codebuild_project.frontend.arn]  # ADD THIS LINE
+    )
   }
 
   statement {

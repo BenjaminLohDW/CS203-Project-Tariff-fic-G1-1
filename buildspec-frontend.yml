@@ -5,7 +5,7 @@ phases:
     commands:
       - echo "Installing Node.js dependencies..."
       - cd frontend
-      - npm ci
+      - npm install
       
       - echo "Creating environment file for production..."
       - |
