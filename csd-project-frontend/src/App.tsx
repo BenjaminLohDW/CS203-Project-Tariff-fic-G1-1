@@ -142,6 +142,22 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
     return country ? country.code : null
   }
 
+  // Helper function to extract just the product name from verbose HS code descriptions
+  const extractProductName = (fullDescription: string): string => {
+    // If the description contains arrows (→), extract only the final part
+    if (fullDescription.includes('→')) {
+      const parts = fullDescription.split('→')
+      const lastPart = parts[parts.length - 1].trim()
+      // Remove HS code prefix if present (e.g., "8517.13: Smartphones" -> "Smartphones")
+      const colonIndex = lastPart.indexOf(':')
+      if (colonIndex !== -1) {
+        return lastPart.substring(colonIndex + 1).trim()
+      }
+      return lastPart
+    }
+    return fullDescription
+  }
+
   // Handle dropdown changes
   const handleProductChange = (selectedOption: ProductOption | null) => {
     setSelectedProduct(selectedOption)
@@ -771,7 +787,7 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
       }
       
       // Set basic calculated values for display
-      setCalculatedProduct(selectedProduct?.label || '')
+      setCalculatedProduct(extractProductName(selectedProduct?.label || ''))
       setCalculatedImportingCountry(selectedImportingCountry)
       setCalculatedQuantity(quantity)
       setCalculatedCost(cost)
@@ -815,7 +831,7 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
     
     // Regular single-exporter calculation mode
     // Set basic calculated values
-    setCalculatedProduct(selectedProduct?.label || '')
+    setCalculatedProduct(extractProductName(selectedProduct?.label || ''))
     setCalculatedImportingCountry(selectedImportingCountry)
     setCalculatedExportingCountry(selectedExportingCountry)
     setCalculatedQuantity(quantity)
