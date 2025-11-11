@@ -93,7 +93,7 @@ class AdminTariffService {
   async createTariff(tariff: TariffCreateRequest): Promise<TariffResponse> {
     try {
       const headers = await this.getAuthHeader()
-      const response = await fetch(`${this.baseUrl}/api/tariffs`, {
+      const response = await fetch(`${this.baseUrl}/tariffs`, {
         method: 'POST',
         headers,
         body: JSON.stringify(tariff),
@@ -130,7 +130,7 @@ class AdminTariffService {
   async getAllTariffs(): Promise<TariffResponse[]> {
     try {
       const headers = await this.getAuthHeader()
-      const response = await fetch(`${this.baseUrl}/api/tariffs/all`, {
+      const response = await fetch(`${this.baseUrl}/tariffs/all`, {
         method: 'GET',
         headers,
       });
@@ -152,7 +152,7 @@ class AdminTariffService {
   async updateTariff(id: number, tariff: TariffCreateRequest): Promise<TariffResponse> {
     try {
       const headers = await this.getAuthHeader()
-      const response = await fetch(`${this.baseUrl}/api/tariffs/${id}`, {
+      const response = await fetch(`${this.baseUrl}/tariffs/${id}`, {
         method: 'PUT',
         headers,
         body: JSON.stringify(tariff),
