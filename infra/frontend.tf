@@ -31,23 +31,64 @@ resource "aws_cloudfront_distribution" "frontend" {
   enabled             = true
   default_root_object = "index.html"
 
+  # Origin 1: S3 bucket for static frontend files
   origin {
     domain_name              = aws_s3_bucket.frontend.bucket_regional_domain_name
     origin_id                = "s3-frontend"
     origin_access_control_id = aws_cloudfront_origin_access_control.oac.id
   }
 
+  # Origin 2: ALB for API requests
+  origin {
+    domain_name = aws_lb.public.dns_name
+    origin_id   = "alb-backend"
+    
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "http-only"  # ALB doesn't have HTTPS configured
+      origin_ssl_protocols   = ["TLSv1.2"]
+    }
+  }
+
+  # Default behavior: serve static files from S3
   default_cache_behavior {
     target_origin_id       = "s3-frontend"
     viewer_protocol_policy = "redirect-to-https"
-    allowed_methods = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
-    cached_methods  = ["GET", "HEAD", "OPTIONS"]  # Only cache reads
+    allowed_methods = ["GET", "HEAD", "OPTIONS"]
+    cached_methods  = ["GET", "HEAD", "OPTIONS"]
     compress        = true
 
     forwarded_values {
       query_string = false
       cookies { forward = "none" }
     }
+  }
+
+  # API behavior: proxy /api/* requests to ALB
+  ordered_cache_behavior {
+    path_pattern     = "/api/*"
+    target_origin_id = "alb-backend"
+    
+    viewer_protocol_policy = "redirect-to-https"
+    allowed_methods        = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    cached_methods         = ["GET", "HEAD", "OPTIONS"]
+    compress               = true
+    
+    # Forward everything to backend
+    forwarded_values {
+      query_string = true
+      headers      = ["Authorization", "Content-Type", "Accept", "Origin", "Referer"]
+      
+      cookies {
+        forward = "all"
+      }
+    }
+    
+    # Don't cache API responses
+    min_ttl     = 0
+    default_ttl = 0
+    max_ttl     = 0
   }
 
   price_class = "PriceClass_200"

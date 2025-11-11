@@ -12,11 +12,15 @@ phases:
       - echo "Creating environment file for production..."
       - |
         cat > .env.production << EOF
-        VITE_API_BASE_URL=http://$ALB_DNS_NAME
-        VITE_USER_API_URL=http://$ALB_DNS_NAME
-        VITE_TARIFF_API_URL=http://$ALB_DNS_NAME
-        VITE_COUNTRY_API_URL=http://$ALB_DNS_NAME
-        VITE_AGREEMENT_API_URL=http://$ALB_DNS_NAME
+        # Use relative URLs - CloudFront will proxy to ALB
+        VITE_API_BASE_URL=/api
+        VITE_USER_API_URL=/api
+        VITE_TARIFF_API_URL=/api
+        VITE_COUNTRY_API_URL=/api
+        VITE_AGREEMENT_API_URL=/api
+        VITE_HISTORY_API_URL=/api
+        VITE_FORECAST_API_URL=/api
+        # Firebase configuration
         VITE_FIREBASE_API_KEY=$VITE_FIREBASE_API_KEY
         VITE_FIREBASE_AUTH_DOMAIN=$VITE_FIREBASE_AUTH_DOMAIN
         VITE_FIREBASE_PROJECT_ID=$VITE_FIREBASE_PROJECT_ID
