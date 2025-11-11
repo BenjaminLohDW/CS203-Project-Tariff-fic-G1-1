@@ -394,6 +394,266 @@ def get_country_by_name():
         return jsonify({'code': 500, 'error': str(e)}), 500
 
 
+@app.route('/countries', methods=['POST'])
+def create_country():
+    """
+    Create a new country
+    ---
+    tags:
+      - Countries
+    parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          required:
+            - name
+            - code
+          properties:
+            name:
+              type: string
+              example: "Singapore"
+              description: Full name of the country
+            code:
+              type: string
+              example: "SG"
+              description: Country code (ISO 3166-1 alpha-2)
+    responses:
+      201:
+        description: Country created successfully
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 201
+            message:
+              type: string
+              example: "Country created successfully"
+            data:
+              type: object
+              properties:
+                country_id:
+                  type: integer
+                  example: 1
+                name:
+                  type: string
+                  example: "Singapore"
+                code:
+                  type: string
+                  example: "SG"
+      400:
+        description: Invalid request or missing required fields
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 400
+            error:
+              type: string
+              example: "Missing required fields: name, code"
+      409:
+        description: Country already exists
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 409
+            error:
+              type: string
+              example: "Country with this name or code already exists"
+      500:
+        description: Internal server error
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 500
+            error:
+              type: string
+              example: "Database error"
+    """
+    try:
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'code': 400, 'error': 'No JSON data provided'}), 400
+        
+        name = data.get('name', '').strip()
+        code = data.get('code', '').strip().upper()
+        
+        if not name or not code:
+            return jsonify({'code': 400, 'error': 'Missing required fields: name, code'}), 400
+        
+        # Check if country already exists
+        existing = Country.query.filter(
+            (Country.name.ilike(name)) | (Country.code.ilike(code))
+        ).first()
+        
+        if existing:
+            return jsonify({'code': 409, 'error': 'Country with this name or code already exists'}), 409
+        
+        # Create new country
+        new_country = Country(name=name, code=code)
+        db.session.add(new_country)
+        db.session.commit()
+        
+        return jsonify({
+            'code': 201,
+            'message': 'Country created successfully',
+            'data': new_country.as_dict()
+        }), 201
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'code': 500, 'error': str(e)}), 500
+
+
+@app.route('/countries/bulk', methods=['POST'])
+def create_countries_bulk():
+    """
+    Create multiple countries in bulk
+    ---
+    tags:
+      - Countries
+    parameters:
+      - name: body
+        in: body
+        required: true
+        schema:
+          type: object
+          required:
+            - countries
+          properties:
+            countries:
+              type: array
+              items:
+                type: object
+                required:
+                  - name
+                  - code
+                properties:
+                  name:
+                    type: string
+                    example: "Singapore"
+                  code:
+                    type: string
+                    example: "SG"
+            skip_duplicates:
+              type: boolean
+              example: true
+              description: If true, skip existing countries instead of returning error
+    responses:
+      201:
+        description: Countries created successfully
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 201
+            message:
+              type: string
+              example: "Successfully created 195 countries"
+            created:
+              type: integer
+              example: 195
+            skipped:
+              type: integer
+              example: 5
+      400:
+        description: Invalid request format
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 400
+            error:
+              type: string
+              example: "Invalid data format"
+      500:
+        description: Internal server error
+        schema:
+          type: object
+          properties:
+            code:
+              type: integer
+              example: 500
+            error:
+              type: string
+              example: "Database error"
+    """
+    try:
+        data = request.get_json()
+        
+        if not data or 'countries' not in data:
+            return jsonify({'code': 400, 'error': "Missing 'countries' array in request body"}), 400
+        
+        countries_data = data.get('countries', [])
+        skip_duplicates = data.get('skip_duplicates', False)
+        
+        if not isinstance(countries_data, list):
+            return jsonify({'code': 400, 'error': "'countries' must be an array"}), 400
+        
+        created_count = 0
+        skipped_count = 0
+        errors = []
+        
+        for idx, country_data in enumerate(countries_data):
+            try:
+                name = country_data.get('name', '').strip()
+                code = country_data.get('code', '').strip().upper()
+                
+                if not name or not code:
+                    errors.append(f"Row {idx}: Missing name or code")
+                    continue
+                
+                # Check if country exists
+                existing = Country.query.filter(
+                    (Country.name.ilike(name)) | (Country.code.ilike(code))
+                ).first()
+                
+                if existing:
+                    if skip_duplicates:
+                        skipped_count += 1
+                        continue
+                    else:
+                        errors.append(f"Row {idx}: Country '{name}' or code '{code}' already exists")
+                        continue
+                
+                # Create country
+                new_country = Country(name=name, code=code)
+                db.session.add(new_country)
+                created_count += 1
+                
+            except Exception as e:
+                errors.append(f"Row {idx}: {str(e)}")
+        
+        # Commit all changes
+        if created_count > 0:
+            db.session.commit()
+        
+        response = {
+            'code': 201,
+            'message': f'Successfully created {created_count} countries',
+            'created': created_count,
+            'skipped': skipped_count
+        }
+        
+        if errors:
+            response['errors'] = errors
+        
+        return jsonify(response), 201
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'code': 500, 'error': str(e)}), 500
+
 #======================== COUNTRY RELATIONS ==========================
 @app.route('/countries/relation/current', methods=["GET"])
 def current_relation():
