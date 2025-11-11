@@ -75,6 +75,25 @@ resource "aws_iam_role_policy_attachment" "codebuild_s3" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
 }
 
+# CloudFront permissions for CodeBuild
+resource "aws_iam_role_policy" "codebuild_cloudfront" {
+  name = "${local.name_prefix}-codebuild-cloudfront"
+  role = aws_iam_role.codebuild.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "cloudfront:CreateInvalidation",
+          "cloudfront:GetInvalidation"
+        ]
+        Resource = aws_cloudfront_distribution.frontend.arn
+      }
+    ]
+  })
+}
 
 # ================= 2. CodeBuild Project: actual packaging of images into services (backend and frontend) =================
 resource "aws_codebuild_project" "build" {
@@ -129,7 +148,7 @@ resource "aws_codebuild_project" "build" {
 
   logs_config {
     cloudwatch_logs {
-      group_name  = "/codebuild/${local.name_prefix}"
+      group_name  = "/codebuild/${local.name_prefix}"   
       stream_name = "build"
     }
   }
