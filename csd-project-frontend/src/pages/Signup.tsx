@@ -69,12 +69,15 @@ export default function Signup() {
   try { localStorage.setItem('signupMessage', 'Account created. Please sign in.') } catch {}
   navigate('/', { replace: true })
     } catch (err: any) {
+      console.error('Signup error:', err)
       const code = err?.code || ''
+      const message = err?.message || ''
       let msg = 'Signup failed. Please try again.'
       if (code === 'auth/email-already-in-use') msg = 'Email already in use.'
       else if (code === 'auth/invalid-email') msg = 'Invalid email address.'
       else if (code === 'auth/weak-password') msg = 'Password is too weak.'
       else if (code === 'auth/network-request-failed') msg = 'Network error. Please check your connection and try again.'
+      else if (message.includes('Firebase not initialized')) msg = 'Firebase is not configured. Please check your environment variables.'
       setError(msg)
     } finally {
       setLoading(false)

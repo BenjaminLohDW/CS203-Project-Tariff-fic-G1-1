@@ -40,9 +40,9 @@ resource "aws_cloudfront_distribution" "frontend" {
   default_cache_behavior {
     target_origin_id       = "s3-frontend"
     viewer_protocol_policy = "redirect-to-https"
-    allowed_methods        = ["GET", "HEAD", "OPTIONS"]
-    cached_methods         = ["GET", "HEAD"]
-    compress               = true
+    allowed_methods = ["DELETE", "GET", "HEAD", "OPTIONS", "PATCH", "POST", "PUT"]
+    cached_methods  = ["GET", "HEAD", "OPTIONS"]  # Only cache reads
+    compress        = true
 
     forwarded_values {
       query_string = false
@@ -62,8 +62,26 @@ resource "aws_cloudfront_distribution" "frontend" {
     cloudfront_default_certificate = true
   }
 
+  # Custom error responses for SPA (Single Page Application)
+  # Return index.html for 403/404 errors so React Router can handle routing
+  custom_error_response {
+    error_code         = 403
+    response_code      = 200
+    response_page_path = "/index.html"
+    error_caching_min_ttl = 0
+  }
+
+  custom_error_response {
+    error_code         = 404
+    response_code      = 200
+    response_page_path = "/index.html"
+    error_caching_min_ttl = 0
+  }
+
   tags = local.tags
 }
+
+# data "aws_caller_identity" "current" {} # Defined in pipeline.tf
 
 # Bucket policy to allow CloudFront OAC to read
 data "aws_iam_policy_document" "frontend_s3" {
@@ -82,8 +100,15 @@ data "aws_iam_policy_document" "frontend_s3" {
       variable = "AWS:SourceArn"
       values   = [aws_cloudfront_distribution.frontend.arn]
     }
+
+    condition {
+      test     = "StringEquals"
+      variable = "AWS:SourceAccount"
+      values   = [data.aws_caller_identity.current.account_id]
+    }
   }
 }
+
 
 resource "aws_s3_bucket_policy" "frontend" {
   bucket = aws_s3_bucket.frontend.id

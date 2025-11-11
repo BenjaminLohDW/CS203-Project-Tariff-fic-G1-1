@@ -413,7 +413,7 @@ def get_country_by_name():
         return jsonify({'code': 500, 'error': str(e)}), 500
 
 
-@app.route('/countries', methods=['POST', 'OPTIONS'])
+@app.route('/countries/insert', methods=['POST', 'OPTIONS'])
 def create_country():
     """
     Create a new country
