@@ -163,7 +163,7 @@ def healthcheck():
     }), 200
 
 #--------------- api routes ---------------
-@app.route("/user/<string:user_id>/history", methods=["GET"])
+@app.route("/history/user/<string:user_id>", methods=["GET"])
 def get_user_history(user_id):
     try:
         #pagination of rows; max return 100 rows per page, default 20
@@ -172,19 +172,14 @@ def get_user_history(user_id):
         q = History.query.filter_by(user_id=user_id).order_by(History.created_at.desc())
         items = q.paginate(page=page, per_page=size, error_out=False)
         
-        if items.total != 0:
-            return jsonify({
-                "code": 200,
-                "page": items.page,
-                "size": items.per_page,
-                "total": items.total,
-                "data": [user.json() for user in items.items]
-            }), 200
-        else:
-            return jsonify({
-                "code": 404,
-                "error": "No history exist for user"
-            }), 404
+        # Always return 200, even if no history (empty array)
+        return jsonify({
+            "code": 200,
+            "page": items.page,
+            "size": items.per_page,
+            "total": items.total,
+            "data": [user.json() for user in items.items]
+        }), 200
     except Exception as e:
         return jsonify({
             "code": 500,

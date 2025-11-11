@@ -19,6 +19,44 @@ resource "aws_s3_bucket_public_access_block" "frontend" {
 }
 
 # CloudFront OAC (Origin Access Control) to read S3
+# CloudFront Function to rewrite /api/* paths for backend services
+resource "aws_cloudfront_function" "api_rewrite" {
+  name    = "${local.name_prefix}-api-rewrite"
+  runtime = "cloudfront-js-1.0"
+  comment = "Rewrite /api prefix for backend microservices"
+  publish = true
+  code    = <<-EOT
+function handler(event) {
+    var request = event.request;
+    var uri = request.uri;
+    
+    // Rewrite /api/user/* to /user/*
+    if (uri.startsWith('/api/user/')) {
+        request.uri = uri.replace('/api/user/', '/user/');
+    }
+    // Rewrite /api/history/* to /history/*
+    else if (uri.startsWith('/api/history/')) {
+        request.uri = uri.replace('/api/history/', '/history/');
+    }
+    // Rewrite /api/countries/* to /countries/*
+    else if (uri.startsWith('/api/countries/')) {
+        request.uri = uri.replace('/api/countries/', '/countries/');
+    }
+    // Rewrite /api/agreements/* to /agreements/*
+    else if (uri.startsWith('/api/agreements/')) {
+        request.uri = uri.replace('/api/agreements/', '/agreements/');
+    }
+    // Rewrite /api/forecast/* to /forecast/*
+    else if (uri.startsWith('/api/forecast/')) {
+        request.uri = uri.replace('/api/forecast/', '/forecast/');
+    }
+    // /api/tariffs/* stays as-is (tariff service expects /api/tariffs/*)
+    
+    return request;
+}
+EOT
+}
+
 resource "aws_cloudfront_origin_access_control" "oac" {
   name                              = "${local.name_prefix}-oac"
   description                       = "OAC for ${aws_s3_bucket.frontend.bucket}"
@@ -85,6 +123,12 @@ resource "aws_cloudfront_distribution" "frontend" {
       }
     }
     
+    # Attach path rewrite function
+    function_association {
+      event_type   = "viewer-request"
+      function_arn = aws_cloudfront_function.api_rewrite.arn
+    }
+    
     # Don't cache API responses
     min_ttl     = 0
     default_ttl = 0
@@ -103,20 +147,21 @@ resource "aws_cloudfront_distribution" "frontend" {
     cloudfront_default_certificate = true
   }
 
-  # Custom error responses for SPA (Single Page Application)
-  # Return index.html for 403/404 errors so React Router can handle routing
+  # Custom error responses for SPA routing
+  # These primarily handle S3 403/404 for non-existent HTML pages
+  # APIs should return proper status codes (200, 400, 401, 500) to avoid triggering these
   custom_error_response {
-    error_code         = 403
-    response_code      = 200
-    response_page_path = "/index.html"
-    error_caching_min_ttl = 0
+    error_code            = 403
+    response_code         = 200
+    response_page_path    = "/index.html"
+    error_caching_min_ttl = 10
   }
 
   custom_error_response {
-    error_code         = 404
-    response_code      = 200
-    response_page_path = "/index.html"
-    error_caching_min_ttl = 0
+    error_code            = 404
+    response_code         = 200
+    response_page_path    = "/index.html"
+    error_caching_min_ttl = 10
   }
 
   tags = local.tags

@@ -46,7 +46,7 @@ export const saveCalculation = async (calculationData: CalculationData): Promise
  */
 export const getUserHistory = async (userId: string, page = 1, size = 20): Promise<any> => {
   try {
-    const response = await fetch(`${HISTORY_API_URL}/user/${userId}/history?page=${page}&size=${size}`)
+    const response = await fetch(`${HISTORY_API_URL}/history/user/${userId}?page=${page}&size=${size}`)
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)

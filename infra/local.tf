@@ -10,6 +10,8 @@ locals {
   # Service definitions
 
   #public (connects to alb directly; communication with frontend)
+  # Note: ALB paths must match what services expect, not what frontend sends
+  # Frontend sends /api/user/*, but service expects /user/*
   public_services = {
     user     = { path = "/user/*",     port = 5001, health = "/health" }
     history  = { path = "/history/*",  port = 5003, health = "/health" }
