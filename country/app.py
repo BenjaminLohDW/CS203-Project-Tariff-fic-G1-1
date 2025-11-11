@@ -149,6 +149,17 @@ def get_weights(a: str, b: str, as_of=None) -> float:
     )
     return float(w.weight) if w else 0.0
 
+
+#----------------------- CORS HANDLER ----------------------- 
+@app.after_request
+def after_request(response):
+    """Ensure CORS headers are present on all responses"""
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Requested-With')
+    response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS')
+    response.headers.add('Access-Control-Max-Age', '3600')
+    return response
+
 #----------------------- API ROUTES ----------------------- 
 
 @app.route('/', methods=['GET'])
@@ -402,7 +413,7 @@ def get_country_by_name():
         return jsonify({'code': 500, 'error': str(e)}), 500
 
 
-@app.route('/countries', methods=['POST'])
+@app.route('/countries', methods=['POST', 'OPTIONS'])
 def create_country():
     """
     Create a new country
@@ -485,6 +496,10 @@ def create_country():
               type: string
               example: "Database error"
     """
+    # Handle preflight OPTIONS request
+    if request.method == "OPTIONS":
+        return jsonify({}), 200
+    
     try:
         data = request.get_json()
         
@@ -521,7 +536,7 @@ def create_country():
         return jsonify({'code': 500, 'error': str(e)}), 500
 
 
-@app.route('/countries/bulk', methods=['POST'])
+@app.route('/countries/bulk', methods=['POST', 'OPTIONS'])
 def create_countries_bulk():
     """
     Create multiple countries in bulk
@@ -596,6 +611,11 @@ def create_countries_bulk():
               type: string
               example: "Database error"
     """
+
+    # Handle preflight OPTIONS request
+    if request.method == "OPTIONS":
+        return jsonify({}), 200
+    
     try:
         data = request.get_json()
         
