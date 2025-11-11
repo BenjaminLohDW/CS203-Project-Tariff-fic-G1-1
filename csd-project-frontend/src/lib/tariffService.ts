@@ -16,7 +16,7 @@ class TariffService {
    */
   async getTariffsByHsCode(hsCode: string): Promise<any[]> {
     try {
-      const response = await fetch(`${TARIFF_BASE_URL}/api/tariffs/by-hs/${encodeURIComponent(hsCode)}`, {
+      const response = await fetch(`${TARIFF_BASE_URL}/tariffs/by-hs/${encodeURIComponent(hsCode)}`, {
         method: 'GET',
       })
 
@@ -47,7 +47,7 @@ class TariffService {
         exporter: exporter
       })
 
-      const response = await fetch(`${TARIFF_BASE_URL}/api/tariffs?${params}`, {
+      const response = await fetch(`${TARIFF_BASE_URL}/tariffs?${params}`, {
         method: 'GET',
       })
 
@@ -80,7 +80,7 @@ class TariffService {
         date: date
       })
 
-      const response = await fetch(`${TARIFF_BASE_URL}/api/tariffs/effective?${params}`, {
+      const response = await fetch(`${TARIFF_BASE_URL}/tariffs/effective?${params}`, {
         method: 'GET',
       })
 
@@ -114,7 +114,7 @@ class TariffService {
         date: request.date
       })
 
-      const response = await fetch(`${TARIFF_BASE_URL}/api/tariffs/effective/by-names?${params}`, {
+      const response = await fetch(`${TARIFF_BASE_URL}/tariffs/effective/by-names?${params}`, {
         method: 'GET',
       })
 
