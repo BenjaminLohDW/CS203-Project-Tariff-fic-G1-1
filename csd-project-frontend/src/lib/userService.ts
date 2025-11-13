@@ -3,9 +3,21 @@
  * Simple utility to create users in microservice with Firebase user_id
  */
 import { UserProfile } from '../types'
+import { getIdToken } from './auth'
 
 // const API_BASE = '/api'
 const USER_API_URL = import.meta.env.VITE_USER_API_URL || '/api'
+
+/**
+ * Get authentication headers with Firebase JWT token
+ */
+const getAuthHeaders = async (): Promise<HeadersInit> => {
+  const token = await getIdToken()
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+  }
+}
 
 interface CreateUserData {
   user_id: string
@@ -56,11 +68,10 @@ export async function createUser(userData: CreateUserData): Promise<UserProfile>
  * @returns {Promise<UserProfile>} User profile object
  */
 export async function getUserProfile(userId: string): Promise<UserProfile> {
+  const headers = await getAuthHeaders()
   const response = await fetch(`${USER_API_URL}/user/${userId}`, {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    }
+    headers
   })
 
   if (!response.ok) {
@@ -81,11 +92,10 @@ export async function getUserProfile(userId: string): Promise<UserProfile> {
  * @returns {Promise<UserProfile>} Updated user profile
  */
 export async function promoteToAdmin(userId: string): Promise<UserProfile> {
+  const headers = await getAuthHeaders()
   const response = await fetch(`${USER_API_URL}/user/${userId}/promote-admin`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    }
+    headers
   })
 
   if (!response.ok) {

@@ -1,9 +1,19 @@
 // History Service - API calls to the history microservice
 import { CalculationData } from '../types'
+import { getIdToken } from './auth'
 
 const HISTORY_API_URL = import.meta.env.VITE_HISTORY_API_URL || '/api'
 
-
+/**
+ * Get authentication headers with Firebase JWT token
+ */
+const getAuthHeaders = async (): Promise<HeadersInit> => {
+  const token = await getIdToken()
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+  }
+}
 
 /**
  * Save a calculation to user's history
@@ -12,11 +22,10 @@ const HISTORY_API_URL = import.meta.env.VITE_HISTORY_API_URL || '/api'
  */
 export const saveCalculation = async (calculationData: CalculationData): Promise<any> => {
   try {
+    const headers = await getAuthHeaders()
     const response = await fetch(`${HISTORY_API_URL}/history/create`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers,
       body: JSON.stringify(calculationData)
     })
     
@@ -46,7 +55,10 @@ export const saveCalculation = async (calculationData: CalculationData): Promise
  */
 export const getUserHistory = async (userId: string, page = 1, size = 20): Promise<any> => {
   try {
-    const response = await fetch(`${HISTORY_API_URL}/history/user/${userId}?page=${page}&size=${size}`)
+    const headers = await getAuthHeaders()
+    const response = await fetch(`${HISTORY_API_URL}/history/user/${userId}?page=${page}&size=${size}`, {
+      headers
+    })
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
@@ -83,7 +95,10 @@ export const getUserHistory = async (userId: string, page = 1, size = 20): Promi
  */
 export const getHistoryTariffLines = async (historyId: string, page = 1, size = 20): Promise<any> => {
   try {
-    const response = await fetch(`${HISTORY_API_URL}/history/${historyId}?page=${page}&size=${size}`)
+    const headers = await getAuthHeaders()
+    const response = await fetch(`${HISTORY_API_URL}/history/${historyId}?page=${page}&size=${size}`, {
+      headers
+    })
     
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`)
@@ -109,8 +124,10 @@ export const getHistoryTariffLines = async (historyId: string, page = 1, size = 
  */
 export const deleteCalculationFromHistory = async (historyId: string): Promise<any> => {
   try {
+    const headers = await getAuthHeaders()
     const response = await fetch(`${HISTORY_API_URL}/history/${historyId}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers
     })
     
     if (!response.ok) {

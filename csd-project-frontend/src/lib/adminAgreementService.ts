@@ -2,6 +2,7 @@
  * Admin Agreement Service
  * Handles admin operations for agreement management
  */
+import { getIdToken } from './auth'
 
 export interface AgreementCreateRequest {
   importerName: string;    // country name e.g., "Singapore"
@@ -40,15 +41,25 @@ class AdminAgreementService {
   }
 
   /**
+   * Get authentication headers with Firebase JWT token
+   */
+  private async getAuthHeaders(): Promise<HeadersInit> {
+    const token = await getIdToken()
+    return {
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+    }
+  }
+
+  /**
    * Create a new agreement
    */
   async createAgreement(agreement: AgreementCreateRequest): Promise<AgreementResponse> {
     try {
+      const headers = await this.getAuthHeaders()
       const response = await fetch(`${this.baseUrl}/agreements/create`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify(agreement),
       });
 

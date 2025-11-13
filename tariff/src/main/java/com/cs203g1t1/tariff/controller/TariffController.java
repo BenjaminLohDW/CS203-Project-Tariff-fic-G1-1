@@ -168,7 +168,7 @@ public class TariffController {
    *  - 500 Internal Server Error on DB errors
    */
   @PutMapping("/{id}")
-  public ResponseEntity<TariffResponse> update(
+  public ResponseEntity<?> update(
       @PathVariable Long id,
       @Valid @RequestBody TariffCreateRequest req
   ) {
@@ -180,13 +180,16 @@ public class TariffController {
       return ResponseEntity.ok(updated);
     } catch (IllegalArgumentException e) {
       // e.g., req validation beyond bean validation, invalid date ranges, etc.
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+      ErrorResponse error = new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value());
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     } catch (IllegalStateException e) {
       // use this in service for domain conflicts, e.g., validity-range overlap with another record
-      return ResponseEntity.status(HttpStatus.CONFLICT).build();
+      ErrorResponse error = new ErrorResponse(e.getMessage(), HttpStatus.CONFLICT.value());
+      return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     } catch (RestClientException e) {
       // downstream product/country/agreement lookups failed
-      return ResponseEntity.status(HttpStatus.BAD_GATEWAY).build();
+      ErrorResponse error = new ErrorResponse("External service unavailable", HttpStatus.BAD_GATEWAY.value());
+      return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(error);
     } catch (DataAccessException e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }

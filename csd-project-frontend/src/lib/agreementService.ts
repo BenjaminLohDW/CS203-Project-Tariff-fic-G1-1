@@ -1,5 +1,18 @@
 // Agreement Service - API calls to the agreement microservice
+import { getIdToken } from './auth'
+
 const AGREEMENT_API_URL = import.meta.env.VITE_AGREEMENT_API_URL || '/api'
+
+/**
+ * Get authentication headers with Firebase JWT token
+ */
+const getAuthHeaders = async (): Promise<HeadersInit> => {
+  const token = await getIdToken()
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+  }
+}
 
 /**
  * Agreement interface matching the backend response
@@ -122,11 +135,10 @@ class AgreementService {
     note?: string
   }): Promise<Agreement> {
     try {
+      const headers = await getAuthHeaders()
       const response = await fetch(`${AGREEMENT_API_URL}/agreements/create`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify(agreementData)
       })
 

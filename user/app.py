@@ -9,10 +9,18 @@ from uuid import uuid4
 from dotenv import load_dotenv
 from sqlalchemy.exc import IntegrityError
 import os
+import sys
+
+# Add parent directory to path for shared module import
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from shared.firebase_auth import initialize_firebase, require_jwt, require_admin, verify_user_ownership
 
 app = Flask(__name__)
 CORS(app)
 load_dotenv()
+
+# Initialize Firebase Admin SDK for JWT verification
+initialize_firebase()
 
 ENV = os.getenv('ENV', 'local')
 user = os.getenv("DB_USER")
@@ -113,8 +121,20 @@ def get_all_users():
     
 
 @app.route("/user/<string:user_id>", methods=["GET"])
+@require_jwt
 def get_user(user_id):
+    """Get user profile. Users can only access their own profile unless they are admin."""
     try:
+        # Verify user can only access their own data (unless admin)
+        if not verify_user_ownership(user_id):
+            # Check if current user is admin
+            current_user = User.query.filter_by(user_id=request.user_id).first()
+            if not current_user or current_user.role != 'admin':
+                return jsonify({
+                    "code": 403,
+                    "error": "Forbidden: You can only access your own profile"
+                }), 403
+        
         user = User.query.filter_by(user_id=user_id).first()
 
         if user:
@@ -144,15 +164,22 @@ def create_user():
             "message": "missing required fields"
         })
     
+    # Debug logging
+    print(f"📝 Creating user with data: {data}")
+    print(f"🔑 user_id from request: {data.get('user_id')}")
+    
     user = User(
         user_id = data.get('user_id'),  # Accept Firebase user_id if provided
         name = data['name'].strip().lower(),
         email = data['email'].strip().lower()
     )
+    
+    print(f"✅ User object created with user_id: {user.user_id}")
 
     try:
         db.session.add(user)
         db.session.commit()
+        print(f"💾 User committed to database with user_id: {user.user_id}")
     except IntegrityError:
         db.session.rollback()
         return jsonify(
@@ -167,8 +194,20 @@ def create_user():
 
 
 @app.route("/user/<string:user_id>", methods=["PATCH"])
+@require_jwt
 def update_user(user_id):
+    """Update user profile. Users can only update their own profile unless they are admin."""
     try:
+        # Verify user can only update their own data (unless admin)
+        if not verify_user_ownership(user_id):
+            # Check if current user is admin
+            current_user = User.query.filter_by(user_id=request.user_id).first()
+            if not current_user or current_user.role != 'admin':
+                return jsonify({
+                    "code": 403,
+                    "error": "Forbidden: You can only update your own profile"
+                }), 403
+        
         user = User.query.filter_by(user_id=user_id).first()
         if not user:
             return jsonify({
@@ -205,7 +244,9 @@ def update_user(user_id):
     
 
 @app.route("/user/<string:user_id>", methods=["DELETE"])
+@require_admin(db)
 def delete_user(user_id):
+    """Delete a user. Admin-only operation."""
     user = User.query.filter_by(user_id=user_id).first()
     if not user:
         return jsonify({
@@ -230,7 +271,8 @@ def delete_user(user_id):
 def promote_to_admin(user_id):
     """
     Promote a user to admin role.
-    This endpoint should ideally be protected by admin-only authentication in production.
+    PUBLIC endpoint - no authentication required (for demo purposes).
+    Security: Requires knowledge of user's Firebase UID.
     """
     try:
         user = User.query.filter_by(user_id=user_id).first()

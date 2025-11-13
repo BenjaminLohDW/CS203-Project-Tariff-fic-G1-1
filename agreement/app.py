@@ -8,8 +8,16 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 import requests
 import datetime
+import sys
+
+# Add parent directory to path for shared module import
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from shared.firebase_auth import initialize_firebase, require_admin
 
 load_dotenv()
+
+# Initialize Firebase Admin SDK for JWT verification
+initialize_firebase()
 
 # ============================================================
 # Database Config
@@ -130,9 +138,10 @@ def healthcheck():
     
 
 @app.route('/agreements/create', methods=['POST'])
+@require_admin(db)
 def create_agreement():
     """
-    Create an agreement
+    Create an agreement - Admin only
     ---
     tags:
       - Agreements
@@ -178,6 +187,10 @@ def create_agreement():
           $ref: '#/definitions/Agreement'
       400:
         description: Bad Request
+        schema:
+          $ref: '#/definitions/Error'
+      403:
+        description: Forbidden - Admin access required
         schema:
           $ref: '#/definitions/Error'
     """

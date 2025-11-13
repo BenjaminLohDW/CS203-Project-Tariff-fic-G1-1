@@ -8,10 +8,13 @@ ENV FLASK_ENV=development
 
 WORKDIR /app
 
-COPY requirements.txt .
+COPY agreement/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+# Copy the shared module (for Firebase authentication)
+COPY shared /app/shared
+
+COPY agreement/ .
 
 EXPOSE 5006
 

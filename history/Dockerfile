@@ -16,13 +16,17 @@ WORKDIR /app
 #     rm -rf /var/lib/apt/lists/*
 
 # Copy requirements file first to leverage Docker cache
-COPY requirements.txt .
+COPY history/requirements.txt .
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of the application
-COPY . .
+# Copy the shared module (for Firebase authentication)
+COPY shared /app/shared
+
+# Copy the application file (not __init__.py to avoid package structure)
+COPY history/app.py ./
+COPY history/migrations ./migrations/
 
 # Expose the port the app runs on
 EXPOSE 5003

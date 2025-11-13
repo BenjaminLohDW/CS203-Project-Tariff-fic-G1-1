@@ -75,7 +75,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const checkRoleChange = async () => {
       try {
-        const freshProfile = await getUserProfile(user.uid)
+        let freshProfile: UserProfile
+        
+        try {
+          freshProfile = await getUserProfile(user.uid)
+        } catch (error: any) {
+          // If user not found (404), try to create them first
+          if (error.message?.includes('User not found') || error.message?.includes('404')) {
+            console.log('User not found in microservice during role check, creating...')
+            const userData = {
+              user_id: user.uid,
+              name: user.displayName || user.email?.split('@')[0] || 'User',
+              email: user.email || ''
+            }
+            freshProfile = await createUser(userData)
+            setUserProfile(freshProfile)
+            console.log('✅ User created during role check:', freshProfile)
+            return // No need to check role change on first creation
+          } else {
+            throw error // Re-throw other errors
+          }
+        }
         
         // If role has changed, update profile and force logout/re-login
         if (freshProfile.role !== userProfile.role) {

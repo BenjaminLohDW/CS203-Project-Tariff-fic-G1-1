@@ -9,10 +9,18 @@ from uuid import uuid4
 from dotenv import load_dotenv
 from sqlalchemy.exc import IntegrityError
 import os
+import sys
+
+# Add parent directory to path for shared module import
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from shared.firebase_auth import initialize_firebase, require_jwt, verify_user_ownership
 
 app = Flask(__name__)
 CORS(app)
 load_dotenv()
+
+# Initialize Firebase Admin SDK for JWT verification
+initialize_firebase()
 
 ENV = os.getenv('ENV', 'local')
 user = os.getenv("DB_USER")
@@ -164,8 +172,17 @@ def healthcheck():
 
 #--------------- api routes ---------------
 @app.route("/history/user/<string:user_id>", methods=["GET"])
+@require_jwt
 def get_user_history(user_id):
+    """Get calculation history for a user. Users can only access their own history."""
     try:
+        # Verify user can only access their own history
+        if not verify_user_ownership(user_id):
+            return jsonify({
+                "code": 403,
+                "error": "Forbidden: You can only access your own history"
+            }), 403
+        
         #pagination of rows; max return 100 rows per page, default 20
         page = max(int(request.args.get("page", 1)), 1)
         size = min(max(int(request.args.get("size", 20)), 1), 100)
@@ -188,7 +205,9 @@ def get_user_history(user_id):
     
 
 @app.route("/history/<string:history_id>", methods=["GET"])
+@require_jwt
 def get_specific_user_history(history_id):
+    """Get specific calculation history. Users can only access their own records."""
     try:
         # Get the history record first
         history = History.query.filter_by(history_id=history_id).first()
@@ -197,6 +216,13 @@ def get_specific_user_history(history_id):
                 "code": 404,
                 "message": "History record not found"
             }), 404
+
+        # Verify user owns this history record
+        if not verify_user_ownership(history.user_id):
+            return jsonify({
+                "code": 403,
+                "error": "Forbidden: You can only access your own history"
+            }), 403
 
         # Get tariff lines (with pagination)
         page = max(int(request.args.get("page", 1)), 1)
@@ -227,7 +253,9 @@ def get_specific_user_history(history_id):
     
 
 @app.route("/history/create", methods=["POST"])
+@require_jwt
 def save_calculation():
+    """Save calculation history. Users can only create their own records."""
     try:
         data = request.get_json()
         required = ["user_id", "product_type", "total_qty", "base_cost", "final_cost", "import_country", "export_country", "tariff_lines"]
@@ -236,6 +264,13 @@ def save_calculation():
                 "code": 400,
                 "message": "mising required fields"
             })
+
+        # Verify user can only create history for themselves
+        if not verify_user_ownership(data["user_id"]):
+            return jsonify({
+                "code": 403,
+                "error": "Forbidden: You can only create history for yourself"
+            }), 403
 
         history = History(
             user_id        = data["user_id"],
@@ -304,7 +339,9 @@ def history_agreement_lines(history_id):
 
 
 @app.route("/history/<string:history_id>", methods=["DELETE"])
+@require_jwt
 def delete_history(history_id):
+    """Delete calculation history. Users can only delete their own records."""
     try:
         history = History.query.filter_by(history_id=history_id).first()
 
@@ -313,6 +350,13 @@ def delete_history(history_id):
                 "code": 404,
                 "message": "History record not found"
             }), 404
+
+        # Verify user owns this history record
+        if not verify_user_ownership(history.user_id):
+            return jsonify({
+                "code": 403,
+                "error": "Forbidden: You can only delete your own history"
+            }), 403
 
         db.session.delete(history)
         db.session.commit()
