@@ -22,7 +22,7 @@ class TestHistoryValidator:
         assert "missing required fields" in error.lower()
     
     def test_validate_create_request_empty_tariff_lines(self):
-        """Test validation fails for empty tariff lines"""
+        """Test validation allows empty tariff lines (for 0% tariff cases)"""
         # Arrange
         data = {
             "user_id": "user123",
@@ -32,15 +32,14 @@ class TestHistoryValidator:
             "final_cost": "1200",
             "import_country": "US",
             "export_country": "CN",
-            "tariff_lines": []  # Empty!
+            "tariff_lines": []  # Empty is now allowed (0% tariff products)
         }
         
         # Act
         error = HistoryValidator.validate_create_request(data)
         
-        # Assert
-        assert error is not None
-        assert "at least one tariff line" in error.lower()
+        # Assert - Should pass validation for empty tariff array
+        assert error is None
     
     def test_validate_create_request_invalid_tariff_line(self):
         """Test validation fails for invalid tariff line"""
