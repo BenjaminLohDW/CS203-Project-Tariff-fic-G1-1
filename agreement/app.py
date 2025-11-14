@@ -1,18 +1,26 @@
+"""
+Agreement Microservice - Refactored with Clean Architecture
+Follows SOLID principles with clear separation of concerns
+"""
 import os
 from dotenv import load_dotenv
 from urllib.parse import quote_plus
-from datetime import date
-from flask import Flask, jsonify, request
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from flask_cors import CORS
-import requests
 import datetime
 import sys
+from flask import Flask, jsonify, request
+from flask_migrate import Migrate
+from flask_cors import CORS
 
-# Add parent directory to path for shared module import
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+# Ensure current directory is in path (works both locally and in Docker)
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(current_dir)
+for path in [current_dir, parent_dir]:
+    if path not in sys.path:
+        sys.path.insert(0, path)
+
 from shared.firebase_auth import initialize_firebase, require_admin
+from models import db
+from services import AgreementService
 
 load_dotenv()
 
@@ -30,7 +38,7 @@ DB_PORT = os.getenv('DB_PORT', '5432')
 DB_NAME = os.getenv('DB_NAME', 'default')
 
 if ENV == 'aws':
-    DB_SSLMODE = os.getenv('DB_SSLMODE', 'require') #'disbale'
+    DB_SSLMODE = os.getenv('DB_SSLMODE', 'require')
 else:
     DB_SSLMODE = 'disable'
 
@@ -44,98 +52,35 @@ app.config['SQLALCHEMY_DATABASE_URI'] = (
 )
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-    'pool_pre_ping': True,        # Verify connections before using
-    'pool_recycle': 300,          # Recycle connections after 5 min
-    'pool_size': 5,               # Small pool (proxy does pooling)
+    'pool_pre_ping': True,
+    'pool_recycle': 300,
+    'pool_size': 5,
     'max_overflow': 2,
     'connect_args': {
         'connect_timeout': 10,
-        'sslmode': DB_SSLMODE,    # ✅ Pass sslmode to psycopg2
+        'sslmode': DB_SSLMODE,
     }
 }
 
-db = SQLAlchemy(app)
+db.init_app(app)
 migrate = Migrate(app, db, version_table='agreement_alembic_version')
 
-# Helper to fetch country ISO from country microservice
-def resolve_country_code(name):
-    """
-    Query the Country microservice to get ISO2 code by name.
-    Returns ISO2 code string, or None if not found.
-    """
-    try:
-        resp = requests.get(f"{COUNTRY_MS_URL}/countries/by-name?name={name}")
-        if resp.status_code == 200:
-            data = resp.json()
-            # expected: {'data': {'code': 'SG', 'name': 'Singapore'}}
-            return data.get("data", {}).get("code")
-    except Exception as e:
-        print(f"[WARN] Country lookup failed for {name}: {e}")
-    return None
-
-# ============================================================
-# Models
-# ============================================================
-class Agreement(db.Model):
-    __tablename__ = 'agreements'
-
-    id = db.Column(db.Integer, primary_key=True)
-    importerId = db.Column(db.String(2), nullable=False, index=True)  # e.g. 'US'
-    exporterId = db.Column(db.String(2), nullable=False, index=True)  # e.g. 'CN'
-    start_date = db.Column(db.Date, nullable=False)
-    end_date = db.Column(db.Date, nullable=False)
-    kind = db.Column(db.String(16), nullable=False)   # 'override' | 'surcharge' | 'multiplier'
-    value = db.Column(db.Numeric(10, 4), nullable=False)
-    note = db.Column(db.String, nullable=True)
-
-    __table_args__ = (
-        db.Index('ix_pair_window', 'importerId', 'exporterId', 'start_date', 'end_date'),
-    )
-
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "importerId": self.importerId,
-            "exporterId": self.exporterId,
-            "start_date": self.start_date.isoformat(),
-            "end_date": self.end_date.isoformat(),
-            "kind": self.kind,
-            "value": float(self.value),
-            "note": self.note,
-        }
+# Initialize service layer
+agreement_service = AgreementService(COUNTRY_MS_URL)
 
 # ============================================================
 # Routes
 # ============================================================
 
-# ---- Healthcheck api for ALB ----
-# @app.route("/health", methods=["GET"])
-# def healthcheck():
-#     #healthcheck for ALB target group
-#     try:
-#         # Quick DB connection check
-#         db.session.execute(db.text("SELECT 1"))
-#         return jsonify({
-#             "status": "healthy",
-#             "service": "history",
-#             "timestamp": datetime.utcnow().isoformat()
-#         }), 200
-#     except Exception as e:
-#         return jsonify({
-#             "status": "unhealthy",
-#             "service": "history",
-#             "error": str(e)
-#         }), 503
-    
-#updated health checks for faster deployment
 @app.route("/health", methods=["GET"])
 def healthcheck():
+    """Health check endpoint for load balancer"""
     return jsonify({
         "status": "healthy",
-        "service": "user",
+        "service": "agreement",
         "timestamp": datetime.datetime.utcnow().isoformat()
     }), 200
-    
+
 
 @app.route('/agreements/create', methods=['POST'])
 @require_admin(db)
@@ -195,31 +140,11 @@ def create_agreement():
           $ref: '#/definitions/Error'
     """
     data = request.get_json()
-    required_fields = ['importerName', 'exporterName', 'start_date', 'end_date', 'kind', 'value']
-    if not data or not all(f in data for f in required_fields):
-        return jsonify({"error": "Missing required fields"}), 400
+    result, error, status_code = agreement_service.create_agreement(data)
     
-    importer_code = resolve_country_code(data['importerName'])
-    exporter_code = resolve_country_code(data['exporterName'])
-
-    if not importer_code or not exporter_code:
-        return jsonify({"error": "Failed to resolve country name(s)"}), 400
-
-    if data['kind'] not in ('override', 'surcharge', 'multiplier'):
-        return jsonify({"error": "Invalid kind"}), 400
-
-    ag = Agreement(
-        importerId=importer_code,
-        exporterId=exporter_code,
-        start_date=date.fromisoformat(data['start_date']),
-        end_date=date.fromisoformat(data['end_date']),
-        kind=data['kind'],
-        value=data['value'],
-        note=data.get('note'),
-    )
-    db.session.add(ag)
-    db.session.commit()
-    return jsonify(ag.to_dict()), 201
+    if error:
+        return jsonify({"error": error}), status_code
+    return jsonify(result), status_code
 
 
 @app.route('/agreements/all', methods=['GET'])
@@ -261,20 +186,13 @@ def list_agreements():
     exporter_name = request.args.get('exporter')
     active_on = request.args.get('active_on')
     
-    importer = resolve_country_code(importer_name) if importer_name else None
-    exporter = resolve_country_code(exporter_name) if exporter_name else None
-
-    query = Agreement.query
-    if importer:
-        query = query.filter_by(importerId=importer.upper())
-    if exporter:
-        query = query.filter_by(exporterId=exporter.upper())
-    if active_on:
-        d = date.fromisoformat(active_on)
-        query = query.filter(Agreement.start_date <= d, Agreement.end_date >= d)
-
-    results = query.order_by(Agreement.start_date.desc()).all()
-    return jsonify([a.to_dict() for a in results])
+    result, error, status_code = agreement_service.list_agreements(
+        importer_name, exporter_name, active_on
+    )
+    
+    if error:
+        return jsonify({"error": error}), status_code
+    return jsonify(result), status_code
 
 
 @app.route('/agreements/active', methods=['GET'])
@@ -318,31 +236,19 @@ def get_active_agreements():
     """
     importer_name = request.args.get('importer')
     exporter_name = request.args.get('exporter')
-    on = request.args.get('on', date.today().isoformat())
+    on_date = request.args.get('on')
     
-    if not importer_name or not exporter_name:
-        return jsonify({"error": "importer and exporter are required"}), 400
+    result, error, status_code = agreement_service.get_active_agreements(
+        importer_name, exporter_name, on_date
+    )
     
-    importer = resolve_country_code(importer_name) if importer_name else None
-    exporter = resolve_country_code(exporter_name) if exporter_name else None
-
-    if not importer or not exporter:
-        return jsonify({"error": "Failed to resolve country name(s)"}), 400
-
-    d = date.fromisoformat(on)
-    rows = Agreement.query.filter_by(
-        importerId=importer,
-        exporterId=exporter
-    ).filter(
-        Agreement.start_date <= d,
-        Agreement.end_date >= d
-    ).order_by(Agreement.start_date.desc()).all()
-
-    return jsonify([r.to_dict() for r in rows])
+    if error:
+        return jsonify({"error": error}), status_code
+    return jsonify(result), status_code
 
 
 # ============================================================
-# Swagger (move this AFTER routes so docs are visible)
+# Swagger Documentation
 # ============================================================
 from flasgger import Swagger
 
@@ -367,9 +273,8 @@ swagger_template = {
         "title": "Agreement Microservice API",
         "description": "A microservice providing agreement data between countries",
         "version": "1.0.0",
-        "contact": { "name": "CS203 G1-T1", "email": "support@cs203.com" }
+        "contact": {"name": "CS203 G1-T1", "email": "support@cs203.com"}
     },
-    # tip: omit "host" for portability behind proxies/load balancers
     "basePath": "/",
     "schemes": ["http"],
     "consumes": ["application/json"],
@@ -378,14 +283,14 @@ swagger_template = {
         "Agreement": {
             "type": "object",
             "properties": {
-                "id":         {"type": "integer", "example": 1},
-                "importerId": {"type": "string",  "example": "SG"},
-                "exporterId": {"type": "string",  "example": "US"},
-                "start_date": {"type": "string",  "format": "date", "example": "2025-01-01"},
-                "end_date":   {"type": "string",  "format": "date", "example": "2025-12-31"},
-                "kind":       {"type": "string",  "enum": ["override","surcharge","multiplier"], "example": "override"},
-                "value":      {"type": "number",  "format": "float", "example": 0.0500},
-                "note":       {"type": "string",  "example": "Promotional override during 2025."}
+                "id": {"type": "integer", "example": 1},
+                "importerId": {"type": "string", "example": "SG"},
+                "exporterId": {"type": "string", "example": "US"},
+                "start_date": {"type": "string", "format": "date", "example": "2025-01-01"},
+                "end_date": {"type": "string", "format": "date", "example": "2025-12-31"},
+                "kind": {"type": "string", "enum": ["override", "surcharge", "multiplier"], "example": "override"},
+                "value": {"type": "number", "format": "float", "example": 0.0500},
+                "note": {"type": "string", "example": "Promotional override during 2025."}
             }
         },
         "Error": {
@@ -400,14 +305,14 @@ swagger_template = {
 swagger = Swagger(app, config=swagger_config, template=swagger_template)
 
 with app.app_context():
-  try:
-    if os.getenv("AUTO_CREATE_DB") == "1":
-      db.create_all()
-      print("✅ Agreement service: Database tables created/verified (AUTO_CREATE_DB=1)")
-    else:
-      print("ℹ️ Agreement service: Skipping db.create_all(); use Alembic migrations (set AUTO_CREATE_DB=1 to enable)")
-  except Exception as e:
-    print(f"⚠️ Agreement service: Database table creation check failed: {e}")
+    try:
+        if os.getenv("AUTO_CREATE_DB") == "1":
+            db.create_all()
+            print("✅ Agreement service: Database tables created/verified (AUTO_CREATE_DB=1)")
+        else:
+            print("ℹ️ Agreement service: Skipping db.create_all(); use Alembic migrations (set AUTO_CREATE_DB=1 to enable)")
+    except Exception as e:
+        print(f"⚠️ Agreement service: Database table creation check failed: {e}")
 
 # ============================================================
 # Run

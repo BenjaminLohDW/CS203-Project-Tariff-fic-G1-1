@@ -24,9 +24,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the shared module (for Firebase authentication)
 COPY shared /app/shared
 
-# Copy the application file (not __init__.py to avoid package structure)
-COPY history/app.py ./
-COPY history/migrations ./migrations/
+# Copy all application files (refactored structure)
+COPY history/ .
 
 # Expose the port the app runs on
 EXPOSE 5003

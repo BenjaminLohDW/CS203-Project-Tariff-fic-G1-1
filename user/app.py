@@ -1,19 +1,19 @@
-from flask import Flask, jsonify, request
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
-from urllib.parse import quote_plus
+from flask import Flask, jsonify, request, g
 from flask_cors import CORS
-from datetime import datetime
-from sqlalchemy.dialects.postgresql import JSONB
-from uuid import uuid4
+from urllib.parse import quote_plus
 from dotenv import load_dotenv
-from sqlalchemy.exc import IntegrityError
+from datetime import datetime
 import os
 import sys
 
 # Add parent directory to path for shared module import
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from shared.firebase_auth import initialize_firebase, require_jwt, require_admin, verify_user_ownership
+
+# Import refactored components
+from models import db, User
+from services.user_service import UserService
+from flask_migrate import Migrate
 
 app = Flask(__name__)
 CORS(app)
@@ -22,15 +22,16 @@ load_dotenv()
 # Initialize Firebase Admin SDK for JWT verification
 initialize_firebase()
 
+# Database configuration
 ENV = os.getenv('ENV', 'local')
 user = os.getenv("DB_USER")
-pwd  = quote_plus(os.getenv("DB_PASSWORD", ""))  # URL-escape if needed
+pwd = quote_plus(os.getenv("DB_PASSWORD", ""))
 host = os.getenv("DB_HOST", "localhost")
 port = os.getenv("DB_PORT", "5432")
 dbname = os.getenv("DB_NAME", "default")
 
 if ENV == 'aws':
-    dbsslmode = os.getenv('DB_SSLMODE', 'require') #'disbale'
+    dbsslmode = os.getenv('DB_SSLMODE', 'require')
 else:
     dbsslmode = 'disable'
 
@@ -39,50 +40,28 @@ app.config["SQLALCHEMY_DATABASE_URI"] = (
 )
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
-    'pool_pre_ping': True,        # Verify connections before using
-    'pool_recycle': 300,          # Recycle connections after 5 min
-    'pool_size': 5,               # Small pool (proxy does pooling)
+    'pool_pre_ping': True,
+    'pool_recycle': 300,
+    'pool_size': 5,
     'max_overflow': 2,
     'connect_args': {
         'connect_timeout': 10,
-        'sslmode': dbsslmode,    
+        'sslmode': dbsslmode,
     }
 }
 
-
-db = SQLAlchemy(app)
+# Initialize database with app
+db.init_app(app)
 migrate = Migrate(app, db, version_table="user_alembic_version")
 
+# Initialize service
+user_service = UserService()
 
-#----Models----
-class User(db.Model):
-    __tablename__ = "users"
 
-    user_id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid4()))
-    name = db.Column(db.String(100), nullable=False, index=True)
-    email =  db.Column(db.String(200), nullable=False, unique=True, index=True)
-    role = db.Column(db.String(32), default="user")
-    updated_at = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
-    created_at = db.Column(db.DateTime, server_default=db.func.now())
-
-    __table_args__ = (
-        db.Index("ix_users_created_at", "created_at"),
-    )
-    
-    def json(self):
-        return {
-            "user_id": self.user_id,
-            "name": self.name,
-            "email": self.email,
-            "role": self.role,
-            "created_at": self.created_at.isoformat() if self.created_at else None,
-            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
-        }
-    
-#---- Healthcheck api for ALB ----
-#updated health checks for faster deployment
+# ---- Healthcheck API for ALB ----
 @app.route("/health", methods=["GET"])
 def healthcheck():
+    """Health check endpoint for load balancer."""
     return jsonify({
         "status": "healthy",
         "service": "user",
@@ -90,181 +69,83 @@ def healthcheck():
     }), 200
 
 
-#----api routes----
+# ---- API Routes ----
 @app.route("/user/all", methods=["GET"])
 def get_all_users():
-    try:
-        #pagination of rows; max return 100 rows per page, default 20
-        page = max(int(request.args.get("page", 1)), 1)
-        size = min(max(int(request.args.get("size", 20)), 1), 100)
-        q = User.query.order_by(User.created_at.desc())
-        items = q.paginate(page=page, per_page=size, error_out=False)
-        
-        if items.total != 0:
-            return jsonify({
-                "code": 200,
-                "page": items.page,
-                "size": items.per_page,
-                "total": items.total,
-                "data": [user.json() for user in items.items]
-            }), 200
-        else:
-            return jsonify({
-                "code": 404,
-                "error": "No user found"
-            }), 404
-    except Exception as e:
-        return jsonify({
-            "code": 500,
-            "messsage": str(e)
-        }), 500
+    """
+    Get all users with pagination.
+    Public endpoint for demo purposes.
+    """
+    page = int(request.args.get("page", 1))
+    size = int(request.args.get("size", 20))
     
+    result, status = user_service.get_all_users(page, size)
+    return jsonify(result), status
+
 
 @app.route("/user/<string:user_id>", methods=["GET"])
 @require_jwt
 def get_user(user_id):
-    """Get user profile. Users can only access their own profile unless they are admin."""
-    try:
-        # Verify user can only access their own data (unless admin)
-        if not verify_user_ownership(user_id):
-            # Check if current user is admin
-            current_user = User.query.filter_by(user_id=request.user_id).first()
-            if not current_user or current_user.role != 'admin':
-                return jsonify({
-                    "code": 403,
-                    "error": "Forbidden: You can only access your own profile"
-                }), 403
-        
-        user = User.query.filter_by(user_id=user_id).first()
-
-        if user:
+    """
+    Get user profile.
+    Users can only access their own profile unless they are admin.
+    """
+    # Verify user can only access their own data (unless admin)
+    if not verify_user_ownership(user_id):
+        # Check if current user is admin
+        current_user_result, status = user_service.get_user(g.user_id)
+        if status != 200 or current_user_result.get("data", {}).get("role") != 'admin':
             return jsonify({
-                "code": 200,
-                "data": user.json()
-            }), 200
-        else:
-            return jsonify({
-                "code": 404,
-                "error": "User not found"
-            }), 404
-    except Exception as e:
-        return jsonify({
-            "code": 500,
-            "message": str(e)
-        }), 500
+                "code": 403,
+                "error": "Forbidden: You can only access your own profile"
+            }), 403
     
+    result, status = user_service.get_user(user_id)
+    return jsonify(result), status
+
 
 @app.route("/user/create", methods=["POST"])
 def create_user():
+    """
+    Create new user.
+    Public endpoint for user registration.
+    """
     data = request.get_json()
-    required = ['name', 'email']
-    if not all(x in data for x in required):
-        return jsonify({
-            "code": 400,
-            "message": "missing required fields"
-        })
-    
-    # Debug logging
-    print(f"📝 Creating user with data: {data}")
-    print(f"🔑 user_id from request: {data.get('user_id')}")
-    
-    user = User(
-        user_id = data.get('user_id'),  # Accept Firebase user_id if provided
-        name = data['name'].strip().lower(),
-        email = data['email'].strip().lower()
-    )
-    
-    print(f"✅ User object created with user_id: {user.user_id}")
-
-    try:
-        db.session.add(user)
-        db.session.commit()
-        print(f"💾 User committed to database with user_id: {user.user_id}")
-    except IntegrityError:
-        db.session.rollback()
-        return jsonify(
-            {"code": 409, "error": "Email already exists"}
-        ), 409 
-
-    return jsonify({
-        "code": 200,
-        "data": user.json(),
-        "message": "user successfully created"
-    }), 200
+    result, status = user_service.create_user(data)
+    return jsonify(result), status
 
 
 @app.route("/user/<string:user_id>", methods=["PATCH"])
 @require_jwt
 def update_user(user_id):
-    """Update user profile. Users can only update their own profile unless they are admin."""
-    try:
-        # Verify user can only update their own data (unless admin)
-        if not verify_user_ownership(user_id):
-            # Check if current user is admin
-            current_user = User.query.filter_by(user_id=request.user_id).first()
-            if not current_user or current_user.role != 'admin':
-                return jsonify({
-                    "code": 403,
-                    "error": "Forbidden: You can only update your own profile"
-                }), 403
-        
-        user = User.query.filter_by(user_id=user_id).first()
-        if not user:
+    """
+    Update user profile.
+    Users can only update their own profile unless they are admin.
+    """
+    # Verify user can only update their own data (unless admin)
+    if not verify_user_ownership(user_id):
+        # Check if current user is admin
+        current_user_result, status = user_service.get_user(g.user_id)
+        if status != 200 or current_user_result.get("data", {}).get("role") != 'admin':
             return jsonify({
-                "error": "User not found"
-            }), 404
-        
-        data = request.get_json()
-        for field in ("name", "email", "role"):
-            if field in data and field:
-                setattr(user, field, data[field].strip().lower())
-            else:
-                return jsonify({
-                    "code": 400,
-                    "message": f"{field} cannot be empty"
-                }), 400
-
-        try:
-            db.session.commit()
-        except IntegrityError:
-            db.session.rollback()
-            return jsonify({"code": 409, "error": "Email already exists"}), 409
-
-        return jsonify({
-            "code": 200,
-            "data": user.json(),
-            "message": "user successfully updated"
-        }), 200
+                "code": 403,
+                "error": "Forbidden: You can only update your own profile"
+            }), 403
     
-    except Exception as e:
-        return jsonify({
-            "code": 500,
-            "message": str(e)
-        }), 500
-    
+    data = request.get_json()
+    result, status = user_service.update_user(user_id, data)
+    return jsonify(result), status
+
 
 @app.route("/user/<string:user_id>", methods=["DELETE"])
 @require_admin(db)
 def delete_user(user_id):
-    """Delete a user. Admin-only operation."""
-    user = User.query.filter_by(user_id=user_id).first()
-    if not user:
-        return jsonify({
-            "error": "User not found"
-        }), 404
-    db.session.delete(user)
-    
-    try:
-        db.session.commit()
-    except IntegrityError as e:
-        db.session.rollback()
-        # Typically triggered if there are referencing rows and no ON DELETE CASCADE
-        return jsonify({"code": 409, "error": "Cannot delete user due to related records"}), 409
-    
-    return jsonify({
-        "code" : 204,
-        "message": "deleted"
-    }), 204
+    """
+    Delete a user.
+    Admin-only operation.
+    """
+    result, status = user_service.delete_user(user_id)
+    return jsonify(result), status
 
 
 @app.route("/user/<string:user_id>/promote-admin", methods=["POST"])
@@ -274,45 +155,13 @@ def promote_to_admin(user_id):
     PUBLIC endpoint - no authentication required (for demo purposes).
     Security: Requires knowledge of user's Firebase UID.
     """
-    try:
-        user = User.query.filter_by(user_id=user_id).first()
-        if not user:
-            return jsonify({
-                "code": 404,
-                "error": "User not found"
-            }), 404
-        
-        # Update role to admin
-        user.role = "admin"
-        
-        try:
-            db.session.commit()
-        except Exception as e:
-            db.session.rollback()
-            return jsonify({
-                "code": 500,
-                "error": "Failed to update user role",
-                "message": str(e)
-            }), 500
+    result, status = user_service.promote_to_admin(user_id)
+    return jsonify(result), status
 
-        return jsonify({
-            "code": 200,
-            "data": user.json(),
-            "message": "User successfully promoted to admin"
-        }), 200
-    
-    except Exception as e:
-        return jsonify({
-            "code": 500,
-            "message": str(e)
-        }), 500
 
+# ---- Database Initialization ----
 with app.app_context():
     try:
-        # Only auto-create tables when explicitly enabled. Alembic should be
-        # the canonical migration path in CI / production. To enable local
-        # quick-start, set AUTO_CREATE_DB=1 in the environment (not recommended
-        # for production).
         if os.getenv("AUTO_CREATE_DB") == "1":
             db.create_all()
             print("✅ Database tables created/verified (AUTO_CREATE_DB=1)")
@@ -321,6 +170,6 @@ with app.app_context():
     except Exception as e:
         print(f"⚠️ Database table creation check failed: {e}")
 
-    
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5001, debug=True)

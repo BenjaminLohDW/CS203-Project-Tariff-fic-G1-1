@@ -252,6 +252,14 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
 
   // Get predicted tariff and run calculation with it
   const handlePredictCalculation = async () => {
+    console.log('🔮 Predict button clicked!')
+    console.log('Current state:', {
+      calculatedProduct,
+      calculatedImportingCountry,
+      calculatedExportingCountry,
+      tariffData: tariffData?.length
+    })
+    
     setIsLoadingPrediction(true)
     setPredictionError('')
     setPredictedResults(null)
@@ -259,12 +267,18 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
     try {
       // Validate inputs - use the current calculated values
       if (!calculatedProduct) {
+        console.error('❌ No calculated product')
         setPredictionError('Please run a calculation first before predicting')
+        setIsLoadingPrediction(false)
+        alert('Please run a calculation first before predicting')
         return
       }
 
       if (!calculatedImportingCountry || !calculatedExportingCountry) {
+        console.error('❌ Missing country information')
         setPredictionError('Missing country information from calculation')
+        setIsLoadingPrediction(false)
+        alert('Missing country information from calculation')
         return
       }
 
@@ -281,10 +295,20 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
         }
       }
       
+      // If no HS code from tariffData, try selectedHsCodeFromSuggestions
+      if (!hsCode && selectedHsCodeFromSuggestions) {
+        const cleanedHsCode = String(selectedHsCodeFromSuggestions).replace(/\./g, '')
+        hsCode = cleanedHsCode.substring(0, 6)
+        console.log('Using HS code from suggestions:', hsCode)
+      }
+      
       // For string input, we'll need to rely on tariffData from previous calculation
       // since we don't know if it's an HS code or product name
       if (!hsCode) {
+        console.error('❌ No HS code available')
         setPredictionError('HS code not available. Please ensure you have run a calculation with a valid product first.')
+        setIsLoadingPrediction(false)
+        alert('HS code not available. Please select a product from the suggestions and run a calculation first.')
         return
       }
 
@@ -293,7 +317,10 @@ function App({ onManagementClick, managementContent, showManagement = false, onC
       const exporterCode = getCountryCode(calculatedExportingCountry)
 
       if (!importerCode || !exporterCode) {
+        console.error('❌ Invalid country selection')
         setPredictionError('Invalid country selection')
+        setIsLoadingPrediction(false)
+        alert('Invalid country selection')
         return
       }
 
