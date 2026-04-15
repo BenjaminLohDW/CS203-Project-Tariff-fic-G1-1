@@ -1081,256 +1081,365 @@ This project is for educational purposes as part of the CS203 Software Engineeri
 
 
 
-# bolt.diy Technical Documentation
+# Technical Documentation
 
-## 1. Purpose
+## 1. Introduction
 
-This document describes the current architecture of bolt.diy with emphasis on the runtime request flow, the visual editor, deployment, and analytics tracking. It is intended as a technical reference rather than a narrative walkthrough.
+This document describes the technical architecture and operating model of the AI-enabled internal developer platform built on top of `bolt.diy`. The platform is designed for prompt-driven web content generation, visual refinement, controlled deployment, and post-deployment analytics within a governed environment.
 
-## 2. Architecture Summary
+At a high level, the system combines a browser-based authoring experience with a server-side orchestration layer for large language model (LLM) interactions, deployment automation, and telemetry ingestion. Users can generate pages from natural language prompts, refine the output through a drag-and-drop editor, preview the generated application, and deploy the resulting site through a one-click workflow.
 
-bolt.diy is a browser-first AI coding environment with a server-side orchestration layer. The main runtime split is:
+This documentation focuses on four technical concerns:
 
-- Browser UI and local runtime orchestration for chat, parsing, preview, and visual editing.
-- Server-side Remix routes for LLM orchestration, deployment, and analytics ingestion.
-- WebContainer execution for filesystem writes, shell commands, and local preview hosting.
+- End-to-end prompt-to-preview orchestration
+- LLM provider abstraction and prompt enforcement
+- Visual editing through GrapeJS
+- Deployment and analytics architecture
 
-Primary modules involved in the architecture are:
+## 2. Feature Overview
 
-- Chat UI: `app/components/chat/Chat.client.tsx`
-- Chat endpoint: `app/routes/api.chat.ts`
-- LLM stream orchestration: `app/lib/.server/llm/stream-text.ts`
-- Provider/model resolution: `app/lib/.server/llm/model-factory.ts`
-- Prompt registry and templates: `app/lib/common/prompt-library.ts`, `app/lib/common/prompts/*.ts`
-- Streaming parser and runtime execution: `app/lib/hooks/useMessageParser.ts`, `app/lib/runtime/*.ts`
-- Workbench and preview state: `app/lib/stores/workbench.ts`, `app/lib/stores/previews.ts`, `app/components/workbench/Preview.tsx`
+The platform currently provides the following core capabilities:
 
-## 3. Prompt → LLM → Actions → Preview
+- Prompt-to-preview generation for web pages and application scaffolds
+- Provider-agnostic LLM orchestration for build and discuss workflows
+- Incremental parsing and execution of generated file and shell actions
+- Browser-based visual editing with drag-and-drop composition
+- One-click deployment using generated Docker artifacts and Fly.io automation
+- Analytics tracking for deployed pages through an injected tracker and server-side ingestion endpoint
 
-### 3.1 Prompt submission
+These features are intentionally connected as one continuous workflow: the user begins in chat, iterates in preview, refines visually if needed, deploys the generated project, and then monitors usage through deployment analytics.
 
-`app/components/chat/Chat.client.tsx` wires the chat UI to `useChat({ api: '/api/chat', body: {...} })`. Each request carries:
+## 3. Installation and Configuration
 
-- Prompt text and message history
-- Selected prompt variant
-- Active chat mode
-- Project context and file state
-- Optional metadata used by the backend
+### 3.1 Prerequisites
 
-### 3.2 Chat API entry point
+To run the platform locally or through Docker, the following prerequisites are recommended:
 
-`app/routes/api.chat.ts` is the request entry point. The route performs these steps:
+- Docker Desktop installed and running
+- Git for cloning the repository
+- Node.js 22 or higher for local non-container workflows
+- A valid LLM API configuration, depending on the selected provider
 
-1. Parse request fields such as `messages`, `files`, `promptId`, and `chatMode`.
-2. Initialize streaming infrastructure.
-3. Process MCP tool invocations before the model call.
-4. Invoke the server-side LLM stream function.
-5. Emit progress and usage annotations for the UI.
-6. Handle continuation when responses are truncated.
+### 3.2 Repository Setup
 
-### 3.3 Streaming orchestration
+Clone the repository and move into the project root:
 
-`app/lib/.server/llm/stream-text.ts` prepares the model request. It:
+```bash
+git clone <repository-url>
+cd bolt.diy
+```
 
-- Resolves the provider and model through `getModel(...)`.
-- Normalizes message content before it reaches the provider.
-- Builds the final system message from prompt templates plus runtime constraints.
-- Switches behavior by chat mode:
-  - `build` for code generation.
-  - `discuss` for response-oriented interaction.
-- Sends the final request through the AI SDK stream API.
+### 3.3 Environment Configuration
 
-### 3.4 Provider-agnostic model routing
+Create a `.env.local` file in the repository root. The exact values depend on the chosen deployment mode and provider configuration, but the following categories are typically required:
 
-`app/lib/.server/llm/model-factory.ts` isolates provider-specific configuration behind a single adapter. Environment variables used by this layer include:
+- LLM provider settings such as `LLM_PROVIDER`, `LLM_MODEL`, `LLM_API_KEY`, and optional base URL values
+- Authentication settings such as `BOLT_AUTH_REQUIRED`, `BOLT_ADMIN_EMAIL`, `BOLT_ADMIN_PASSWORD`, and `BOLT_SESSION_SECRET`
+- Deployment settings such as `FLY_API_TOKEN`
+- Optional email configuration for account verification and password recovery
+
+Where Docker is used, the application also consumes environment variables through `docker-compose.yaml` and passes them into the container runtime.
+
+### 3.4 Running the Platform
+
+For containerized execution, the recommended command is:
+
+```bash
+docker compose --profile production up --build
+```
+
+This approach provides the most consistent runtime behavior across Windows and macOS hosts because the production environment runs inside a Linux container with a stable Node runtime and deployment tooling.
+
+## 4. System Architecture Overview
+
+The platform follows a split-runtime model with three major execution domains.
+
+### 4.1 Browser Runtime
+
+The browser is responsible for the interactive user experience and local orchestration concerns, including:
+
+- Chat UI and message composition
+- Incremental parsing of streamed model responses
+- Preview iframe updates
+- Visual editing through GrapeJS
+- WebContainer-backed project interaction
+
+Relevant files include:
+
+- `app/components/chat/Chat.client.tsx`
+- `app/lib/hooks/useMessageParser.ts`
+- `app/components/workbench/Preview.tsx`
+- `app/components/workbench/VisualEditor.client.tsx`
+
+### 4.2 Server Runtime
+
+The server runtime is responsible for orchestration, deployment, and ingestion workflows that should not be handled directly in the browser. These include:
+
+- LLM request handling through `/api/chat`
+- Deployment preparation and Fly execution through `/api/deploy-docker`
+- Analytics event ingestion through `/api/stats`
+- Authentication and session validation
+
+Relevant files include:
+
+- `app/routes/api.chat.ts`
+- `app/routes/api.deploy-docker.ts`
+- `app/routes/api.stats.ts`
+- `app/lib/auth/*`
+
+### 4.3 WebContainer Runtime
+
+The WebContainer layer acts as the isolated project execution environment used during generation and refinement. It supports:
+
+- Filesystem writes generated by model actions
+- Shell command execution for build/start tasks
+- Local preview hosting for generated applications
+
+This allows the platform to simulate a development workflow in-browser while keeping orchestration logic in the server layer.
+
+## 5. End-to-End Prompt-to-Preview Workflow
+
+### 5.1 Prompt Submission
+
+The user enters a prompt through the chat interface implemented in `app/components/chat/Chat.client.tsx`. The client sends a request to `/api/chat` with:
+
+- Prompt text and prior messages
+- Active prompt variant
+- Chat mode such as `build` or `discuss`
+- Current project files and context state
+- Optional metadata such as Supabase connectivity
+
+### 5.2 Chat API Handling
+
+The main server entry point is `app/routes/api.chat.ts`. This route:
+
+1. Validates the requesting user
+2. Parses the request payload
+3. Initializes stream lifecycle infrastructure
+4. Processes MCP tool invocations where applicable
+5. Delegates the actual provider call to `stream-text.ts`
+6. Returns progress, usage, and response annotations to the UI
+
+### 5.3 LLM Stream Orchestration
+
+`app/lib/.server/llm/stream-text.ts` is the runtime orchestration layer for LLM calls. It is responsible for:
+
+- Resolving the provider and model
+- Building the final system prompt
+- Injecting runtime constraints such as context files and locked files
+- Applying mode-specific behavior for build and discuss workflows
+- Streaming the model response through the AI SDK
+
+This file is not simply a prompt repository. Instead, it converts prompt templates plus request-time context into the actual provider request.
+
+### 5.4 Provider-Abstraction Layer
+
+`app/lib/.server/llm/model-factory.ts` provides a provider-agnostic abstraction for model selection. It resolves the correct adapter based on runtime configuration variables such as:
 
 - `LLM_PROVIDER`
 - `LLM_MODEL`
 - `LLM_BASE_URL`
 - `LLM_API_KEY`
 
-This design keeps the rest of the pipeline provider-neutral.
+Because this abstraction sits between the API routes and provider-specific SDKs, the rest of the application can remain stable when switching providers.
 
-### 3.5 Prompt stack and policy enforcement
+### 5.5 Prompt Policy Layer
 
-The prompt stack is defined across:
+Prompt behavior is defined through:
 
 - `app/lib/common/prompt-library.ts`
 - `app/lib/common/prompts/prompts.ts`
 - `app/lib/common/prompts/new-prompt.ts`
 - `app/lib/common/prompts/discuss-prompt.ts`
 
-The flow is:
+The prompt library selects the appropriate base prompt by `promptId` and chat mode. `stream-text.ts` then merges these base instructions with runtime constraints before the provider request is sent.
 
-1. `PromptLibrary` selects a template by `promptId`.
-2. Build mode uses `prompts.ts` and `new-prompt.ts`.
-3. Discuss mode uses `discuss-prompt.ts`.
-4. `stream-text.ts` merges the prompt with runtime constraints such as files, locked files, and summaries.
-5. `api.chat.ts` uses `CONTINUE_PROMPT` when a response needs continuation.
+### 5.6 Parsing and Action Execution
 
-### 3.6 Streaming parser and action execution
-
-The model output is parsed incrementally so the UI can react before the full response completes.
-
-Relevant files:
+Model output is consumed incrementally by the parser layer:
 
 - `app/lib/hooks/useMessageParser.ts`
 - `app/lib/runtime/message-parser.ts`
 - `app/lib/runtime/enhanced-message-parser.ts`
 - `app/lib/runtime/action-runner.ts`
+
+The parser extracts artifacts and actions from the streamed response, while `ActionRunner` executes those actions against the WebContainer-backed project. This is how generated file updates, shell commands, and build/start steps become visible in the workbench before the assistant response fully completes.
+
+### 5.7 Preview Refresh
+
+Preview behavior is coordinated through:
+
 - `app/lib/stores/workbench.ts`
-
-Behavior:
-
-- `useMessageParser` processes assistant text as it arrives.
-- `StreamingMessageParser` handles explicit bolt tags such as `<boltArtifact>` and `<boltAction>`.
-- `EnhancedStreamingMessageParser` adds fallback extraction for markdown, code blocks, and shell snippets.
-- Parser callbacks feed workbench events such as `onArtifactOpen`, `onActionOpen`, `onActionStream`, and `onActionClose`.
-- `ActionRunner` executes file, shell, start, build, and deploy-related actions.
-
-### 3.7 Preview refresh
-
-When actions update files or runtime state, the workbench increments `previewsStore.refreshSignal`.
-
-Relevant files:
-
 - `app/lib/stores/previews.ts`
-- `app/lib/stores/workbench.ts`
 - `app/components/workbench/Preview.tsx`
 
-`Preview.tsx` watches the refresh signal and reloads the iframe so the generated application reflects the latest filesystem state.
+Whenever actions mutate files or runtime state, the preview store emits a refresh signal. The preview iframe then reloads, allowing the user to observe the generated application in near real time.
 
-## 5. GrapeJS Integration (Drag-and-Drop)
+## 6. Visual Editing with GrapeJS
 
-### 5.1 SDK integration
+### 6.1 Integration Layer
 
-Relevant files:
+The visual editor is primarily implemented through:
 
 - `app/components/workbench/VisualEditor.client.tsx`
 - `app/components/workbench/BlocksPanel.client.tsx`
 - `app/lib/stores/visualEditorStore.ts`
 
-`VisualEditor.client.tsx` dynamically imports and initializes `grapesjs` on client mount. `BlocksPanel.client.tsx` mounts the block manager UI into the side panel container. Shared editor, HTML, and CSS state is synchronized through visual-editor atoms.
+`VisualEditor.client.tsx` dynamically loads GrapeJS on the client and initializes the editor canvas, while `BlocksPanel.client.tsx` exposes the block manager and related UI controls.
 
-### 5.2 Custom block definitions
+### 6.2 Block and Component Model
 
-Custom blocks are defined in the `BLOCKS` array inside `VisualEditor.client.tsx`.
+Custom visual elements are defined in the `BLOCKS` array inside `VisualEditor.client.tsx`. New blocks can be introduced by:
 
-To add a block:
+1. Adding a new block definition
+2. Registering it through `editor.Blocks.add(...)`
+3. Optionally adding a custom component type through `editor.Components.addType(...)`
 
-1. Add a new entry in `BLOCKS`.
-2. Register it through `editor.Blocks.add(...)`.
-3. Optionally add a custom component type through `editor.Components.addType(...)`.
+This makes the visual editing layer extensible without requiring changes to the rest of the orchestration pipeline.
 
-### 5.3 Drag and drop behavior
+### 6.3 Drag-and-Drop Behavior
 
-Drag and drop behavior is controlled by component defaults and type definitions such as:
+Drag-and-drop interaction is governed by component defaults such as:
 
 - `draggable`
 - `droppable`
 - `resizable`
-- layout types such as `section-container`, `flex-row`, and `flex-col`
-- editor event hooks such as `component:add`, `component:update`, and `component:drag:end`
 
-The editor also includes block search/filter UI and a “Use in Chat” bridge for copying generated HTML/CSS payloads.
+The implementation also differentiates between structural layout blocks and leaf content nodes, allowing the editor to provide stronger placement constraints and more useful resize behavior.
 
-### 5.4 Sync with code and preview
+### 6.4 Synchronization with Project Files
 
-The visual editor writes HTML and CSS back to WebContainer files and triggers preview refresh. When LLM actions update HTML or CSS, update signals are used so the GrapesJS canvas can resync from file content.
+The visual editor is not an isolated canvas. It synchronizes with the actual project files in the WebContainer environment. When the user edits visually, the corresponding HTML and CSS are written back to the project; when the LLM updates those files, the editor can resynchronize the canvas state.
 
-Important synchronization controls include:
+This synchronization is coordinated through shared atoms and update signals to avoid write-loop conflicts.
 
-- Shared atoms for HTML, CSS, and update signals.
-- Guard logic to prevent write-loop ping-pong.
-- CSS and script injection compatibility for Tailwind and external assets.
+## 7. Deployment Architecture
 
-## 6. One-Click Deployment: Docker + Fly.io
+### 7.1 Deployment UI and Flow
 
-### 6.1 Deployment flow
-
-Relevant files:
+The deployment flow begins from:
 
 - `app/components/deploy/DeployButton.tsx`
 - `app/components/deploy/DockerDeploy.client.tsx`
 - `app/components/deploy/DockerDeploymentDialog.tsx`
 
-Deployment flow:
+The process is:
 
-1. The user triggers deployment from the UI.
-2. Project files are collected from WebContainer.
-3. The project type is detected.
-4. Docker artifacts are generated.
-5. A request is sent to `/api/deploy-docker` with action `fly-deploy`.
+1. The user triggers deployment from the UI
+2. Project files are collected from WebContainer
+3. The project type is detected
+4. Docker artifacts are generated
+5. A request is sent to `/api/deploy-docker`
 
-### 6.2 Config generation
+### 7.2 Generated Deployment Artifacts
 
-Relevant files:
-
-- `app/components/deploy/DockerDeploy.client.tsx`
-- `app/routes/api.deploy-docker.ts`
-
-This layer generates or writes:
+The deployment layer can generate:
 
 - `Dockerfile`
 - `docker-compose.yml`
 - `.dockerignore`
 - `fly.toml` when needed
 
-### 6.3 Fly.io deployment execution
+The client-side generator prepares the project package, while the server-side route finalizes deployment-specific configuration.
 
-`app/routes/api.deploy-docker.ts` performs the deployment work:
+### 7.3 Fly.io Execution
 
-- Checks `flyctl` availability.
-- Writes files to a temporary build directory.
-- Creates or reuses the Fly app.
-- Runs `flyctl deploy --remote-only`.
-- Streams logs back to the client.
+`app/routes/api.deploy-docker.ts` performs the server-side deployment workflow. Its responsibilities include:
 
-### 6.4 Generated app images vs bolt.diy containerization
+- Preparing a temporary build directory
+- Generating `fly.toml` if not already present
+- Creating or reusing the Fly application
+- Running `flyctl deploy --remote-only`
+- Streaming deployment logs back to the client
 
-- Root-level Docker files such as `Dockerfile` and `docker-compose.yaml` run bolt.diy itself.
-- The one-click deploy path generates Docker artifacts for the user’s generated project.
+This route is also where deployment-time analytics instrumentation is added to the generated project.
 
-### 6.5 Deployment behavior summary
+### 7.4 Runtime vs Generated Project Containerization
 
-The deployment layer provides:
+It is important to distinguish between two containerization concerns:
 
-- Project auto-detection for Node, Python, and static projects.
-- Automatic `fly.toml` generation with detected internal port.
-- Fly deploy logging for create/reuse, deploy, and final URL reporting.
-- Runtime diagnostics when `flyctl` is missing or deployment output is incomplete.
+- The root-level `Dockerfile` and `docker-compose.yaml` are used to run `bolt.diy` itself
+- The one-click deployment flow generates Docker artifacts for the user-created project
 
-## 7. File-by-Feature Reference Map
+This distinction matters for troubleshooting because runtime issues with the platform container are separate from deployment issues in generated applications.
 
-### Prompt to LLM pipeline
+## 8. Analytics Architecture
+
+### 8.1 Purpose
+
+The analytics layer provides lightweight usage visibility for deployed pages without requiring the generated application author to manually integrate a third-party analytics SDK. It is designed to capture page visits and route transitions for applications deployed through the one-click deployment flow.
+
+### 8.2 Deployment-Time Injection
+
+Analytics instrumentation is injected during deployment preparation in `app/routes/api.deploy-docker.ts`.
+
+At deployment time, the server modifies the generated `index.html` and inserts a tracker script before the closing `</body>` tag, with a fallback to `</html>` if necessary. This means the deployed application is analytics-enabled as part of the deployment workflow rather than through post-deployment manual edits.
+
+### 8.3 Tracker Behavior
+
+The injected tracker performs the following functions:
+
+- Creates or reuses a browser-scoped session identifier stored in `sessionStorage`
+- Sends an initial pageview event when the page loads
+- Hooks `history.pushState` and the `popstate` event to observe single-page application navigation
+- Uses `navigator.sendBeacon(...)` when available
+- Falls back to `fetch(..., { keepalive: true })` or an image beacon when necessary
+
+This design improves reliability while keeping the tracker implementation lightweight and self-contained.
+
+### 8.4 Event Ingestion
+
+Analytics events are received by `app/routes/api.stats.ts`.
+
+The tracker sends the application identifier, path, session ID, and timestamp-related parameters to this route. The route acts as the ingestion layer for deployment analytics and can be used to aggregate route-level activity per deployed application.
+
+### 8.5 Data Flow Summary
+
+The analytics data path is:
+
+1. User visits a deployed page
+2. Injected tracker detects page load or client-side navigation
+3. Tracker sends a request to `/api/stats`
+4. The server records the event in the analytics ingestion layer
+
+This gives the system a deployment-aware telemetry path that is tightly integrated with the generated application lifecycle.
+
+### 8.6 Architectural Benefits
+
+The analytics approach provides several benefits:
+
+- No manual analytics integration is required for generated applications
+- The tracker is consistent across deployments
+- Initial page loads and SPA navigation are both captured
+- Instrumentation is injected only when the deployment workflow is used
+- Analytics remains under platform control, which aligns with governed deployment environments
+
+## 9. Key File Reference Map
+
+### Prompt and LLM orchestration
 
 - `app/components/chat/Chat.client.tsx`
 - `app/routes/api.chat.ts`
 - `app/lib/.server/llm/stream-text.ts`
 - `app/lib/.server/llm/model-factory.ts`
 - `app/lib/common/prompt-library.ts`
-- `app/lib/common/prompts/prompts.ts`
-- `app/lib/common/prompts/new-prompt.ts`
-- `app/lib/common/prompts/discuss-prompt.ts`
+- `app/lib/common/prompts/*.ts`
 
-### Streaming parse and runtime execution
+### Parsing, actions, and preview
 
 - `app/lib/hooks/useMessageParser.ts`
-- `app/lib/runtime/message-parser.ts`
-- `app/lib/runtime/enhanced-message-parser.ts`
-- `app/lib/runtime/action-runner.ts`
+- `app/lib/runtime/*.ts`
 - `app/lib/stores/workbench.ts`
 - `app/lib/stores/previews.ts`
 - `app/components/workbench/Preview.tsx`
 
-### GrapeJS visual builder
+### Visual editor
 
 - `app/components/workbench/VisualEditor.client.tsx`
 - `app/components/workbench/BlocksPanel.client.tsx`
 - `app/lib/stores/visualEditorStore.ts`
-- `app/lib/styles/grapesjs-overrides.css`
 
-### Deployment + analytics
+### Deployment and analytics
 
 - `app/components/deploy/DeployButton.tsx`
 - `app/components/deploy/DockerDeploy.client.tsx`
@@ -1340,32 +1449,9 @@ The deployment layer provides:
 - `Dockerfile`
 - `docker-compose.yaml`
 
-## 8. Analytics Tracking
+## 10. Conclusion
 
-Analytics are injected during deployment so deployed applications can emit lightweight usage events without manual code changes.
+The platform is best understood as a coordinated workflow engine rather than a single-page generator. Chat-driven generation, streaming action execution, visual editing, deployment automation, and analytics instrumentation are all part of one integrated system. The architecture intentionally separates browser interaction, server orchestration, and WebContainer execution so that the platform can remain interactive for users while still supporting deployment and telemetry workflows that belong on the server.
 
-### 8.1 Injection point
-
-`app/routes/api.deploy-docker.ts` injects a tracker script into the generated `index.html` before the closing `</body>` tag, with a fallback insert before `</html>` when needed.
-
-### 8.2 What the tracker records
-
-The injected script records:
-
-- Initial page load events
-- Client-side navigation changes in the SPA
-- A persistent session identifier stored in `sessionStorage`
-- App name and route path for aggregation
-
-### 8.3 Transport and fallback behavior
-
-The tracker attempts to send events using `navigator.sendBeacon(...)` first. If that is unavailable, it falls back to `fetch(..., { keepalive: true })` and finally to an image-based request path.
-
-### 8.4 Ingestion endpoint
-
-`app/routes/api.stats.ts` receives the events emitted by the tracker and aggregates them for reporting.
-
-### 8.5 Operational note
-
-Because analytics are injected into the deployed HTML, the tracker stays aligned with the generated app version automatically.
+For future iterations, this document can be extended with sequence diagrams, environment-variable reference tables, and operational deployment guides for production hosting.
 
