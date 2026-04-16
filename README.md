@@ -1455,3 +1455,22 @@ The platform is best understood as a coordinated workflow engine rather than a s
 
 For future iterations, this document can be extended with sequence diagrams, environment-variable reference tables, and operational deployment guides for production hosting.
 
+```env
+# Configurations for LLM providers
+LLM_PROVIDER=your_provider #anthropic, openai, moonshot etc
+LLM_MODEL=your_provider_model #i.e gpt-4o
+LLM_API_KEY=your_api_key_here
+
+# Configurations for Authentication setup (local auth)
+VITE_PUBLIC_BOLT_URL=set_for_analytics
+BOLT_AUTH_REQUIRED=true
+BOLT_ADMIN_EMAIL=admin_email
+BOLT_ADMIN_PASSWORD=random_password_for_admin_account
+BOLT_SESSION_SECRET=random_password
+BOLT_SMTP_HOST=smtp.gmail.com
+BOLT_SMTP_PORT=587
+BOLT_SMTP_SECURE=false
+BOLT_SMTP_USER=admin_email
+BOLT_SMTP_PASS=obtain_from_admin_email
+BOLT_SMTP_FROM=admin_email
+```
