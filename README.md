@@ -1473,4 +1473,10 @@ BOLT_SMTP_SECURE=false
 BOLT_SMTP_USER=admin_email
 BOLT_SMTP_PASS=obtain_from_admin_email
 BOLT_SMTP_FROM=admin_email
+
+POSTGRES_USER=bolt_app
+POSTGRES_PASSWORD=your_password #replace with your own set password
+POSTGRES_DB=bolt_core
+POSTGRES_PORT=5432
+DATABASE_URL=postgresql://bolt_app:your_password@db:5432/bolt_core #replace the you_password field with the password set above
 ```
